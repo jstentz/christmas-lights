@@ -3,7 +3,7 @@ Programmable Christmas Lights.
 
 ## How to Run the WebApp:
 
-Go to webapp folder.
+Go to `webapp` folder.
 
 ### Frontend
 
