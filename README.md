@@ -9,6 +9,7 @@ Go to `webapp` folder.
 
   ```
   $ cd frontend
+  $ npm install #you only need to run this the first time
   $ npm start
   ```
   
