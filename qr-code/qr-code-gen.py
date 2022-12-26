@@ -53,4 +53,13 @@ def update_password_and_url(password: str, url: str):
   ser.write(message)
   ser.close()
 
-update_password_and_url("password", "https://public.ryanstentz.com/games/shredders/stomp.mp4")
+if __name__ == '__main__':
+  import argparse
+  parser = argparse.ArgumentParser(prog="qr-code updater", 
+                                   description="Sends a new password and qr-code to a microcontroller for displaying")
+  
+  parser.add_argument('password', type=str)
+  parser.add_argument('-u', '--url', type=str, default='https://lights.ryanstentz.com/')
+  args = parser.parse_args()
+
+  update_password_and_url(args.password, args.url)
