@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import { Grid, Card, Text, Button, Image, Col} from '@nextui-org/react';
+import { Grid, Card, Text, Col} from '@nextui-org/react';
 import './App.css';
 import { NextUIProvider } from '@nextui-org/react';
 
@@ -8,27 +8,34 @@ import { NextUIProvider } from '@nextui-org/react';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const MockItem = ({callbackfn, text, imageurl, selectedlightid }) => {
+const GridItem = ({callbackfn, text, imageurl, lightid }) => {
   return (
-   <Card variant="shadow" isHoverable isPressable onPress={() => callbackfn(selectedlightid)}>
+   <Card isHoverable isPressable 
+   onPress={() => callbackfn(lightid)}>
      <Card.Body css={{ p: 0 }}>
-     <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
-       <Col>
-         <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
-           Select Light Pattern
-         </Text>
-         <Text h4 color="white">
-           {text}
-         </Text>
-       </Col>
-     </Card.Header>
      <Card.Image
        src={imageurl}
        objectFit="cover"
        width="100%"
-       height={240}
+       height={350}
        alt="Card image background"
- />
+      />
+      <Card.Footer isBlurred
+      css={{
+        position: "absolute",
+        bgBlur: "#0f111466",
+        bottom: 0,
+        zIndex: 1,
+      }}>
+       <Col>
+         {/* <Text size={14} weight="bold" transform="uppercase" color="#ffffffaa">
+           Select This Light Pattern
+         </Text> */}
+         <Text h4 color="white">
+           {text}
+         </Text>
+       </Col>
+     </Card.Footer>
  </Card.Body>
    </Card>
  );}
@@ -38,7 +45,7 @@ class App extends Component{
     super(props);
     this.state = {
       light_pattern_list: [],
-      selected_light_id: null
+      selected_light_pattern: null
     };
   }   
 
@@ -47,17 +54,30 @@ class App extends Component{
     this.get_selected_light_pattern();
   }
 
+  convert_to_dict = (lp_list) => {
+    var light_pattern_dict = {};
+
+    for (var i = 0; i < lp_list.length; i++) {
+      light_pattern_dict[ lp_list[i].id ] = lp_list[i];
+    }
+    return light_pattern_dict;
+
+  };
+
   refresh_list = () => {
     axios
       .get("/api/options")
-      .then((res) => this.setState({ light_pattern_list: res.data }))
+      .then((res) => this.setState({ light_pattern_list: this.convert_to_dict(res.data)}))
       .catch((err) => console.log(err));
+
+
+    
   };
 
   get_selected_light_pattern = () => {
     axios
       .get("/api/selections/last")
-      .then((res) => this.setState({ selected_light_id: res.data.light_pattern_id }))
+      .then((res) => this.setState({ selected_light_pattern: res.data.light_pattern_id }))
       .catch((err) => console.log(err));
   }
 
@@ -83,14 +103,28 @@ class App extends Component{
 
 
   render_choices = () => {
-  
+    console.log(this.state.selected_light_pattern);
+    console.log(this.state.light_pattern_list);
+    console.log();
+    const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
+    const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
+    const light_pattern_list = Object.values(this.state.light_pattern_list);
     return (
       <NextUIProvider>
+        <Text h1
+        css={{
+          textGradient: "45deg, $red600 35%, $green600 65%",
+          textAlign: "center"
+        }}
+        weight="bold">Plaid Family Holiday Lights</Text>
+        <Text h3 css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
+        <Text h4 css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
+        <Text css={{textAlign:"center"}}>{selection_description}</Text>
         <div className="outer-container">
         <Grid.Container gap={2} justify="flex-start">
-          {this.state.light_pattern_list.map((choice) => 
+          {light_pattern_list.map((choice) => 
           <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
-            <MockItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} selectedlightid={choice.id}/>
+            <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
           </Grid>
           )}
         </Grid.Container>
@@ -100,6 +134,7 @@ class App extends Component{
  
   };
   render(){
+    console.log(this.state.selected_light_pattern)
     return this.render_choices();
   }
 
