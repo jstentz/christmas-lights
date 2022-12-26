@@ -50,6 +50,9 @@ class LightPatternsView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='Get last selected light pattern')
     def last(self, request, *args, **kwargs):
         queryset = LightPattern.objects.last()
+        # raspberry pi shit? 
 
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
+
+    

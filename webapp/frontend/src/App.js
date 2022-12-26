@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from "axios";
+import { Grid, Card, Text, Button, Image, Col} from '@nextui-org/react';
 import './App.css';
+import { NextUIProvider } from '@nextui-org/react';
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -49,37 +51,50 @@ class App extends Component{
   }
 
 
+
   render_choices = () => {
     console.log(this.state.selected_light_id);
-    return this.state.light_pattern_list.map((choice) => 
-    <li
-        key={choice.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-        <span>
-          {choice.title}
-        </span>
-        <span>
-        {choice.description}
-        </span>
-        <span>
-        <img src={choice.image_url} style={{ width: 100, height: 100 }}alt="new" />
-        </span>
-        <span>
-          <button
-            className="btn btn-primary"
-            id={choice.id}
-            onClick={e => this.handle_selection(choice.id)}
-          >
-            Select
-          </button>    
-        </span>
-      </li>
+    const MockItem = ({ text, imageurl, selected_light_id }) => {
+     return (
+      <Card variant="shadow" isHoverable isPressable onPress={() => this.handle_selection(selected_light_id)} css={{ maxWidth: "100%" }}>
+        <Card.Body css={{ p: 0 }}>
+        <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
+          <Col>
+            <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
+              Select Light Pattern
+            </Text>
+            <Text h4 color="white">
+              {text}
+            </Text>
+          </Col>
+        </Card.Header>
+        <Card.Image
+          src={imageurl}
+          objectFit="cover"
+          width="100%"
+          height={340}
+          alt="Card image background"
+    />
+    </Card.Body>
+      </Card>
+    );}
+  
+    return (
+      <NextUIProvider>
+        <Grid.Container gap={2} justify="flex-start" alignContent="center" css={{margin: "0 auto"}}>
+          {this.state.light_pattern_list.map((choice) => 
+          <Grid alignContent="center">
+          <MockItem text={choice.title} imageurl={choice.image_url} selected_light_id={choice.id}/>
+        </Grid>
+          )}
+        </Grid.Container>
+      </NextUIProvider>
     );
-    
+ 
   };
 
   render(){
+    console.log(this.render_choices());
     return this.render_choices();
 
 
