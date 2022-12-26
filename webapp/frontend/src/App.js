@@ -8,6 +8,31 @@ import { NextUIProvider } from '@nextui-org/react';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+const MockItem = ({ text, imageurl, selectedlightid }) => {
+  return (
+   <Card variant="shadow" isHoverable isPressable onPress={() => this.handle_selection(selectedlightid)}>
+     <Card.Body css={{ p: 0 }}>
+     <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
+       <Col>
+         <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
+           Select Light Pattern
+         </Text>
+         <Text h4 color="white">
+           {text}
+         </Text>
+       </Col>
+     </Card.Header>
+     <Card.Image
+       src={imageurl}
+       objectFit="cover"
+       width="100%"
+       height={240}
+       alt="Card image background"
+ />
+ </Card.Body>
+   </Card>
+ );}
+
 class App extends Component{
   constructor(props) {
     super(props);
@@ -15,7 +40,7 @@ class App extends Component{
       light_pattern_list: [],
       selected_light_id: null
     };
-  }
+  }   
 
   componentDidMount() {
     this.refresh_list();
@@ -53,51 +78,24 @@ class App extends Component{
 
 
   render_choices = () => {
-    console.log(this.state.selected_light_id);
-    const MockItem = ({ text, imageurl, selected_light_id }) => {
-     return (
-      <Card variant="shadow" isHoverable isPressable onPress={() => this.handle_selection(selected_light_id)} css={{ maxWidth: "100%" }}>
-        <Card.Body css={{ p: 0 }}>
-        <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
-          <Col>
-            <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
-              Select Light Pattern
-            </Text>
-            <Text h4 color="white">
-              {text}
-            </Text>
-          </Col>
-        </Card.Header>
-        <Card.Image
-          src={imageurl}
-          objectFit="cover"
-          width="100%"
-          height={340}
-          alt="Card image background"
-    />
-    </Card.Body>
-      </Card>
-    );}
   
     return (
       <NextUIProvider>
-        <Grid.Container gap={2} justify="flex-start" alignContent="center" css={{margin: "0 auto"}}>
+        <div className="outer-container">
+        <Grid.Container gap={2} justify="flex-start">
           {this.state.light_pattern_list.map((choice) => 
-          <Grid alignContent="center">
-          <MockItem text={choice.title} imageurl={choice.image_url} selected_light_id={choice.id}/>
-        </Grid>
+          <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
+            <MockItem text={choice.title} imageurl={choice.image_url} selectedlightid={choice.id}/>
+          </Grid>
           )}
         </Grid.Container>
+        </div>
       </NextUIProvider>
     );
  
   };
-
   render(){
-    console.log(this.render_choices());
     return this.render_choices();
-
-
   }
 
 }
