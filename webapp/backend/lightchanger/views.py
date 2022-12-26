@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+import json, requests
 
 
 
@@ -50,9 +51,13 @@ class LightPatternsView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='Get last selected light pattern')
     def last(self, request, *args, **kwargs):
         queryset = LightPattern.objects.last()
-        # raspberry pi shit? 
-
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'], name='Send most recent light pattern to raspberry pi.')
+    def updatepi(self, request, *args, **kwargs):
+        light_pattern_json = json.dumps(request.data)
+        requests.post("http://192.168.1.166:8000/", light_pattern_json)
+        return Response(status=200)
 
     

@@ -8,9 +8,9 @@ import { NextUIProvider } from '@nextui-org/react';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const MockItem = ({ text, imageurl, selectedlightid }) => {
+const MockItem = ({callbackfn, text, imageurl, selectedlightid }) => {
   return (
-   <Card variant="shadow" isHoverable isPressable onPress={() => this.handle_selection(selectedlightid)}>
+   <Card variant="shadow" isHoverable isPressable onPress={() => callbackfn(selectedlightid)}>
      <Card.Body css={{ p: 0 }}>
      <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
        <Col>
@@ -68,10 +68,15 @@ class App extends Component{
       light_pattern_id: selection_id,
       timestamp: date.toISOString(),
     }
+    console.log(selection);
 
     axios
       .post("/api/selections/", selection)
       .then((res) => this.get_selected_light_pattern())
+      .catch((err) => console.log(err));
+
+    axios
+      .post("/api/selections/updatepi/", {"light_pattern_id": selection_id})
       .catch((err) => console.log(err));
   }
 
@@ -85,7 +90,7 @@ class App extends Component{
         <Grid.Container gap={2} justify="flex-start">
           {this.state.light_pattern_list.map((choice) => 
           <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
-            <MockItem text={choice.title} imageurl={choice.image_url} selectedlightid={choice.id}/>
+            <MockItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} selectedlightid={choice.id}/>
           </Grid>
           )}
         </Grid.Container>
