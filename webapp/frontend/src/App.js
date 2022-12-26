@@ -114,13 +114,11 @@ class App extends Component{
         <Text h1
         css={{
           textGradient: "45deg, $red600 35%, $green600 65%",
-          textAlign: "center"
-        }}
+          textAlign: "center",        }}
         weight="bold">Plaid Family Holiday Lights</Text>
-        <Text h3 css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
-        <Text h4 css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
-        <Text css={{textAlign:"center"}}>{selection_description}</Text>
-        <div className="outer-container">
+        <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
+        <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
+        <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
         <Grid.Container gap={2} justify="flex-start">
           {light_pattern_list.map((choice) => 
           <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
@@ -128,7 +126,6 @@ class App extends Component{
           </Grid>
           )}
         </Grid.Container>
-        </div>
       </NextUIProvider>
     );
  
