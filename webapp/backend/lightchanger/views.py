@@ -57,7 +57,7 @@ class LightPatternsView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='Send most recent light pattern to raspberry pi.')
     def updatepi(self, request, *args, **kwargs):
         light_pattern_json = json.dumps(request.data)
-        requests.post("http://192.168.1.166:8000/", light_pattern_json)
+        requests.post("http://192.168.1.166:8000/", light_pattern_json, headers={'Content-Type': 'application/json'})
         return Response(status=200)
 
     
