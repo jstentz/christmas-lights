@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import { Grid, Card, Text, Col} from '@nextui-org/react';
+import { Grid, Text} from '@nextui-org/react';
 import './App.css';
 import { NextUIProvider } from '@nextui-org/react';
 
@@ -8,9 +8,9 @@ import { NextUIProvider } from '@nextui-org/react';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const GridItem = ({callbackfn, text, imageurl, lightid }) => {
+const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   return (<Grid xs={12} sm={4} md={3} lg={2}>
-              <div className="card" onClick={() => callbackfn(lightid)}>
+              <div className="card" onClick={() => callbackfn(lightid, lightname)}>
                 <img src={imageurl}/>
                 
                 <div className="container">
@@ -67,7 +67,7 @@ class App extends Component{
       .catch((err) => console.log(err));
   }
 
-  handle_selection = (selection_id) => {
+  handle_selection = (selection_id, selection_name) => {
     const date = new Date();
     date.setTime(date.getTime()-date.getTimezoneOffset()*60*1000);
     const selection = {
@@ -75,36 +75,29 @@ class App extends Component{
       timestamp: date.toISOString(),
     }
     console.log("selection", selection);
+    console.log(selection_name);
 
     axios
       .post("/api/selections/", selection)
       .then((res) => this.get_selected_light_pattern())
       .catch((err) => console.log(err));
 
+    console.log(this.state.selected_light_pattern)
+
     axios
-      .post("/api/selections/updatepi/", {"light_pattern_id": selection_id})
+      .post("/api/selections/updatepi/", {"light_pattern_name": selection_name,
+                                          "parameters": ""})
       .catch((err) => console.log(err));
   }
 
 
 
   render_choices = () => {
+    console.log(this.state.light_pattern_list);
     const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
     const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
     const light_pattern_list = Object.values(this.state.light_pattern_list);
     return (
-      // <NextUIProvider>
-
-      //   <div className="outer-container">
-      //   <Grid.Container gap={2} justify="flex-start">
-      //     {light_pattern_list.map((choice) => 
-      //     <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
-      //       <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
-      //     </Grid>
-      //     )}
-      //   </Grid.Container>
-      //   </div>
-      // </NextUIProvider>
       <NextUIProvider>
         <Text h1
         css={{
@@ -117,8 +110,7 @@ class App extends Component{
         <div className="outer-container">
         <Grid.Container gap={2}>
           {light_pattern_list.map((choice) => 
-          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
-
+          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id} lightname={choice.animation_id}/>
           )}
       </Grid.Container>
       </div>
