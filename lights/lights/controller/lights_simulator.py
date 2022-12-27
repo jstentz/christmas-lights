@@ -14,13 +14,13 @@ class LightsSimulator(adafruit_pixelbuf.PixelBuf):
 
   def show(self):
     num_rows_last_print = (self._pixels + self.tcols - 1) // self.tcols
-    print("\033[F" * num_rows_last_print, end="", flush=True)
     buf = list(self._post_brightness_buffer)
     s = ""
     for pixel in self:
       r, g, b = pixel[self._byteorder[0]], pixel[self._byteorder[1]], pixel[self._byteorder[2]]
-      s += bg(r, g, b) + " " + bg.rs 
+      s += bg(r, g, b) + " " 
 
+    print("\033[F" * num_rows_last_print, end="")
     print(s, end='', flush=True)
     self.tcols, self.trows = os.get_terminal_size()
 
