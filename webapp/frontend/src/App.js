@@ -55,6 +55,11 @@ class App extends Component{
     this.get_selected_light_pattern();
   }
 
+  shouldComponentUpdate(newProps, newState) {
+    // only render if the state has changed
+    return this.state.selected_light_pattern !== newState.selected_light_pattern;
+}
+
   convert_to_dict = (lp_list) => {
     var light_pattern_dict = {};
 
@@ -104,9 +109,6 @@ class App extends Component{
 
 
   render_choices = () => {
-    console.log(this.state.selected_light_pattern);
-    console.log(this.state.light_pattern_list);
-    console.log();
     const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
     const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
     const light_pattern_list = Object.values(this.state.light_pattern_list);
