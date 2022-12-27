@@ -16,12 +16,12 @@ class DownTheLine(BaseAnimation):
     decay = self.decay
 
     if t % NUM_PIXELS == 0:
-      color = randomColor()
+      self.color = randomColor()
 
     for i in range(rate):
       index = t % NUM_PIXELS - (i * NUM_PIXELS // rate)
-      self.pixels[index] = color
+      self.pixels[index] = self.color
     for i in range(NUM_PIXELS):
-      color = self.pixels[i]
-      self.pixels[i] = tuple(int(c * decay) for c in color)
+      self.color = self.pixels[i]
+      self.pixels[i] = tuple(int(c * decay) for c in self.color)
     self.t += 1
