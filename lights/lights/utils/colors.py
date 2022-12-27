@@ -17,4 +17,8 @@ def hsv_to_rgb(h, s, v):
   return [int(c * 255) for c in colorsys.hsv_to_rgb(h, s, v)]
 
 def rgb_to_hsv(r, g, b):
-  return colorsys.rgb_to_hsv(r, g, b)
+  return colorsys.rgb_to_hsv(r/255, g/255, b/255)
+
+def decayPixel(r, g, b, decayRate):
+  h, s, v = rgb_to_hsv(r, g, b)
+  return hsv_to_rgb(h, s, v * decayRate)
