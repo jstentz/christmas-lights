@@ -1,6 +1,12 @@
 import random
 import colorsys
 
+def rainbowFrame(t, NUM_PIXELS):
+  """
+  Generates rgb values for a rainbow gradient at time t.
+  """
+  return [[int(v * 255) for v in colorsys.hsv_to_rgb((c + t) % NUM_PIXELS / NUM_PIXELS, 1.0, 1.0)] for c in range(NUM_PIXELS)]
+
 def randomColor():
   h = random.uniform(0, 1)
   s = 1

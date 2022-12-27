@@ -12,6 +12,7 @@ from lights.animations.moving_rainbow import MovingRainbow
 from lights.animations.red_green_swap import RedGreenSwap
 from lights.animations.game_of_life import GameOfLife
 from lights.animations.single_color import SingleColor
+from lights.animations.color_sort import ColorSort
 
 from lights.animations.base import BaseAnimation
 
@@ -24,7 +25,8 @@ ANIMATIONS: BaseAnimation = [
   MovingRainbow,
   RedGreenSwap,
   GameOfLife,
-  SingleColor
+  SingleColor,
+  ColorSort
 ]
 NAME_TO_ANIMATION: Dict[str, BaseAnimation] = {animation.__name__: animation for animation in ANIMATIONS}
 
