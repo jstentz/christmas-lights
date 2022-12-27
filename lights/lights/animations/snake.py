@@ -7,10 +7,7 @@ class Snake(BaseAnimation):
     self.numFood = numFood
     self.food = random.sample(range(len(self.pixels)), self.numFood)
     self.body = [random.randint(0, len(self.pixels) - 1)]
-    self.empty = set([i for i in range(len(self.pixels))])
-    self.empty.remove(self.body[0])
-    for f in self.food:
-      self.empty.remove(f)
+    self.S = set([i for i in range(len(pixels))]) # set of all indices
     
   def renderNextFrame(self):
     NUM_PIXELS = len(self.pixels)
@@ -19,10 +16,6 @@ class Snake(BaseAnimation):
     if len(set(self.body)) == NUM_PIXELS:
       self.food = random.sample(range(NUM_PIXELS), self.numFood)
       self.body = [random.randint(0, NUM_PIXELS - 1)]
-      self.empty = set([i for i in range(NUM_PIXELS)])
-      self.empty.remove(self.body[0])
-      for f in self.food:
-        self.empty.remove(f)
       # reset
 
     # move the snake
@@ -39,17 +32,13 @@ class Snake(BaseAnimation):
     newHead = head + dir
     self.body.insert(0, newHead)
 
-    if newHead in self.empty: 
-      self.empty.remove(newHead)
-
     if newHead in self.food:
       self.food.remove(newHead)
-      foodOptions = list(self.empty)
+      foodOptions = list(self.S - set(self.food) - set(self.body))
       if foodOptions != []:
-        self.food.append(random.choice(list(self.empty)))
+        self.food.append(random.choice(foodOptions))
     else:
-      tail = self.body.pop()
-      self.empty.add(tail)
+      self.body.pop()
 
     # update pixels
     for i in range(NUM_PIXELS):
