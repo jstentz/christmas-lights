@@ -2,7 +2,7 @@ import random
 from lights.animations.base import BaseAnimation
 
 class Snake(BaseAnimation):
-  def __init__(self, pixels, fps=None, numFood=5):
+  def __init__(self, pixels, *, fps=None, numFood=5):
     super().__init__(pixels, fps=fps)
     self.numFood = numFood
     self.food = random.sample(range(len(self.pixels)), self.numFood)

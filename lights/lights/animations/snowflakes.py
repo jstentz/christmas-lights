@@ -2,7 +2,7 @@ from lights.animations.base import BaseAnimation
 import random
 
 class Snowflakes(BaseAnimation):
-  def __init__(self, pixels, fps=30, density=.005, decayRate=.99):
+  def __init__(self, pixels, *, fps=30, density=.005, decayRate=.99):
     super().__init__(pixels, fps=fps)
     self.density = density
     self.decayRate = decayRate

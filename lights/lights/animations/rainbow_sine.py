@@ -4,7 +4,7 @@ import math
 
 class RainbowSine(BaseAnimation):
   # exp must be an even number >= 2 and freq must be >= 1
-  def __init__(self, pixels, freq=1, exp=10, fps=None):
+  def __init__(self, pixels, *, freq=1, exp=10, fps=None):
     super().__init__(pixels, fps=fps)
     self.freq = freq
     self.exp = exp
