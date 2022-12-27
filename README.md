@@ -1,26 +1,14 @@
 # christmas-lights
 Programmable Christmas Lights.
 
-## How to Run the WebApp:
+## Animations
 
-Go to `webapp` folder.
+For information regarding light animations, including instructions for programming your own animations, please see the [README](lights/lights/README.md)
 
-### Frontend
+## WebApp
 
-  ```
-  $ cd frontend
-  $ npm install #you only need to run this the first time
-  $ npm start
-  ```
-  
-### Backend
+For information about the web app, please see the webapp's [README](webapp/README.md)
 
-Use a virtual environment. Note: You may need to use `python3` instead of `python`.
+## QR Code
 
-  ```
-  $ cd backend
-  $ python manage.py runserver
-  ```
-  
-
-  
+For information about the dynamic qr-code, please see the qr-code's [README](qr-code/README.md)
