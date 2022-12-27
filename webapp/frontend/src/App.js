@@ -150,9 +150,13 @@ class App extends Component{
         <Grid.Container gap={2}>
           {urls.map((img_src) => 
             <Grid xs={12} sm={4} md={3} lg={2}>
-              <Card>
-              <Card.Image src={img_src}/>
-              </Card>
+              <div className="card">
+                <img src={img_src}/>
+                <div class="container">
+                  <h4><b>John Doe</b></h4>
+                  <p>Architect and Engineer</p>
+                </div>
+              </div>
             </Grid>
           )}
       </Grid.Container>
