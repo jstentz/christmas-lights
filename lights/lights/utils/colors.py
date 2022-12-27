@@ -7,6 +7,10 @@ def rainbowFrame(t, NUM_PIXELS):
   """
   return [[int(v * 255) for v in colorsys.hsv_to_rgb((c + t) % NUM_PIXELS / NUM_PIXELS, 1.0, 1.0)] for c in range(NUM_PIXELS)]
 
+def brightnessFrame(color, NUM_PIXELS):
+  h, s, _ = rgb_to_hsv(*color)
+  return [hsv_to_rgb(h, s, (c+1) / NUM_PIXELS) for c in range(NUM_PIXELS)]
+
 def randomColor():
   h = random.uniform(0, 1)
   s = 1
@@ -22,3 +26,4 @@ def rgb_to_hsv(r, g, b):
 def decayPixel(r, g, b, decayRate):
   h, s, v = rgb_to_hsv(r, g, b)
   return hsv_to_rgb(h, s, v * decayRate)
+
