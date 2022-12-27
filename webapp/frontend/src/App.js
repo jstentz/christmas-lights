@@ -9,35 +9,16 @@ axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
 const GridItem = ({callbackfn, text, imageurl, lightid }) => {
-  return (
-   <Card isHoverable isPressable 
-   onPress={() => callbackfn(lightid)}>
-     <Card.Body css={{ p: 0 }}>
-     <Card.Image
-       src={imageurl}
-       objectFit="cover"
-       width="100%"
-       height={350}
-       alt="Card image background"
-      /> 
-      <Card.Footer isBlurred
-      css={{
-        position: "absolute",
-        bgBlur: "#0f111466",
-        bottom: 0,
-        zIndex: 1,
-      }}>
-       <Col>
-         {/* <Text size={14} weight="bold" transform="uppercase" color="#ffffffaa">
-           Select This Light Pattern
-         </Text> */}
-         <Text h4 color="white">
-           {text}
-         </Text>
-       </Col>
-     </Card.Footer>
- </Card.Body>
-   </Card>
+  return (<Grid xs={12} sm={4} md={3} lg={2}>
+              <div className="card" onClick={() => callbackfn(lightid)}>
+                <img src={imageurl}/>
+                
+                <div className="container">
+                  <h4><b>{text}</b></h4>
+                  <p>Select This Light Pattern!</p>
+                </div>
+              </div>
+            </Grid>
  );}
 
 class App extends Component{
@@ -93,7 +74,7 @@ class App extends Component{
       light_pattern_id: selection_id,
       timestamp: date.toISOString(),
     }
-    console.log(selection);
+    console.log("selection", selection);
 
     axios
       .post("/api/selections/", selection)
@@ -108,34 +89,12 @@ class App extends Component{
 
 
   render_choices = () => {
-    // const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
-    // const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
-    // const light_pattern_list = Object.values(this.state.light_pattern_list);
-    const urls = ["https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
-                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",];
+    const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
+    const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
+    const light_pattern_list = Object.values(this.state.light_pattern_list);
     return (
       // <NextUIProvider>
-      //   <Text h1
-      //   css={{
-      //     textGradient: "45deg, $red600 35%, $green600 65%",
-      //     textAlign: "center",        }}
-      //   weight="bold">Plaid Family Holiday Lights</Text>
-      //   <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
-      //   <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
-      //   <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
+
       //   <div className="outer-container">
       //   <Grid.Container gap={2} justify="flex-start">
       //     {light_pattern_list.map((choice) => 
@@ -147,19 +106,22 @@ class App extends Component{
       //   </div>
       // </NextUIProvider>
       <NextUIProvider>
+        <Text h1
+        css={{
+          textGradient: "45deg, $red600 35%, $green600 65%",
+          textAlign: "center",        }}
+        weight="bold">Plaid Family Holiday Lights</Text>
+        <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
+        <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
+        <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
+        <div className="outer-container">
         <Grid.Container gap={2}>
-          {urls.map((img_src) => 
-            <Grid xs={12} sm={4} md={3} lg={2}>
-              <div className="card">
-                <img src={img_src}/>
-                <div class="container">
-                  <h4><b>John Doe</b></h4>
-                  <p>Architect and Engineer</p>
-                </div>
-              </div>
-            </Grid>
+          {light_pattern_list.map((choice) => 
+          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
+
           )}
       </Grid.Container>
+      </div>
       </NextUIProvider>
 
     );
