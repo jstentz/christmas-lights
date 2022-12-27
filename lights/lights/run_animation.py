@@ -5,18 +5,6 @@ import os
 
 # Animation imports.
 from lights.animations import ANIMATIONS
-from lights.animations.snake import Snake
-from lights.animations.snowflakes import Snowflakes
-from lights.animations.down_the_line import DownTheLine
-from lights.animations.rainbow_sine import RainbowSine
-from lights.animations.color_sine import ColorSine
-from lights.animations.moving_rainbow import MovingRainbow
-from lights.animations.red_green_swap import RedGreenSwap
-from lights.animations.game_of_life import GameOfLife
-from lights.animations.single_color import SingleColor
-from lights.animations.color_sort import ColorSort
-from lights.animations.binary_count import BinaryCount
-
 from lights.animations.base import BaseAnimation
 
 NAME_TO_ANIMATION: Dict[str, BaseAnimation] = {animation.__name__: animation for animation in ANIMATIONS}
@@ -41,12 +29,7 @@ if __name__ == '__main__':
   kwargs = dict([(arg[0], ast.literal_eval(arg[1]))for arg in kwargs_list])
 
   # Setup.
-<<<<<<< HEAD
-  SIMULATE = True
-  if not SIMULATE:
-=======
   if not simulate:
->>>>>>> 8dad8b9 (start of readme, auto load animations)
     from neopixel import NeoPixel as LightsController
     from lights.constants import PIN, NUM_PIXELS, ORDER
   else:
