@@ -13,29 +13,30 @@ const GridItem = ({callbackfn, text, imageurl, lightid }) => {
    <Card isHoverable isPressable 
    onPress={() => callbackfn(lightid)}>
      <Card.Body css={{ p: 0 }}>
-     <Card.Image
+     {/* <Card.Image
        src={imageurl}
        objectFit="cover"
        width="100%"
        height={350}
        alt="Card image background"
-      />
-      <Card.Footer isBlurred
+      /> */}
+      {/* <Card.Footer isBlurred
       css={{
         position: "absolute",
         bgBlur: "#0f111466",
         bottom: 0,
         zIndex: 1,
-      }}>
+      }}> */}
        <Col>
          {/* <Text size={14} weight="bold" transform="uppercase" color="#ffffffaa">
            Select This Light Pattern
          </Text> */}
-         <Text h4 color="white">
+         <Text h4 color="black">
            {text}
+           This is just a test to see if this stupid things works why does it suck at loading on my phone I am sick of working on this part of the project.
          </Text>
        </Col>
-     </Card.Footer>
+     {/* </Card.Footer> */}
  </Card.Body>
    </Card>
  );}
@@ -119,6 +120,7 @@ class App extends Component{
         <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
         <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
         <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
+        <div className="outer-container">
         <Grid.Container gap={2} justify="flex-start">
           {light_pattern_list.map((choice) => 
           <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
@@ -126,6 +128,7 @@ class App extends Component{
           </Grid>
           )}
         </Grid.Container>
+        </div>
       </NextUIProvider>
     );
  
