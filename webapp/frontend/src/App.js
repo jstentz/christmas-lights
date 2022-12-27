@@ -111,6 +111,21 @@ class App extends Component{
     // const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
     // const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
     // const light_pattern_list = Object.values(this.state.light_pattern_list);
+    const urls = ["https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",
+                  "https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg",];
     return (
       // <NextUIProvider>
       //   <Text h1
@@ -133,21 +148,11 @@ class App extends Component{
       // </NextUIProvider>
       <NextUIProvider>
         <Grid.Container gap={2}>
-          <Grid xs={12} sm={4} md={3} lg={2}>
-            <img src="https://media.npr.org/assets/img/2022/11/23/russian-toy-2-3-_custom-fd300880a9643efca73031d33f38ca7f4054b710.jpg"></img>
-          </Grid>
-          <Grid xs={12} sm={4} md={3} lg={2}>
-            <img src="https://www.scotsman.com/webimg/b25lY21zOjAxZWU1YzNjLTEyOTgtNGQwYS1iYzlkLWM5YmMxYjFmYTMwOTo5YjUyMWNiNS04NGZkLTQzZjMtOGI4Zi1hMjFjZTg1YWUyZjY=.jpg?crop=61:45,smart&width=800"></img>
-          </Grid>
-          <Grid xs={12} sm={4} md={3} lg={2}>
-            <img src="https://www.princeton.edu/sites/default/files/styles/full_2x/public/images/2022/02/KOA_Nassau_2697x1517.jpg?itok=Hy5eTACi"></img>
-          </Grid>
-          <Grid xs={12} sm={4} md={3} lg={2}>
-            <img src="https://www.travelandleisure.com/thmb/6xTNZI_Hd_oEXieQdZXAVjgtla8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/corgi-dog-POPDOGNAME1020-ebc7e573ca6e476b859c6092ac8589a4.jpg"></img>
-          </Grid>
-          <Grid xs={12} sm={4} md={3} lg={2}>
-          <img src="https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg"></img>
-          </Grid>
+          {urls.map((img_src) => 
+            <Grid xs={12} sm={4} md={3} lg={2}>
+              <img src={img_src}></img>
+            </Grid>
+          )}
       </Grid.Container>
       </NextUIProvider>
 
