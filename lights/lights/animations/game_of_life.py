@@ -2,7 +2,7 @@ from lights.animations.base import BaseAnimation
 import copy
 
 class GameOfLife(BaseAnimation):
-  def __init__(self, pixels, *, fps=None, color=(0, 255, 0)):
+  def __init__(self, pixels, *, fps=5, color=(0, 255, 0)):
     super().__init__(pixels, fps=fps)
     self.state = [True, True] + [False for _ in range(len(self.pixels) - 2)]
     self.color = color
