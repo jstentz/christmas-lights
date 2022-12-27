@@ -7,3 +7,5 @@ adafruit-circuitpython-neopixel
 rpi_ws281x
 adafruit-blinka
 flask
+sty
+cursor

@@ -25,14 +25,12 @@ class BaseAnimation():
       end = time.time()
       wait = max(0, self.period - (end - start))
       time.sleep(wait)
-    self.pixels.clear()
+    self.pixels.fill((0, 0, 0))
 
   def _handle_sigterm(self, *args):
-    print("Got SIGTERM, shutting down...")
     self.shutdown()
     self.running = False
 
   def _handle_sigint(self, *args):
-    print("Got SIGINT, shutting down...")
     self.shutdown()
     self.running = False
