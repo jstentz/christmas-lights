@@ -32,6 +32,8 @@ asgiref==3.6.0
     # via django
 click==8.1.3
     # via flask
+cursor==1.3.5
+    # via -r requirements.in
 django==4.1.4
     # via
     #   -r requirements.in
@@ -67,6 +69,8 @@ rpi-ws281x==4.3.4
     # via -r requirements.in
 sqlparse==0.4.3
     # via django
+sty==1.0.4
+    # via -r requirements.in
 typing-extensions==4.4.0
     # via adafruit-circuitpython-typing
 werkzeug==2.2.2
