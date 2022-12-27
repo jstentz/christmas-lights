@@ -2,6 +2,7 @@ from flask import Flask, request
 from subprocess import Popen
 import pathlib
 from typing import Optional
+import sys
 
 # ID_TO_FILENAME = {
 #   0: 'redlights.py',
@@ -11,8 +12,8 @@ from typing import Optional
 #   4: 'rainbow.py'
 # }
 
-# BASE_PATH = pathlib.Path(__file__).parent
-# ANIMATIONS_PATH = BASE_PATH / 'animations'
+BASE_PATH = pathlib.Path(__file__).parent
+RUN_ANIMATION_PATH = BASE_PATH / 'run_animation.py'
 
 p: Optional[Popen[bytes]] = None
 
@@ -26,7 +27,7 @@ def receive_data():
   if p is not None:
     p.terminate()
     p.wait()
-  p = Popen(['python', 'run_animation.py', '-r', '-a', animation])
+  p = Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation])
   return 'Success!'
 
 # @app.route('/select', methods=['GET'])
