@@ -17,3 +17,4 @@ class BinaryCount(BaseAnimation):
         self.pixels[i] = self.color
       else:
         self.pixels[i] = (0, 0, 0)
+    self.t += 1
