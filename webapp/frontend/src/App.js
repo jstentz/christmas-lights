@@ -108,34 +108,51 @@ class App extends Component{
 
 
   render_choices = () => {
-    const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
-    const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
-    const light_pattern_list = Object.values(this.state.light_pattern_list);
+    // const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
+    // const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
+    // const light_pattern_list = Object.values(this.state.light_pattern_list);
     return (
-      <NextUIProvider>
-        <Text h1
-        css={{
-          textGradient: "45deg, $red600 35%, $green600 65%",
-          textAlign: "center",        }}
-        weight="bold">Plaid Family Holiday Lights</Text>
-        <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
-        <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
-        <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
-        <div className="outer-container">
-        <Grid.Container gap={2} justify="flex-start">
-          {light_pattern_list.map((choice) => 
-          <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
-            <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
-          </Grid>
-          )}
-        </Grid.Container>
-        </div>
-      </NextUIProvider>
+      // <NextUIProvider>
+      //   <Text h1
+      //   css={{
+      //     textGradient: "45deg, $red600 35%, $green600 65%",
+      //     textAlign: "center",        }}
+      //   weight="bold">Plaid Family Holiday Lights</Text>
+      //   <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
+      //   <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
+      //   <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
+      //   <div className="outer-container">
+      //   <Grid.Container gap={2} justify="flex-start">
+      //     {light_pattern_list.map((choice) => 
+      //     <Grid xs={12} sm={4} md={3} lg={2} key={choice.id}>
+      //       <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id}/>
+      //     </Grid>
+      //     )}
+      //   </Grid.Container>
+      //   </div>
+      // </NextUIProvider>
+      <ul>
+        <li>
+          <img src="https://media.npr.org/assets/img/2022/11/23/russian-toy-2-3-_custom-fd300880a9643efca73031d33f38ca7f4054b710.jpg"></img>
+        </li>
+        <li>
+          <img src="https://www.scotsman.com/webimg/b25lY21zOjAxZWU1YzNjLTEyOTgtNGQwYS1iYzlkLWM5YmMxYjFmYTMwOTo5YjUyMWNiNS04NGZkLTQzZjMtOGI4Zi1hMjFjZTg1YWUyZjY=.jpg?crop=61:45,smart&width=800"></img>
+        </li>
+        <li>
+          <img src="https://www.princeton.edu/sites/default/files/styles/full_2x/public/images/2022/02/KOA_Nassau_2697x1517.jpg?itok=Hy5eTACi"></img>
+        </li>
+        <li>
+          <img src="https://www.travelandleisure.com/thmb/6xTNZI_Hd_oEXieQdZXAVjgtla8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/corgi-dog-POPDOGNAME1020-ebc7e573ca6e476b859c6092ac8589a4.jpg"></img>
+        </li>
+        <li>
+          <img src="https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg"></img>
+        </li>
+      </ul>
+
     );
  
   };
   render(){
-    console.log(this.state.selected_light_pattern)
     return this.render_choices();
   }
 
