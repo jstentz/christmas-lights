@@ -2,14 +2,14 @@
 
 ## Installation
 At the root of the repository, create a virtual environment and install the requirements:
-```
+```shell
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
 Still in the virtual environment, install the local change to the first `lights` folder and install the local `lights` package:
-```
+```shell
 cd lights
 pip install -e .
 ```
@@ -17,7 +17,7 @@ pip install -e .
 ## Creating an animation
 
 All animations live in their own file in the `animations` subdirectory. Here's the basic structure of an animation:
-```
+```python
 from lights.animations.base import BaseAnimation
 
 class NewAnimation(BaseAnimation): # all animations inherit from BaseAnimation
@@ -42,17 +42,17 @@ class NewAnimation(BaseAnimation): # all animations inherit from BaseAnimation
 The `self.pixels` object is the actual interface to the lights. Here's what you can do with it:
 
 ### Set an individual pixels color
-```
+```python
 self.pixels[idx] = (0, 128, 255)
 ```
 
 ### Set a range of pixel colors
-```
+```python
 self.pixels[0:2] = [(0, 0, 255), (255, 255, 0)]
 ```
 
 ### Fill all pixels with a single color
-```
+```python
 self.pixels.fill((255, 255, 255))
 ```
 
@@ -62,7 +62,7 @@ Unfortunately there's not a lot you can do as of now, but it should be enough to
 
 ### Simulating an animation
 Animators anywhere can test their animations using the simulator. In a terminal that supports 24-bit color (like vscode's built-in terminal), run the command.
-```
+```shell
 python run_animation.py -a AnimationClassName
 ```
 
@@ -70,14 +70,14 @@ This will show a visualization of your animation in the terminal. You can stop t
 
 For a list of all animations, use `-l`
 
-```
+```shell
 python run_animation.py -l
 ```
 
 ### Passing arguments
 If your animation has arguments, you can provide them to the simulator using the `--args` flag
 
-```
+```shell
 python run_animation.py -a AnimationClassName --args custom_arg_1='value' color=255,0,0 fps=30
 ```
 
@@ -85,6 +85,6 @@ Custom arguments are parsed with `ast.literal_eval`, so they can be any valid py
 
 You can also see the optional parameters for a given animation using `-i`
 
-```
+```shell
 python run_animation.py -a AnimationClassName -i
 ```
