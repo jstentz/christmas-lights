@@ -30,23 +30,31 @@ ANIMATIONS: BaseAnimation = [
 ]
 NAME_TO_ANIMATION: Dict[str, BaseAnimation] = {animation.__name__: animation for animation in ANIMATIONS}
 
-# Setup.
-SIMULATE = False
-if not SIMULATE:
-  from neopixel import NeoPixel as LightsController
-  from lights.constants import PIN, NUM_PIXELS, ORDER
-else:
-  PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
-  from lights.controller.lights_simulator import LightsSimulator
-  LightsController = LightsSimulator
 
-# Parse command line arguments.
-animation_name = sys.argv[1]
-kwargs_list = [arg.split('=') for arg in sys.argv[2:]]
-kwargs = dict([(arg[0], ast.literal_eval(arg[1]))for arg in kwargs_list])
+if __name__ == '__main__':
+  # Setup.
+  SIMULATE = True
+  if not SIMULATE:
+    from neopixel import NeoPixel as LightsController
+    from lights.constants import PIN, NUM_PIXELS, ORDER
+  else:
+    PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
+    from lights.controller.lights_simulator import LightsSimulator
+    LightsController = LightsSimulator
 
-# Run animation.
-pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
-animation = NAME_TO_ANIMATION[animation_name]
-a = animation(pixels, **kwargs)
-a.run()
+  # Parse command line arguments.
+  animation_name = sys.argv[1]
+  kwargs_list = [arg.split('=') for arg in sys.argv[2:]]
+  kwargs = dict([(arg[0], ast.literal_eval(arg[1]))for arg in kwargs_list])
+
+  # Run animation.
+  pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
+  animation = NAME_TO_ANIMATION[animation_name]
+  
+  try:
+    a = animation(pixels, **kwargs)
+  except Exception as e:
+    print("Example usage: python run_animation.py", animation.exampleUsage())
+    raise e
+
+  a.run()

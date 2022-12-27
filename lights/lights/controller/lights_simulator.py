@@ -20,8 +20,11 @@ class LightsSimulator(adafruit_pixelbuf.PixelBuf):
       r, g, b = pixel[self._byteorder[0]], pixel[self._byteorder[1]], pixel[self._byteorder[2]]
       s += bg(r, g, b) + " " 
 
+    # Push frame.
     print("\033[F" * num_rows_last_print, end="")
     print(s, end='', flush=True)
+
+    
     self.tcols, self.trows = os.get_terminal_size()
 
   # Make _transmit a noop during simulation.

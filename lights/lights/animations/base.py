@@ -27,6 +27,11 @@ class BaseAnimation():
       time.sleep(wait)
     self.pixels.fill((0, 0, 0))
 
+  @classmethod
+  def exampleUsage(cls):
+    kwargs_str = ["{}={}".format(arg, value) for arg, value in cls.__init__.__kwdefaults__.items()]
+    return "{} {}".format(cls.__name__, " ".join(kwargs_str))
+
   def _handle_sigterm(self, *args):
     self.shutdown()
     self.running = False
