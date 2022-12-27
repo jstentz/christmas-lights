@@ -1,10 +1,14 @@
 import random
 from lights.animations.base import BaseAnimation
+from lights.utils.colors import rainbowFrame, brightnessFrame
 
 class Snake(BaseAnimation):
-  def __init__(self, pixels, *, fps=None, numFood=5):
+  def __init__(self, pixels, *, fps=None, numFood=10, snakeColor=(0,255,0), foodColor=(255,0,0), isRainbow=False):
     super().__init__(pixels, fps=fps)
     self.numFood = numFood
+    self.isRainbow = isRainbow
+    self.foodColor = foodColor
+    self.snakeColor = snakeColor
     self.food = random.sample(range(len(self.pixels)), self.numFood)
     self.body = [random.randint(0, len(self.pixels) - 1)]
     self.S = set([i for i in range(len(pixels))]) # set of all indices
@@ -41,12 +45,24 @@ class Snake(BaseAnimation):
       self.body.pop()
 
     # update pixels
+    uniqueBodyList = []
+    for idx in self.body:
+      if idx not in uniqueBodyList:
+        uniqueBodyList.append(idx)
+
+    if self.isRainbow:
+      snakeFrame = rainbowFrame(0, len(uniqueBodyList))[::-1]
+    else:
+      snakeFrame = brightnessFrame(self.snakeColor, len(uniqueBodyList))[::-1]
+
     for i in range(NUM_PIXELS):
       if i in self.food:
-        self.pixels[i] = (255, 0, 0)
-      elif i == newHead:
-        self.pixels[i] = (0, 255, 0)
-      elif i in self.body:
-        self.pixels[i] = (0, 255, 0)
+        self.pixels[i] = self.foodColor
       else:
-        self.pixels[i] = (0, 0, 0)  
+        self.pixels[i] = (0, 0, 0)
+
+    for i in range(len(uniqueBodyList)):
+      pixelIdx = uniqueBodyList[i]
+      self.pixels[pixelIdx] = snakeFrame[i]
+
+      
