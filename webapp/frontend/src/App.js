@@ -131,6 +131,8 @@ class App extends Component{
       //   </Grid.Container>
       //   </div>
       // </NextUIProvider>
+      <NextUIProvider>
+        <Grid.Container>
       <ul>
         <li>
           <img src="https://media.npr.org/assets/img/2022/11/23/russian-toy-2-3-_custom-fd300880a9643efca73031d33f38ca7f4054b710.jpg"></img>
@@ -148,6 +150,8 @@ class App extends Component{
           <img src="https://www.helpguide.org/wp-content/uploads/king-charles-spaniel-resting-head.jpg"></img>
         </li>
       </ul>
+      </Grid.Container>
+      </NextUIProvider>
 
     );
  

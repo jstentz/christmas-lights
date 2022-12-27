@@ -16,3 +16,8 @@ html, body {
   height: 100%;
   background-color: #F7F7F2;
 }
+
+img {
+  max-width: 300px;
+  max-height: 300px;
+}
