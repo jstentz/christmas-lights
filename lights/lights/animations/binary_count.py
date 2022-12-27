@@ -1,7 +1,7 @@
 from lights.animations.base import BaseAnimation
 
 class BinaryCount(BaseAnimation):
-  def __init__(self, pixels, color=(0,255,0), fps=None):
+  def __init__(self, pixels, *, color=(0,255,0), fps=None):
     super().__init__(pixels, fps=fps)
     self.pixels = pixels
     self.color = color
