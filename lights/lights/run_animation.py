@@ -35,7 +35,7 @@ NAME_TO_ANIMATION: Dict[str, BaseAnimation] = {animation.__name__: animation for
 
 if __name__ == '__main__':
   # Setup.
-  SIMULATE = True
+  SIMULATE = False
   if not SIMULATE:
     from neopixel import NeoPixel as LightsController
     from lights.constants import PIN, NUM_PIXELS, ORDER
