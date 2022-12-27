@@ -22,6 +22,6 @@ class DownTheLine(BaseAnimation):
       index = t % NUM_PIXELS - (i * NUM_PIXELS // rate)
       self.pixels[index] = self.color
     for i in range(NUM_PIXELS):
-      self.color = self.pixels[i]
-      self.pixels[i] = tuple(int(c * decay) for c in self.color)
+      color = self.pixels[i]
+      self.pixels[i] = tuple(int(c * decay) for c in color)
     self.t += 1
