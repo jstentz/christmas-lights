@@ -1,8 +1,9 @@
 from flask import Flask, request
-from subprocess import Popen
+import subprocess
 import pathlib
 from typing import Optional
 import sys
+from threading import Semaphore
 
 # ID_TO_FILENAME = {
 #   0: 'redlights.py',
@@ -15,7 +16,8 @@ import sys
 BASE_PATH = pathlib.Path(__file__).parent
 RUN_ANIMATION_PATH = BASE_PATH / 'run_animation.py'
 
-p: Optional[Popen[bytes]] = None
+p: Optional[subprocess.Popen[bytes]] = None
+s = Semaphore()
 
 app = Flask(__name__)
 
@@ -24,10 +26,12 @@ def receive_data():
   global p
   data = request.get_json()
   animation = data['light_pattern_name']
+  s.acquire()
   if p is not None:
     p.terminate()
     p.wait()
-  p = Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation])
+  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-a', animation])
+  s.release()
   return 'Success!'
 
 # @app.route('/select', methods=['GET'])
