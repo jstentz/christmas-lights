@@ -58,10 +58,13 @@ self.pixels.fill((255, 255, 255))
 
 Unfortunately there's not a lot you can do as of now, but it should be enough to create some pretty animations :). Of course feel free to extend this basic interface with your own higher-level functions in your animations. We just ask that you consider adding functions you think would be useful to other animators to the `utils` subdirectory if it's not already there. 
 
-## Registering an animation
-
-
-
 ### Testing using the simulator
 
-Animators anywhere can test their animations using the simulator
+Animators anywhere can test their animations using the simulator. In a terminal that supports 24-bit color (like vscode's built-in terminal), run the command.
+```
+python run_animation.py -s AnimationClassName
+```
+
+This will show a visualization of your animation in the terminal. You can stop the simulation by running sending a SIGINT (`ctrl + c`).
+
+If your animation has arguments, you can provide them to the simulator using the `--args` flag
