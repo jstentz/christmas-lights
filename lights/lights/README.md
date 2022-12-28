@@ -61,12 +61,17 @@ Unfortunately there's not a lot you can do as of now, but it should be enough to
 ## Testing using the simulator
 
 ### Simulating an animation
-Animators anywhere can test their animations using the simulator. In a terminal that supports 24-bit color (like vscode's built-in terminal), run the command.
+Animators anywhere can test their animations using the simulator. To simulate your animation in a graphics window, run the command:
 ```shell
 python run_animation.py -a AnimationClassName
 ```
 
-This will show a visualization of your animation in the terminal. You can stop the simulation by running sending a SIGINT (`ctrl + c`).
+You can also run your animation within the terminal. In a terminal that supports 24-bit color (like vscode's built-in terminal), run the command:
+```shell
+python run_animation.py -t -a AnimationClassName
+```
+
+You can stop the simulation by running sending a SIGINT (`ctrl + c`).
 
 For a list of all animations, use `-l`
 
