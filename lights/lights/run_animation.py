@@ -23,6 +23,9 @@ if __name__ == '__main__':
   parser.add_argument('-r', 
                       help='run on hardware', 
                       action='store_true')
+  parser.add_argument('-t',
+                      help='simulate in the terminal',
+                      action='store_true')
   parser.add_argument('-i', 
                       help='show example usage for the selected animation', 
                       action='store_true')
@@ -57,8 +60,11 @@ if __name__ == '__main__':
     from lights.constants import PIN, NUM_PIXELS, ORDER
   else:
     PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
-    from lights.controller.lights_simulator import LightsSimulator
-    LightsController = LightsSimulator
+    from lights.controller.lights_simulator import TerminalLightsSimulator, TkLightsSimulator
+    if args.t:
+      LightsController = TerminalLightsSimulator
+    else:
+      LightsController = TkLightsSimulator
 
   # Run animation.
   pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
