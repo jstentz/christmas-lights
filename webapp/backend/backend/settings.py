@@ -20,15 +20,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-026(81kz90bga8ww%l)m=(co^5#fx*2$i7ml=dp_8&$5c^+$8%'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+
+# Basic Authorization:
+API_AUTH_KEY = 'API_AUTH'
+if DEBUG:
+  # SECURITY WARNING: keep the secret key used in production secret!
+  SECRET_KEY = 'django-insecure-026(81kz90bga8ww%l)m=(co^5#fx*2$i7ml=dp_8&$5c^+$8%'
+  API_AUTH = None
+else:
+  try:
+    SECRET_KEY = os.environ['SECRET_KEY']
+  except KeyError as e:
+    raise RuntimeError("Running with DEBUG=False, but couldn't find a SECRET_KEY in environment.") from e
+  
+  try:
+    API_AUTH = os.environ[API_AUTH_KEY]
+  except KeyError as e:
+    raise RuntimeError("Running with DEBUG=False, but couldn't find an API_AUTH in environment.") from e
 
 ALLOWED_HOSTS = [
-  "lights.ryanstentz.com"
+  "lights.ryanstentz.com",
+  "localhost",
+  "127.0.0.1"
 ]
+
+# Lights Controller Configuration:
+LIGHTS_CONTROLLER_ENDPOINT = "http://192.168.1.25:8000/"
 
 
 # Application definition
@@ -135,6 +154,8 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 STATIC_URL = os.path.join(BASE_DIR, 'static/')
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_content/')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),

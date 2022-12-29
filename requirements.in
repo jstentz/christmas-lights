@@ -11,3 +11,4 @@ sty
 cursor
 gunicorn
 perlin_noise
+requests
