@@ -17,6 +17,10 @@ function buildHeaders(currentPath) {
   return headers;
 }
 
+const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
+const auth_headers = buildHeaders(password);
+console.log(auth_headers)
+
 const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   return (<Grid xs={12} sm={4} md={3} lg={2}>
               <div className="card" onClick={() => callbackfn(lightid, lightname)}>
@@ -40,8 +44,6 @@ class App extends Component{
   }   
 
   componentDidMount() {
-    this.password = window.location.href.substring(window.location.href.lastIndexOf('/') + 1, window.location.href.length);
-    this.auth_headers = buildHeaders(this.password);
     this.refresh_list();
     this.get_selected_light_pattern();
   }
@@ -63,14 +65,14 @@ class App extends Component{
 
   refresh_list = () => {
     axios
-      .get("/api/options/", this.auth_headers)
+      .get("/api/options/", auth_headers)
       .then((res) => this.setState({ light_pattern_list: this.convert_to_dict(res.data)}))
       .catch((err) => console.log(err));
   };
 
   get_selected_light_pattern = () => {
     axios
-      .get("/api/selections/last/", this.auth_headers)
+      .get("/api/selections/last/", auth_headers)
       .then((res) => this.setState({ selected_light_pattern: res.data.light_pattern_id }))
       .catch((err) => console.log(err));
   }
@@ -86,13 +88,13 @@ class App extends Component{
     console.log(selection_name);
 
     axios
-      .post("/api/selections/", selection, this.auth_headers)
+      .post("/api/selections/", selection, auth_headers)
       .then((res) => this.get_selected_light_pattern())
       .catch((err) => console.log(err));
 
     axios
       .post("/api/selections/updatepi/", {"light_pattern_name": selection_name,
-                                          "parameters": ""}, this.auth_headers)
+                                          "parameters": ""}, auth_headers)
       .catch((err) => console.log(err));
   }
 
