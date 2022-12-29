@@ -8,6 +8,15 @@ import { NextUIProvider } from '@nextui-org/react';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+function buildHeaders(currentPath) {
+  const headers = {
+    headers: {
+      API_AUTH: currentPath
+    }
+  };
+  return headers;
+}
+
 const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   return (<Grid xs={12} sm={4} md={3} lg={2}>
               <div className="card" onClick={() => callbackfn(lightid, lightname)}>
@@ -28,6 +37,8 @@ class App extends Component{
       light_pattern_list: [],
       selected_light_pattern: null
     };
+    this.password = window.location.href.substring(window.location.href.lastIndexOf('/') + 1, window.location.href.length);
+    this.auth_headers = buildHeaders(this.password);
   }   
 
   componentDidMount() {
@@ -52,17 +63,14 @@ class App extends Component{
 
   refresh_list = () => {
     axios
-      .get("/api/options")
+      .get("/api/options/", this.auth_headers)
       .then((res) => this.setState({ light_pattern_list: this.convert_to_dict(res.data)}))
       .catch((err) => console.log(err));
-
-
-    
   };
 
   get_selected_light_pattern = () => {
     axios
-      .get("/api/selections/last")
+      .get("/api/selections/last/", this.auth_headers)
       .then((res) => this.setState({ selected_light_pattern: res.data.light_pattern_id }))
       .catch((err) => console.log(err));
   }
@@ -78,22 +86,19 @@ class App extends Component{
     console.log(selection_name);
 
     axios
-      .post("/api/selections/", selection)
+      .post("/api/selections/", selection, this.auth_headers)
       .then((res) => this.get_selected_light_pattern())
       .catch((err) => console.log(err));
 
-    console.log(this.state.selected_light_pattern)
-
     axios
       .post("/api/selections/updatepi/", {"light_pattern_name": selection_name,
-                                          "parameters": ""})
+                                          "parameters": ""}, this.auth_headers)
       .catch((err) => console.log(err));
   }
 
 
 
   render_choices = () => {
-    console.log(this.state.light_pattern_list);
     const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
     const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
     const light_pattern_list = Object.values(this.state.light_pattern_list);
@@ -110,7 +115,7 @@ class App extends Component{
         <div className="outer-container">
         <Grid.Container gap={2}>
           {light_pattern_list.map((choice) => 
-          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} lightid={choice.id} lightname={choice.animation_id}/>
+          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} key={choice.id} lightid={choice.id} lightname={choice.animation_id}/>
           )}
       </Grid.Container>
       </div>

@@ -30,7 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('selectLights/', SelectLights.as_view()),
     path('api/', include(router.urls)),
-
 ]
 
 
