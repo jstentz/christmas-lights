@@ -19,7 +19,6 @@ function buildHeaders(currentPath) {
 
 const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
 const auth_headers = buildHeaders(password);
-console.log(auth_headers)
 
 const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   return (<Grid xs={12} sm={4} md={3} lg={2}>
