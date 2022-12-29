@@ -45,6 +45,8 @@ djangorestframework==3.14.0
     # via -r requirements.in
 flask==2.2.2
     # via -r requirements.in
+gunicorn==20.1.0
+    # via -r requirements.in
 itsdangerous==2.1.2
     # via flask
 jinja2==3.1.2
@@ -75,3 +77,6 @@ typing-extensions==4.4.0
     # via adafruit-circuitpython-typing
 werkzeug==2.2.2
     # via flask
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

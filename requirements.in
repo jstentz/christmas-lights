@@ -9,3 +9,4 @@ adafruit-blinka
 flask
 sty
 cursor
+gunicorn
