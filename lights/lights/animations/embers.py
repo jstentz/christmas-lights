@@ -24,14 +24,15 @@ def generateNoise(pixels, frequency):
   return noise
 
 class Embers(BaseAnimation):
-  def __init__(self, pixels, *, fps=30):
+  def __init__(self, pixels, *, color=(255,100,0), fps=30):
     super().__init__(pixels, fps=fps)
-
-    self.color = desaturatePixel(*(255, 195, 0), 0.8)
+    # prevColor = (255, 195, 0)
+    self.color = color
+    # self.color = desaturatePixel(*color, 0.8)
 
     # Least active
     # self.frequencies = (8,)
-    # self.durations = (2,)
+    # self.durations = (.2,)
 
     # More active
     # self.frequencies = (8, 50)
