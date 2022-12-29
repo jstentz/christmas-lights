@@ -37,11 +37,11 @@ class App extends Component{
       light_pattern_list: [],
       selected_light_pattern: null
     };
-    this.password = window.location.href.substring(window.location.href.lastIndexOf('/') + 1, window.location.href.length);
-    this.auth_headers = buildHeaders(this.password);
   }   
 
   componentDidMount() {
+    this.password = window.location.href.substring(window.location.href.lastIndexOf('/') + 1, window.location.href.length);
+    this.auth_headers = buildHeaders(this.password);
     this.refresh_list();
     this.get_selected_light_pattern();
   }
