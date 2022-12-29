@@ -1,7 +1,7 @@
 # Animation courtesy of Austin Schick :)
 
 from lights.animations.base import BaseAnimation
-from lights.utils.colors import decayPixel
+from lights.utils.colors import desaturatePixel
 import random
 from perlin_noise import PerlinNoise
 
@@ -24,11 +24,9 @@ def generateNoise(pixels, frequency):
   return noise
 
 class Embers(BaseAnimation):
-  def __init__(self, pixels, *, color=(255,100,0), fps=30):
+  def __init__(self, pixels, *, color=(255, 195, 0), fps=30):
     super().__init__(pixels, fps=fps)
-    # prevColor = (255, 195, 0)
-    self.color = color
-    # self.color = desaturatePixel(*color, 0.8)
+    self.color = desaturatePixel(*color, 0.8)
 
     # Least active
     # self.frequencies = (8,)
@@ -78,4 +76,4 @@ class Embers(BaseAnimation):
         currOctaveValue = (lerp(self.noise[0][j][i], self.noise[1][j][i], t) - 0.5) * 0.5 ** j
         desaturationValue = max(min(desaturationValue + currOctaveValue, 1), 0)
 
-      self.pixels[i] = decayPixel(*self.color, desaturationValue)
+      self.pixels[i] = desaturatePixel(*self.color, desaturationValue)
