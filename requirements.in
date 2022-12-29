@@ -10,3 +10,4 @@ flask
 sty
 cursor
 gunicorn
+perlin_noise

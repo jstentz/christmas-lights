@@ -27,3 +27,6 @@ def decayPixel(r, g, b, decayRate):
   h, s, v = rgb_to_hsv(r, g, b)
   return hsv_to_rgb(h, s, v * decayRate)
 
+def desaturatePixel(r, g, b, desaturationRate):
+  h, s, v = rgb_to_hsv(r, g, b)
+  return hsv_to_rgb(h, s * desaturationRate, v)
