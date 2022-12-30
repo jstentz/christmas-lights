@@ -6,3 +6,5 @@
 *.pid
 *.log
 static_content
+.API_AUTH
+.DJANGO_SECRET_KEY
