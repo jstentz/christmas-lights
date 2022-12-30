@@ -24,11 +24,9 @@ const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   // Check if the image url is relative.
   return (<Grid xs={12} sm={4} md={3} lg={2}>
               <div className="card" onClick={() => callbackfn(lightid, lightname)}>
-                <img src={imageurl}/>
-                
+                <img src={imageurl} alt={lightname}/>
                 <div className="container">
                   <h4><b>{text}</b></h4>
-                  <p>Select This Light Pattern!</p>
                 </div>
               </div>
             </Grid>
@@ -97,15 +95,15 @@ class App extends Component{
 
   render_choices = () => {
     var selection_text, selection_description;
-    if(this.state.selected_light_pattern == null || this.state.light_pattern_list == null || this.state.light_pattern_list.length == 0) {
+    if(this.state.selected_light_pattern === null || this.state.light_pattern_list === null || this.state.light_pattern_list.length === 0) {
       selection_text = "None! Select one below.";
       selection_description = "None! Select one below.";
     } else {
-      console.log(this.state);
       selection_text = this.state.light_pattern_list[this.state.selected_light_pattern].title;
       selection_description = this.state.light_pattern_list[this.state.selected_light_pattern].description;
     }
     const light_pattern_list = Object.values(this.state.light_pattern_list);
+
     return (
       <NextUIProvider>
         <Text h1
@@ -117,12 +115,12 @@ class App extends Component{
         <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
         <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
         <div className="outer-container">
-        <Grid.Container gap={2}>
+        <Grid.Container gap={2} className="grid-container">
           {light_pattern_list.map((choice) => 
           <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} key={choice.id} lightid={choice.id} lightname={choice.animation_id}/>
           )}
-      </Grid.Container>
-      </div>
+        </Grid.Container>
+        </div>
       </NextUIProvider>
 
     );
