@@ -12,7 +12,7 @@ import json, requests
 
 
 def is_request_authenticated(request):
-  return settings.API_AUTH is None or (settings.API_AUTH_KEY in request.headers and request.headers[settings.API_AUTH_KEY] == settings.API_AUTH)
+  return settings.API_AUTH is None or (settings.API_AUTH_KEY in request.headers and request.headers[settings.API_AUTH_KEY] in settings.API_AUTH)
 
 # Basic decorator that performs incredibly basic authentication for api views. 
 # It only allows requests through that contain the correct secret in their headers.

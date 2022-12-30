@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +37,7 @@ else:
     raise RuntimeError("Running with DEBUG=False, but couldn't find a SECRET_KEY in environment.") from e
   
   try:
-    API_AUTH = os.environ[API_AUTH_KEY]
+    API_AUTH = json.loads(os.environ[API_AUTH_KEY])
   except KeyError as e:
     raise RuntimeError("Running with DEBUG=False, but couldn't find an API_AUTH in environment.") from e
 
