@@ -21,9 +21,11 @@ const password = window.location.pathname.substring(1, window.location.pathname.
 const auth_headers = buildHeaders(password);
 
 const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
+  // Check if the image url is relative.
+  const image_url = imageurl.startsWith('/') ? process.env.PUBLIC_URL + imageurl : imageurl;
   return (<Grid xs={12} sm={4} md={3} lg={2}>
               <div className="card" onClick={() => callbackfn(lightid, lightname)}>
-                <img src={imageurl}/>
+                <img src={image_url}/>
                 
                 <div className="container">
                   <h4><b>{text}</b></h4>
