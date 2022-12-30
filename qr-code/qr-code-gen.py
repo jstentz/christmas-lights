@@ -6,7 +6,7 @@ SCREEN_HEIGHT = 48
 
 PORT = '/dev/ttyUSB0'
 BAUD_RATE = 9600
-PASSWORD_LENGTH = 8
+MAX_MESSAGE_LENGTH = 10
 BITMAP_SIZE = 384
 
 def to_bitmap(qrcode: QrCode, width: int, height: int):
@@ -38,16 +38,22 @@ def bitmap_to_bytearray(bitmap: List):
 
   return output
 
-def update_password_and_url(password: str, url: str):
-  if len(password) != PASSWORD_LENGTH:
-    raise ValueError("Password must be size {}".format(PASSWORD_LENGTH))
+def pad_message(message):
+  if len(message) > MAX_MESSAGE_LENGTH:
+    raise ValueError("Message of length {} exceeds the maximum length ({}).".format(len(message), MAX_MESSAGE_LENGTH))
+  
+  remainder = MAX_MESSAGE_LENGTH - len(message)
+  return (" " * (remainder // 2)) + message + (" " * ((remainder + 1) // 2))
+
+def update_password_and_url(message: str, url: str):
+  message = pad_message(message)
   qr = QrCode.encode_text(url, QrCode.Ecc.MEDIUM)
   bitmap_bytes = bytes(bitmap_to_bytearray(to_bitmap(qr, SCREEN_WIDTH, SCREEN_HEIGHT)))
   if len(bitmap_bytes) != BITMAP_SIZE:
     raise RuntimeError("Wrong bitmap size!")
-  password_bytes = password.encode("ascii")
+  password_bytes = message.encode("ascii")
   message = password_bytes + bitmap_bytes
-  if len(message) != PASSWORD_LENGTH + BITMAP_SIZE:
+  if len(message) != MAX_MESSAGE_LENGTH + BITMAP_SIZE:
     raise RuntimeError("Wrong message size!")
   ser = serial.Serial(PORT, BAUD_RATE)
   ser.write(message)

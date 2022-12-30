@@ -52,9 +52,9 @@
 #define DC_JUMPER 0 // Set to either 0 (default) or 1 based on jumper, matching the value of the DC Jumper
 // Also connect pin 13 to SCK and pin 11 to MOSI
 
-#define PASSWORD_LENGTH 8
+#define MESSAGE_LENGTH 10
 #define BITMAP_SIZE 384
-#define MESSAGE_SIZE (PASSWORD_LENGTH + BITMAP_SIZE)
+#define PAYLOAD_SIZE (MESSAGE_LENGTH + BITMAP_SIZE)
 
 //////////////////////////////////
 // MicroOLED Object Declaration //
@@ -67,11 +67,11 @@
 MicroOLED oled(PIN_RESET, PIN_DC, PIN_CS); //Example SPI declaration, comment out if using I2C
 
 typedef struct {
-  char password[PASSWORD_LENGTH];
+  char password[MESSAGE_LENGTH];
   uint8_t bitmap[BITMAP_SIZE];
 } * message_t;
 
-uint8_t message[MESSAGE_SIZE];
+uint8_t message[PAYLOAD_SIZE];
 
 void setup()
 {
@@ -99,7 +99,7 @@ void update_qr_code() {
 
 void update_password() {
   oled.setFontType(0);
-  oled.setCursor(8, 40);
+  oled.setCursor(0, 40);
   oled.print(((message_t)message)->password);
 }
 
@@ -107,9 +107,9 @@ void loop()
 {
   //Serial.printf("%p, %p\n", ((message_t)message)->password, ((message_t)message)->bitmap);
   size_t pos = 0;
-  while(pos < MESSAGE_SIZE) {
+  while(pos < PAYLOAD_SIZE) {
     uint32_t n = Serial.available();
-    uint32_t num_to_read = min(n, MESSAGE_SIZE - pos);
+    uint32_t num_to_read = min(n, PAYLOAD_SIZE - pos);
     uint8_t *buf = &((uint8_t*)message)[pos];
     size_t num_read = Serial.readBytes(buf, num_to_read);
     pos += num_read;
