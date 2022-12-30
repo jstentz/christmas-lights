@@ -22,10 +22,9 @@ const auth_headers = buildHeaders(password);
 
 const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
   // Check if the image url is relative.
-  const image_url = imageurl.startsWith('/') ? process.env.PUBLIC_URL + imageurl : imageurl;
   return (<Grid xs={12} sm={4} md={3} lg={2}>
               <div className="card" onClick={() => callbackfn(lightid, lightname)}>
-                <img src={image_url}/>
+                <img src={imageurl}/>
                 
                 <div className="container">
                   <h4><b>{text}</b></h4>
@@ -48,11 +47,6 @@ class App extends Component{
     this.refresh_list();
     this.get_selected_light_pattern();
   }
-
-  shouldComponentUpdate(newProps, newState) {
-    // only render if the state has changed
-    return this.state.selected_light_pattern !== newState.selected_light_pattern;
-}
 
   convert_to_dict = (lp_list) => {
     var light_pattern_dict = {};
@@ -102,8 +96,15 @@ class App extends Component{
 
 
   render_choices = () => {
-    const selection_text = this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].title;
-    const selection_description =  this.state.selected_light_pattern == null? "None! Select one below." : this.state.light_pattern_list[this.state.selected_light_pattern].description;
+    var selection_text, selection_description;
+    if(this.state.selected_light_pattern == null || this.state.light_pattern_list == null || this.state.light_pattern_list.length == 0) {
+      selection_text = "None! Select one below.";
+      selection_description = "None! Select one below.";
+    } else {
+      console.log(this.state);
+      selection_text = this.state.light_pattern_list[this.state.selected_light_pattern].title;
+      selection_description = this.state.light_pattern_list[this.state.selected_light_pattern].description;
+    }
     const light_pattern_list = Object.values(this.state.light_pattern_list);
     return (
       <NextUIProvider>

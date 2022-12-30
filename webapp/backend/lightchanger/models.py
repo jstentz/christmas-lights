@@ -5,7 +5,7 @@ from django.db import models
 class LightPatternOption(models.Model):
     title = models.TextField(max_length=100, default="")
     description = models.TextField(max_length=1000)
-    image_url = models.URLField(null=True)
+    image_url = models.TextField(null=True)
     animation_id = models.TextField(default="")
 
 class LightPattern(models.Model):
