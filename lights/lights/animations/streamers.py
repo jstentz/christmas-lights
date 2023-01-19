@@ -11,28 +11,30 @@ class Streamers(BaseAnimation):
     
     NUM_PIXELS = len(pixels)
 
-    # for now, let's make every other streamer move in opposite directions
-    # maybe I could differ the speeds in the future
-    # I also don't want them to spawn overlapping at some point
-    # stored as (headLoc, color, movingUp)
-    # streamers = random.sample([i for i in range(NUM_PIXELS)], numStreamers)
-
-    self.streamers = [(random.randint(0, NUM_PIXELS-1), randomColor(), random.choice((True, False))) for _ in range(numStreamers)]
+    self.streamers = [
+                      (
+                        random.randint(0, NUM_PIXELS-1), # head location
+                        randomColor(),                   # color
+                        random.randint(1, 3),            # speed (1 is fastest)
+                        random.choice((True, False))     # direction
+                      )
+                      for _ in range(numStreamers)]
+    self.t = 0
 
   def renderNextFrame(self):
     # move the streamers heads in their specified directions
     for i in range(len(self.streamers)):
-      headLoc, color, movingUp = self.streamers[i]
-      newHeadLoc = headLoc + 1 if movingUp else headLoc - 1
-      self.streamers[i] = (newHeadLoc, color, movingUp)
+      headLoc, color, speed, movingUp = self.streamers[i]
+      if self.t % speed == 0:
+        newHeadLoc = headLoc + 1 if movingUp else headLoc - 1
+        self.streamers[i] = (newHeadLoc, color, speed, movingUp)
     
     
     # update the pixels with brightness frame
     NUM_PIXELS = len(self.pixels)
-    for i in range(NUM_PIXELS):
-      self.pixels[i] = (0, 0, 0)
+    self.pixels.fill((0, 0, 0))
 
-    for (headLoc, color, movingUp) in self.streamers:
+    for headLoc, color, _, movingUp in self.streamers:
       frame = brightnessFrame(color, self.streamersLen)
       for i in range(len(frame)):
         if movingUp:
@@ -40,4 +42,4 @@ class Streamers(BaseAnimation):
         else:
           loc = (headLoc - i) % NUM_PIXELS
         self.pixels[loc] = frame[i]
-
+    self.t += 1
