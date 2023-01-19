@@ -3,7 +3,7 @@ from lights.animations.base import BaseAnimation
 from lights.utils.colors import randomColor, brightnessFrame
 
 class Streamers(BaseAnimation):
-  def __init__(self, pixels, *, fps=None, numStreamers=10, streamersLen=10):
+  def __init__(self, pixels, *, fps=None, numStreamers=15, streamersLen=20):
     super().__init__(pixels, fps=fps)
     self.pixels = pixels
     self.numStreamers = numStreamers
