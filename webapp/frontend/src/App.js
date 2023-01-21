@@ -3,6 +3,7 @@ import axios from "axios";
 import { Grid, Text} from '@nextui-org/react';
 import './App.css';
 import { NextUIProvider } from '@nextui-org/react';
+import { GridItem } from './GridItem'
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -19,18 +20,6 @@ function buildHeaders(currentPath) {
 
 const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
 const auth_headers = buildHeaders(password);
-
-const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
-  // Check if the image url is relative.
-  return (<Grid xs={12} sm={4} md={3} lg={2}>
-              <div className="card" onClick={() => callbackfn(lightid, lightname)}>
-                <img src={imageurl} alt={lightname}/>
-                <div className="container">
-                  <h4><b>{text}</b></h4>
-                </div>
-              </div>
-            </Grid>
- );}
 
 class App extends Component{
   constructor(props) {
@@ -91,8 +80,6 @@ class App extends Component{
       .catch((err) => console.log(err));
   }
 
-
-
   render_choices = () => {
     var selection_text, selection_description;
     if(this.state.selected_light_pattern === null || this.state.light_pattern_list === null || this.state.light_pattern_list.length === 0) {
@@ -117,7 +104,7 @@ class App extends Component{
         <div className="outer-container">
         <Grid.Container gap={2} className="grid-container">
           {light_pattern_list.map((choice) => 
-          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} key={choice.id} lightid={choice.id} lightname={choice.animation_id}/>
+          <GridItem callbackfn={this.handle_selection} params={{fps: "30", color: "green", shape: "circle", num: "5", retry: "true"}} name={choice.title} image_url={choice.image_url} key={choice.id} light_id={choice.id} light_name={choice.animation_id}/>
           )}
         </Grid.Container>
         </div>
