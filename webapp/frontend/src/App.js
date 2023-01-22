@@ -80,6 +80,17 @@ class App extends Component{
       .catch((err) => console.log(err));
   }
 
+  handle_reset_parameters = (selection_id, selection_name) => {
+    axios
+    .post("/api/options/reset_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
+    .then((this.refresh_list()))
+    .catch((err) => console.log(err));
+  }
+
+  handle_edit_parameters = (selection_id, selection_name, new_params) => {
+    
+  }
+
   render_choices = () => {
     var selection_text, selection_description;
     if(this.state.selected_light_pattern === null || this.state.light_pattern_list === null || this.state.light_pattern_list.length === 0) {
@@ -104,7 +115,16 @@ class App extends Component{
         <div className="outer-container">
         <Grid.Container gap={2} className="grid-container">
           {light_pattern_list.map((choice) => 
-          <GridItem callbackfn={this.handle_selection} params={{fps: "30", color: "green", shape: "circle", num: "5", retry: "true"}} name={choice.title} image_url={choice.image_url} key={choice.id} light_id={choice.id} light_name={choice.animation_id}/>
+          <GridItem 
+            selectionCallback={this.handle_selection}
+            resetParametersCallback={this.handle_reset_parameters}
+            editParametersCallback={this.handle_edit_parameters}
+            params={choice.parameters_json} 
+            name={choice.title} 
+            image_url={choice.image_url} 
+            key={choice.id} 
+            light_id={choice.id} 
+            light_name={choice.animation_id}/>
           )}
         </Grid.Container>
         </div>

@@ -7,10 +7,8 @@ class LightPatternOption(models.Model):
     description = models.TextField(max_length=1000)
     image_url = models.TextField(null=True)
     animation_id = models.TextField(default="")
+    parameters_json = models.JSONField()
 
 class LightPattern(models.Model):
     light_pattern_id = models.ForeignKey(LightPatternOption, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(null=True)
-
-
-

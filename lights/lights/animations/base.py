@@ -33,9 +33,23 @@ class BaseAnimation():
     
     self.pixels.fill((0, 0, 0))
 
+  @classmethod 
+  def get_default_parameters(cls):
+    return cls.__init__.__kwdefaults__
+
+  @classmethod
+  def validate_parameters(cls, parameters):
+    default_parameters = cls.get_default_parameters()
+    for param, value in parameters.items():
+      if param not in default_parameters:
+        raise ValueError("Unknown parameter for animation {}: {}".format(cls.__name__, param))
+      
+      # if not isinstance(value, type(default_parameters[param])):
+      #   raise ValueError("Mismatched parameter type for animation {}. Expecting type {}, got {}.".format(cls.__name__, type(default_parameters), type(value)))
+
   @classmethod
   def exampleUsage(cls):
-    kwargs_str = ["{}={}".format(arg, value) for arg, value in cls.__init__.__kwdefaults__.items()]
+    kwargs_str = ["{}={}".format(arg, value) for arg, value in cls.get_default_parameters().items()]
     return "{} {}".format(cls.__name__, " ".join(kwargs_str))
 
   def _handle_sigterm(self, *args):
