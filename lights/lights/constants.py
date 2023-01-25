@@ -1,6 +1,10 @@
-import board
-import neopixel
+try:
+  import neopixel
+  import board
+  PIN = board.D18
+  ORDER = neopixel.RGB
+except NotImplementedError:
+  PIN = None
+  ORDER = "RGB"
 
-ORDER = neopixel.RGB
 NUM_PIXELS = 500
-PIN = board.D18

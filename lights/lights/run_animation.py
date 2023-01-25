@@ -56,7 +56,8 @@ if __name__ == '__main__':
 
   # Setup.
   if args.r:
-    from neopixel import NeoPixel as LightsController
+    #from neopixel import NeoPixel as LightsController
+    from lights.controller.serial_pixels import SerialPixels as LightsController
     from lights.constants import PIN, NUM_PIXELS, ORDER
   else:
     PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
