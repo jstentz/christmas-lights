@@ -42,7 +42,7 @@ if __name__ == '__main__':
   # Parse command line arguments.
 
   if args.l:
-    print('Available animations:\n', "\n".join(NAME_TO_ANIMATION.keys()))
+    print('Available animations:\n', "\n".join(NAME_TO_ANIMATION.keys()), sep='')
     exit(0)
 
   animation = NAME_TO_ANIMATION[args.animation_name]

@@ -20,11 +20,11 @@ class BaseAnimation():
     while self.running:
       start = time.time()
       self.renderNextFrame()
-      # push frame to lights.
-      self.pixels.show()
       end = time.time()
       wait = max(0, self.period - (end - start))
       time.sleep(wait)
+      # push frame to lights.
+      self.pixels.show()
     self.pixels.fill((0, 0, 0))
 
   @classmethod
