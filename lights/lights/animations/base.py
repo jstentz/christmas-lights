@@ -17,6 +17,11 @@ class BaseAnimation():
     pass
 
   def run(self):
+    # Render first frame immediately. This ensures snappy transitions between animations
+    # using different frame rates.
+    self.renderNextFrame()
+    self.pixels.show()
+
     while self.running:
       start = time.time()
       self.renderNextFrame()
@@ -25,6 +30,7 @@ class BaseAnimation():
       time.sleep(wait)
       # push frame to lights.
       self.pixels.show()
+    
     self.pixels.fill((0, 0, 0))
 
   @classmethod

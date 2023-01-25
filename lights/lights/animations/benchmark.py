@@ -3,7 +3,7 @@ from lights.animations.base import BaseAnimation
 # An animation for empirically measuring animation fps.
 
 class Benchmark(BaseAnimation):
-  def __init__(self, pixels, *, color=(0,255,0), fps=None):
+  def __init__(self, pixels, *, color=(255,0,0), fps=None):
     super().__init__(pixels, fps=fps)
     self.pixels = pixels
     self.color = color
