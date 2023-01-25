@@ -30,7 +30,7 @@ def receive_data():
   if p is not None:
     p.terminate()
     p.wait()
-  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-a', animation])
+  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation])
   s.release()
   return 'Success!'
 
