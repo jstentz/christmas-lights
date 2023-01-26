@@ -56,7 +56,7 @@ export class GridItem extends Component {
     const cardClassName = this.state.cardClickAnimation ? "card run-click-animation" : "card";
 
     const displayCard = (
-      <Grid xs={12} sm={4} md={3} lg={2} className="four-by-three-aspect">
+      <Grid xs={12} sm={4} md={3} lg={2}>
         <div className={cardClassName} onClick={this.handleCardClicked} onAnimationEnd={() => this.setState({cardClickAnimation: false})}>
           <img className="card-background" src={this.props.image_url} alt={this.props.light_name} />
           <img src={Icon} className="edit-button" onClick={this.handleEditButtonClick} alt="edit" />
@@ -68,7 +68,7 @@ export class GridItem extends Component {
     );
     
     const editingCard = (
-      <Grid xs={12} sm={4} md={3} lg={2} className="four-by-three-aspect">
+      <Grid xs={12} sm={4} md={3} lg={2}>
         <div className="edit-card">
           <form onSubmit={this.handleParameterEdit}>
             <p>Edit parameters for {this.props.light_name}</p>

@@ -23,12 +23,9 @@ img {
   padding-bottom: 30px;
 }
 
-.four-by-three-aspect {
-  aspect-ratio: 4 / 3;
-}
-
 .card {
   /* Add shadows to create the "card" effect */
+  aspect-ratio: 4 / 3;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 5px; /* 5px rounded corners */
   position: relative;
@@ -47,6 +44,7 @@ img {
 }
 
 .edit-card {
+  aspect-ratio: 4 / 3;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 5px; /* 5px rounded corners */
   background-color: #F7F7F2;
