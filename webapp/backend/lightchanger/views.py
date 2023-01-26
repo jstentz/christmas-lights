@@ -6,9 +6,12 @@ from django.http import HttpResponseRedirect
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.request import HttpRequest
 from django.conf import settings
 from functools import wraps
 import json, requests
+
+from lights.animations import NAME_TO_ANIMATION
 
 
 def is_request_authenticated(request):
@@ -41,20 +44,7 @@ class HomePage(View):
         return HttpResponseRedirect("/")
 
 
-class SelectLights(View):
-    def get(self, request):
-        print(request)
-        return HttpResponseRedirect("/")
-    def post(self, request):
-        print(request)
-        # send the info the raspberry pi somehow??? 
-        new_light_pattern = LightPattern()
-        #save to database so we can keep track of things
-        new_light_pattern.save()
-        return HttpResponseRedirect("/")
-
-
-class LightOptionsView(viewsets.ReadOnlyModelViewSet):
+class LightOptionsView(viewsets.ModelViewSet):
     serializer_class = LightOptionSerializer
     queryset = LightPatternOption.objects.all()
 
@@ -66,6 +56,59 @@ class LightOptionsView(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, *args, **kwargs):
        return super().retrieve(request, *args, **kwargs)
 
+    @basic_authentication
+    def create(self, request, *args, **kwargs):
+       return super().create(request, *args, **kwargs)
+
+    @basic_authentication
+    def update(self, request, *args, **kwargs):
+       return super().update(request, *args, **kwargs)
+    
+    @basic_authentication
+    def destroy(self, request, *args, **kwargs):
+       return super().destroy(request, *args, **kwargs)
+
+    @basic_authentication
+    def partial_update(self, request, *args, **kwargs):
+       return super().partial_update(request, *args, **kwargs)
+
+    @action(detail=False, methods=['POST'], name='Validate new animation parameters')
+    @basic_authentication
+    def reset_parameters(self, request, *args, **kwargs):
+      light_pattern_json = request.data
+      light_pattern_name = light_pattern_json['light_pattern_name']
+      light_pattern_id = light_pattern_json['light_pattern_id']
+      existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      
+      animation = NAME_TO_ANIMATION[light_pattern_name]
+
+      default_parameters = animation.get_default_parameters()
+      existing.parameters_json = animation.serialize_parameters(default_parameters)
+      existing.save()
+      
+      return Response(200)
+
+    @action(detail=False, methods=['POST'], name='Validate and update new animation parameters')
+    @basic_authentication
+    def update_parameters(self, request, *args, **kwargs):
+      light_pattern_json = request.data
+      light_pattern_name = light_pattern_json['light_pattern_name']
+      light_pattern_id = light_pattern_json['light_pattern_id']
+      new_parameters = light_pattern_json['parameters']
+      existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      
+      animation = NAME_TO_ANIMATION[light_pattern_name]
+      parameters = animation.deserialize_parameters(new_parameters)
+
+      try:
+        animation.validate_parameters(parameters)
+      except TypeError as e:
+        return Response(data=str(e), status=400)
+
+      existing.parameters_json = new_parameters
+      existing.save()
+      
+      return Response(200)
 
 class LightPatternsView(viewsets.ModelViewSet):
     serializer_class = LightPatternSerializer
@@ -98,10 +141,24 @@ class LightPatternsView(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['POST'], name='Send most recent light pattern to raspberry pi.')
+    @action(detail=False, methods=['POST'], name='Send most recent light pattern to raspberry pi')
     @basic_authentication
     def updatepi(self, request, *args, **kwargs):
-        light_pattern_json = json.dumps(request.data)
-        print(light_pattern_json)
+        request_data = request.data.copy()
+        light_pattern_id = request_data['light_pattern_id']
+        light_pattern_name = request_data['light_pattern_name']
+        light_pattern = LightPatternOption.objects.get(pk=light_pattern_id)
+
+        animation = NAME_TO_ANIMATION[light_pattern_name]
+        parameters = animation.deserialize_parameters(light_pattern.parameters_json)
+
+        try:
+          animation.validate_parameters(parameters)
+        except TypeError as e:
+          return Response(data=str(e), status=400)
+
+        request_data['parameters'] = parameters
+        light_pattern_json = json.dumps(request_data)
+
         requests.post(settings.LIGHTS_CONTROLLER_ENDPOINT, light_pattern_json, headers={'Content-Type': 'application/json'})
         return Response(status=200)

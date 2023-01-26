@@ -2,6 +2,7 @@ import ast
 import sys
 import os
 import argparse
+import json
 
 # Animation imports.
 from lights.animations import NAME_TO_ANIMATION
@@ -33,10 +34,9 @@ if __name__ == '__main__':
                       help='list all available animations',
                       action='store_true')
   parser.add_argument('--args', 
-                      help='custom arguments for the selected animation', 
-                      nargs=argparse.REMAINDER, 
+                      help='custom arguments for the selected animation',
                       type=str, 
-                      default=[])
+                      default="{}")
   args = parser.parse_args()
 
   # Parse command line arguments.
@@ -51,8 +51,8 @@ if __name__ == '__main__':
   if args.i:
     printExampleUsage(animation)
     exit(-1)
-  
-  kwargs = parseExtraArgs(args.args)
+
+  kwargs = json.loads(args.args)
 
   # Setup.
   if args.r:
@@ -71,6 +71,7 @@ if __name__ == '__main__':
   pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
   
   try:
+    animation.validate_parameters(kwargs)
     a = animation(pixels, **kwargs)
   except Exception as e:
     printExampleUsage(animation)

@@ -1,7 +1,8 @@
 from lights.animations.base import BaseAnimation
+from typing import Optional
 
 class RedGreenSwap(BaseAnimation):
-  def __init__(self, pixels, *, fps=1):
+  def __init__(self, pixels, *, fps: Optional[int] = 1):
     super().__init__(pixels, fps=fps)
     self.t = 0
 

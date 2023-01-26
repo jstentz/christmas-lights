@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from lightchanger.views import SelectLights, HomePage, LightOptionsView, LightPatternsView
+from lightchanger.views import HomePage, LightOptionsView, LightPatternsView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -28,7 +28,6 @@ router.register(r'selections', LightPatternsView)
 urlpatterns = [
     path('', HomePage.as_view()),
     path('admin/', admin.site.urls),
-    path('selectLights/', SelectLights.as_view()),
     path('api/', include(router.urls)),
 ]
 

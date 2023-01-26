@@ -4,6 +4,7 @@ import pathlib
 from typing import Optional
 import sys
 from threading import Semaphore
+import json
 
 # ID_TO_FILENAME = {
 #   0: 'redlights.py',
@@ -26,21 +27,14 @@ def receive_data():
   global p
   data = request.get_json()
   animation = data['light_pattern_name']
+  parameters = data['parameters']
   s.acquire()
   if p is not None:
     p.terminate()
     p.wait()
-  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation])
+  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation, '--args', json.dumps(parameters)])
   s.release()
   return 'Success!'
-
-# @app.route('/select', methods=['GET'])
-# def handle_select():
-#   global p
-#   if p is not None:
-#     p.terminate()
-#   p = Popen(['python', ANIMATIONS_PATH/'dummy.py'])
-#   return 'Success!'
 
 if __name__ == '__main__':
   app.run(host="0.0.0.0", port=8000)

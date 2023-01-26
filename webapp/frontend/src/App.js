@@ -3,6 +3,7 @@ import axios from "axios";
 import { Grid, Text} from '@nextui-org/react';
 import './App.css';
 import { NextUIProvider } from '@nextui-org/react';
+import { GridItem } from './GridItem'
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -19,18 +20,6 @@ function buildHeaders(currentPath) {
 
 const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
 const auth_headers = buildHeaders(password);
-
-const GridItem = ({callbackfn, text, imageurl, lightid, lightname }) => {
-  // Check if the image url is relative.
-  return (<Grid xs={12} sm={4} md={3} lg={2}>
-              <div className="card" onClick={() => callbackfn(lightid, lightname)}>
-                <img src={imageurl} alt={lightname}/>
-                <div className="container">
-                  <h4><b>{text}</b></h4>
-                </div>
-              </div>
-            </Grid>
- );}
 
 class App extends Component{
   constructor(props) {
@@ -86,12 +75,22 @@ class App extends Component{
       .catch((err) => console.log(err));
 
     axios
-      .post("/api/selections/updatepi/", {"light_pattern_name": selection_name,
-                                          "parameters": ""}, auth_headers)
+      .post("/api/selections/updatepi/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
       .catch((err) => console.log(err));
   }
 
+  handle_reset_parameters = (selection_id, selection_name) => {
+    axios
+    .post("/api/options/reset_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
+    .then((this.refresh_list()))
+    .catch((err) => console.log(err));
+  }
 
+  handle_edit_parameters = (selection_id, selection_name, new_params) => {
+    axios
+    .post("/api/options/update_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name, "parameters": new_params}, auth_headers)
+    .catch((err) => console.log(err));
+  }
 
   render_choices = () => {
     var selection_text, selection_description;
@@ -117,7 +116,16 @@ class App extends Component{
         <div className="outer-container">
         <Grid.Container gap={2} className="grid-container">
           {light_pattern_list.map((choice) => 
-          <GridItem callbackfn={this.handle_selection} text={choice.title} imageurl={choice.image_url} key={choice.id} lightid={choice.id} lightname={choice.animation_id}/>
+          <GridItem 
+            selectionCallback={this.handle_selection}
+            resetParametersCallback={this.handle_reset_parameters}
+            editParametersCallback={this.handle_edit_parameters}
+            params={choice.parameters_json} 
+            name={choice.title} 
+            image_url={choice.image_url} 
+            key={choice.id} 
+            light_id={choice.id} 
+            light_name={choice.animation_id}/>
           )}
         </Grid.Container>
         </div>

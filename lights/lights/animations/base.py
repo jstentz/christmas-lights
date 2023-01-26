@@ -1,8 +1,11 @@
 import signal
 import time
+import json
+from typing import get_type_hints, Optional
+from typeguard import check_type
 
 class BaseAnimation():
-  def __init__(self, pixels, fps=None):
+  def __init__(self, pixels, fps: Optional[int] = None):
     self.pixels = pixels
     self.fps = fps
     self.period = 1/fps if fps is not None else 0
@@ -33,10 +36,34 @@ class BaseAnimation():
     
     self.pixels.fill((0, 0, 0))
 
+  @classmethod 
+  def get_default_parameters(cls):
+    return cls.__init__.__kwdefaults__
+
+  @classmethod
+  def validate_parameters(cls, parameters):
+    default_parameters = cls.get_default_parameters()
+    type_hints = get_type_hints(cls.__init__)
+
+    for param, value in parameters.items():
+      if param not in default_parameters:
+        raise TypeError("Unknown parameter for animation {}: {}".format(cls.__name__, param))
+
+      t = type_hints.get(param, type(default_parameters[param]))
+      
+      check_type(param, value, t)
+      
+  @classmethod
+  def serialize_parameters(cls, parameters):
+    return {k: json.dumps(v) for k, v in parameters.items()}
+
+  @classmethod
+  def deserialize_parameters(cls, parameters):
+    return {k: json.loads(v) for k, v in parameters.items()}
+
   @classmethod
   def exampleUsage(cls):
-    kwargs_str = ["{}={}".format(arg, value) for arg, value in cls.__init__.__kwdefaults__.items()]
-    return "{} {}".format(cls.__name__, " ".join(kwargs_str))
+    return "{} --args '{}'".format(cls.__name__, json.dumps(cls.get_default_parameters()))
 
   def _handle_sigterm(self, *args):
     self.shutdown()

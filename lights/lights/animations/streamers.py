@@ -1,9 +1,10 @@
 import random
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import randomColor, brightnessFrame
+from typing import Optional
 
 class Streamers(BaseAnimation):
-  def __init__(self, pixels, *, fps=None, numStreamers=15, streamersLen=20):
+  def __init__(self, pixels, *, fps: Optional[int] = None, numStreamers: int = 15, streamersLen: int = 20):
     super().__init__(pixels, fps=fps)
     self.pixels = pixels
     self.numStreamers = numStreamers
