@@ -1,4 +1,3 @@
-import ast
 import sys
 import os
 import argparse
@@ -9,10 +8,8 @@ from lights.animations import NAME_TO_ANIMATION
 from lights.animations.base import BaseAnimation
 
 def printExampleUsage(animation: BaseAnimation):
-  print("Example usage: python", os.path.basename(__file__), animation.exampleUsage())
-
-def parseExtraArgs(args):
-  return {k: ast.literal_eval(v) for arg in args for k, v in [arg.split('=')]}
+  print("Example usage:")
+  print("python", os.path.basename(__file__), '-a', animation.exampleUsage())
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(prog="run_animation", 
