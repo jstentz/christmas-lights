@@ -31,8 +31,15 @@ class App extends Component{
   }   
 
   componentDidMount() {
-    this.refresh_list();
-    this.get_selected_light_pattern();
+    axios.all([
+      axios.get("/api/options/", auth_headers),
+      axios.get("/api/selections/last/", auth_headers)
+    ])
+    .then(axios.spread((res1, res2) => {
+      const light_pattern_list = this.convert_to_dict(res1.data);
+      const light_pattern_selection = res2.data.light_pattern_id;
+      this.setState({light_pattern_list: light_pattern_list, selected_light_pattern: light_pattern_selection});
+    }));
   }
 
   convert_to_dict = (lp_list) => {
@@ -66,8 +73,6 @@ class App extends Component{
       light_pattern_id: selection_id,
       timestamp: date.toISOString(),
     }
-    console.log("selection", selection);
-    console.log(selection_name);
 
     axios
       .post("/api/selections/", selection, auth_headers)
