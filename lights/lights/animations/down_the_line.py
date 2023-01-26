@@ -1,8 +1,9 @@
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import randomColor
+from typing import Optional
 
 class DownTheLine(BaseAnimation):
-  def __init__(self, pixels, *, rate=10, decay=0.9, fps=None):
+  def __init__(self, pixels, *, fps: Optional[int] = None, rate: int = 10, decay: float = 0.9):
     super().__init__(pixels, fps=fps)
     self.rate = rate
     self.decay = decay

@@ -1,9 +1,10 @@
 import random
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import rainbowFrame, brightnessFrame
+from typing import Optional, Collection
 
 class Snake(BaseAnimation):
-  def __init__(self, pixels, *, fps=None, numFood=10, snakeColor=(0,255,0), foodColor=(255,0,0), isRainbow=False):
+  def __init__(self, pixels, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), isRainbow: bool = False):
     super().__init__(pixels, fps=fps)
     self.numFood = numFood
     self.isRainbow = isRainbow

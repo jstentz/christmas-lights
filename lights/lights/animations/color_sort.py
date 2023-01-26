@@ -1,9 +1,10 @@
 from lights.animations.base import BaseAnimation
 import random
 from lights.utils.colors import rainbowFrame, rgb_to_hsv
+from typing import Optional
 
 class ColorSort(BaseAnimation):
-  def __init__(self, pixels, *, fps=None):
+  def __init__(self, pixels, *, fps: Optional[int] = None):
     super().__init__(pixels, fps=fps)
     self.pixels = pixels
     NUM_PIXELS = len(self.pixels)

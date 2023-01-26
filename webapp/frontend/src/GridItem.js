@@ -38,11 +38,11 @@ export class GridItem extends Component {
     this.setState(function(oldState) {
       return {parameters: {...oldState.parameters, [parameter_key]: e.target.value}}
     });
-    console.log(this.state.parameters);
   }
 
   handleParameterEdit(e) {
     e.preventDefault();
+    this.setState({editing: false});
     this.props.editParametersCallback(this.props.light_id, this.props.light_name, this.state.parameters);
   }
 

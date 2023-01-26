@@ -1,8 +1,9 @@
 from lights.animations.base import BaseAnimation
 import copy
+from typing import Optional, Collection
 
 class GameOfLife(BaseAnimation):
-  def __init__(self, pixels, *, fps=5, color=(0, 255, 0)):
+  def __init__(self, pixels, *, fps: Optional[int] = 5, color: Collection[int] = (0, 255, 0)):
     super().__init__(pixels, fps=fps)
     self.state = [True, True] + [False for _ in range(len(self.pixels) - 2)]
     self.color = color

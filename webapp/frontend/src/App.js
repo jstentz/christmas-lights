@@ -75,8 +75,7 @@ class App extends Component{
       .catch((err) => console.log(err));
 
     axios
-      .post("/api/selections/updatepi/", {"light_pattern_name": selection_name,
-                                          "parameters": ""}, auth_headers)
+      .post("/api/selections/updatepi/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
       .catch((err) => console.log(err));
   }
 
@@ -88,7 +87,9 @@ class App extends Component{
   }
 
   handle_edit_parameters = (selection_id, selection_name, new_params) => {
-    
+    axios
+    .post("/api/options/update_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name, "parameters": new_params}, auth_headers)
+    .catch((err) => console.log(err));
   }
 
   render_choices = () => {
