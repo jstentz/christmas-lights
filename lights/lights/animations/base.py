@@ -47,14 +47,12 @@ class BaseAnimation():
 
     for param, value in parameters.items():
       if param not in default_parameters:
-        raise ValueError("Unknown parameter for animation {}: {}".format(cls.__name__, param))
+        raise TypeError("Unknown parameter for animation {}: {}".format(cls.__name__, param))
 
       t = type_hints.get(param, type(default_parameters[param]))
       
       check_type(param, value, t)
-      # if not isinstance(value, t):
-      #   raise ValueError("Mismatched parameter type for animation {}. Expecting type {}, got {}.".format(cls.__name__, t, type(value)))
-
+      
   @classmethod
   def serialize_parameters(cls, parameters):
     return {k: json.dumps(v) for k, v in parameters.items()}
