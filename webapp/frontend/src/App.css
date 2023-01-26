@@ -67,8 +67,8 @@ img {
   margin-bottom: 8px;
 }
 
-.edit-card > form > table > tr > td {
-  padding: 4px;
+.input-wrapper > div {
+  width: 100px;
 }
 
 .edit-card > form > p {
@@ -78,6 +78,24 @@ img {
 .edit-card > form > button {
   display: inline-block;
   margin-right: 4px;
+}
+
+.parameter-grid {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: auto 1fr;
+  margin: 0 0 1rem 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.parameter-grid > label {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.input-container > input {
+  width: 100%;
 }
 
 /* Add some padding inside the card container */

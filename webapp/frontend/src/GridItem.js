@@ -72,18 +72,18 @@ export class GridItem extends Component {
         <div className="edit-card">
           <form onSubmit={this.handleParameterEdit}>
             <p>Edit parameters for {this.props.light_name}</p>
-            <table>
-              <tbody>
+            <div className="parameter-grid">
                 {Object.entries(this.props.params).map(([key, value]) => {
                   return (
-                      <tr key={key}>
-                        <td><label>{key}</label></td>
-                        <td><input type="text" name={key} value={this.state.parameters[key]} onChange={(e) => this.handleChange(key, e)}></input></td>
-                      </tr>
+                    <React.Fragment key={key}>
+                      <label htmlFor={key}>{key}</label>
+                      <div className='input-container'>
+                        <input type="text" name={key} value={this.state.parameters[key]} onChange={(e) => this.handleChange(key, e)} />
+                      </div>
+                    </React.Fragment>
                   );
                 })}
-              </tbody>
-            </table>
+            </div>
             <button type="submit">Save</button>
             <button onClick={this.handleCancelButtonClick}>Cancel</button>
             <button onClick={this.handleResetButtonClick}>Reset</button>
