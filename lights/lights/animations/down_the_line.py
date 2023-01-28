@@ -26,3 +26,15 @@ class DownTheLine(BaseAnimation):
       color = self.pixels[i]
       self.pixels[i] = tuple(int(c * decay) for c in color)
     self.t += 1
+
+  @classmethod
+  def validate_parameters(cls, parameters):
+    super().validate_parameters(parameters)
+    full_parameters = {**cls.get_default_parameters(), **parameters}
+    rate = full_parameters['rate']
+    decay = full_parameters['decay']
+
+    if rate <= 0:
+      raise TypeError("rate must be > 0")
+    if decay < 0 or decay >= 1:
+      raise TypeError("decay must be between [0, 1)")

@@ -24,4 +24,14 @@ class RainbowSine(BaseAnimation):
       self.pixels[i] = hsv_to_rgb(h, s, v)
     self.t += 1
         
-        
+  @classmethod
+  def validate_parameters(cls, parameters):
+    super().validate_parameters(parameters)
+    full_parameters = {**cls.get_default_parameters(), **parameters}
+    freq = full_parameters['freq']
+    exp = full_parameters['exp']
+
+    if freq < 1:
+      raise TypeError("freq must be >= 1")
+    if exp < 2:
+      raise TypeError("exp must be >= 2")
