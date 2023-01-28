@@ -29,8 +29,8 @@ class App extends Component{
       light_pattern_list: [],
       selected_light_pattern: null,
       error_message: {
-        message: "really long message I bet you don't know anything about this super long message it's like really long haha what the heck man.",
-        hidden: false
+        message: "",
+        hidden: true
       }
     };
   }   

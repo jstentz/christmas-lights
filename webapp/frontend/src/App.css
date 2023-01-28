@@ -156,7 +156,7 @@ img {
 }
 
 .btn-close {
-  margin: 4px;
+  margin-left: 4px;
   border: 0;
   padding: 0;
   background: hsl(216, 100, 50);
@@ -184,12 +184,16 @@ img {
   transform: translate(-50%, 0);
   background-color: #fda9a9;
   padding: 8px;
-  padding-bottom: 10px;
+  padding-bottom: 12px;
   width: 90%;
   max-width: 600px;
   border-radius: 4px;
   z-index: 1;
   text-align: center;
+}
+
+.error-message > p {
+  line-height: 20px;
 }
 
 .error-message-close {
