@@ -123,6 +123,80 @@ img {
   height: 25px;
 }
 
+.cross {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  position: relative;
+  width: 15px;
+  height: 15px;
+}
+
+.cross:before,.cross:after {
+    content: '';
+    position: absolute;
+    top: (15px - 5px) / 2;
+    left: 0;
+    right: 0;
+    height: 5px;
+    border-radius: 5px;
+  }
+
+.cross:before {
+    transform: rotate(45deg);
+}
+
+.cross:after {
+    transform: rotate(-45deg);
+}
+
+.cross > span {
+    display: block;
+}
+
+.btn-close {
+  margin: 4px;
+  border: 0;
+  padding: 0;
+  background: hsl(216, 100, 50);
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 150ms;
+  float: right;
+}
+
+.btn-close:hover,.btn-close:focus {
+    transform: rotateZ(90deg);
+    background: hsl(216, 100, 40);
+  }
+
+.error-message {
+  position: fixed;
+  left: 50%;
+  margin-top: 16px;
+  transform: translate(-50%, 0);
+  background-color: #fda9a9;
+  padding: 8px;
+  padding-bottom: 10px;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 4px;
+  z-index: 1;
+  text-align: center;
+}
+
+.error-message-close {
+  float: right;
+  font-size: 32px;
+}
+
 .run-click-animation {
   animation: clickAnimation 0.2s;
 }

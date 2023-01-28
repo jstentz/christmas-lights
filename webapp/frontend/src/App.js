@@ -4,6 +4,7 @@ import { Grid, Text} from '@nextui-org/react';
 import './App.css';
 import { NextUIProvider } from '@nextui-org/react';
 import { GridItem } from './GridItem'
+import { ErrorMessage } from './ErrorMessage'
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -26,7 +27,11 @@ class App extends Component{
     super(props);
     this.state = {
       light_pattern_list: [],
-      selected_light_pattern: null
+      selected_light_pattern: null,
+      error_message: {
+        message: "really long message I bet you don't know anything about this super long message it's like really long haha what the heck man.",
+        hidden: false
+      }
     };
   }   
 
@@ -39,7 +44,8 @@ class App extends Component{
       const light_pattern_list = this.convert_to_dict(res1.data);
       const light_pattern_selection = res2.data.light_pattern_id;
       this.setState({light_pattern_list: light_pattern_list, selected_light_pattern: light_pattern_selection});
-    }));
+    }))
+    .catch((err) => this.handleAxiosError(err));
   }
 
   convert_to_dict = (lp_list) => {
@@ -56,14 +62,14 @@ class App extends Component{
     axios
       .get("/api/options/", auth_headers)
       .then((res) => this.setState({ light_pattern_list: this.convert_to_dict(res.data)}))
-      .catch((err) => console.log(err));
+      .catch((err) => this.handleAxiosError(err));
   };
 
   get_selected_light_pattern = () => {
     axios
       .get("/api/selections/last/", auth_headers)
       .then((res) => this.setState({ selected_light_pattern: res.data.light_pattern_id }))
-      .catch((err) => console.log(err));
+      .catch((err) => this.handleAxiosError(err));
   }
 
   handle_selection = (selection_id, selection_name) => {
@@ -77,11 +83,11 @@ class App extends Component{
     axios
       .post("/api/selections/", selection, auth_headers)
       .then((res) => this.get_selected_light_pattern())
-      .catch((err) => console.log(err));
+      .catch((err) => this.handleAxiosError(err));
 
     axios
       .post("/api/selections/updatepi/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
-      .catch((err) => console.log(err));
+      .catch((err) => this.handleAxiosError(err));
   }
 
   handle_reset_parameters = (selection_id, selection_name) => {
@@ -94,7 +100,19 @@ class App extends Component{
   handle_edit_parameters = (selection_id, selection_name, new_params) => {
     axios
     .post("/api/options/update_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name, "parameters": new_params}, auth_headers)
-    .catch((err) => console.log(err));
+    .catch((err) => this.handleAxiosError(err));
+  }
+
+  handleAxiosError(err) {
+    console.log(err);
+    this.setState({error_message: {
+      message: err.response.data,
+      hidden: false
+    }});
+  }
+
+  handle_error_message_close = () => {
+    this.setState({error_message: {message: "", hidden: true}});
   }
 
   render_choices = () => {
@@ -110,6 +128,11 @@ class App extends Component{
 
     return (
       <NextUIProvider>
+        <ErrorMessage 
+          message={this.state.error_message.message} 
+          hide={this.state.error_message.hidden} 
+          errorMessageCloseCallback={this.handle_error_message_close} 
+        />
         <Text h1
         css={{
           textGradient: "45deg, $red600 35%, $green600 65%",
