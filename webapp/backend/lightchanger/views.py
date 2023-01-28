@@ -98,7 +98,11 @@ class LightOptionsView(viewsets.ModelViewSet):
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
       
       animation = NAME_TO_ANIMATION[light_pattern_name]
-      parameters = animation.deserialize_parameters(new_parameters)
+
+      try:
+        parameters = animation.deserialize_parameters(new_parameters)
+      except json.JSONDecodeError:
+        return Response(data="invalid input format", status=400)
 
       try:
         animation.validate_parameters(parameters)
