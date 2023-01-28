@@ -52,6 +52,10 @@ class BaseAnimation():
       t = type_hints.get(param, type(default_parameters[param]))
       
       check_type(param, value, t)
+
+    full_parameters = {**default_parameters, **parameters}
+    if full_parameters['fps'] is not None and full_parameters['fps'] <= 0:
+      raise TypeError("fps must be either None or a positive integer.")
       
   @classmethod
   def serialize_parameters(cls, parameters):

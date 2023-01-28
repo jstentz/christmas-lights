@@ -2,6 +2,7 @@ import random
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import rainbowFrame, brightnessFrame
 from typing import Optional, Collection
+from lights.utils.validation import is_valid_rgb_color
 
 class Snake(BaseAnimation):
   def __init__(self, pixels, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), isRainbow: bool = False):
@@ -66,4 +67,17 @@ class Snake(BaseAnimation):
       pixelIdx = uniqueBodyList[i]
       self.pixels[pixelIdx] = snakeFrame[i]
 
-      
+  @classmethod
+  def validate_parameters(cls, parameters):
+    super().validate_parameters(parameters)
+    full_parameters = {**cls.get_default_parameters(), **parameters}
+    numFood = full_parameters['numFood']
+    snakeColor = full_parameters['snakeColor']
+    foodColor = full_parameters['foodColor']
+
+    if not is_valid_rgb_color(snakeColor):
+      raise TypeError("snakeColor must be a valid rgb color tuple")
+    if not is_valid_rgb_color(foodColor):
+      raise TypeError("foodColor must be a valid rgb color tuple")
+    if numFood < 0:
+      raise TypeError("numFood must be a positive integer")

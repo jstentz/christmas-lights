@@ -44,3 +44,15 @@ class Streamers(BaseAnimation):
           loc = (headLoc - i) % NUM_PIXELS
         self.pixels[loc] = frame[i]
     self.t += 1
+
+  @classmethod
+  def validate_parameters(cls, parameters):
+    super().validate_parameters(parameters)
+    full_parameters = {**cls.get_default_parameters(), **parameters}
+    numStreamers = full_parameters['numStreamers']
+    streamersLen = full_parameters['streamersLen']
+
+    if numStreamers < 0:
+      raise TypeError("numStreamers must be a positive integer")
+    if streamersLen < 0:
+      raise TypeError("streamersLen must be a positive integer")
