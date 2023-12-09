@@ -24,7 +24,7 @@ def basic_authentication(func):
   @wraps(func)
   def wrapper(self, request, *args, **kwargs):
     if not is_request_authenticated(request):
-      return Response(status=401)
+      return Response(status=401, data="Unauthorized: Make sure you've scanned the qr-code at the base of the tree.")
     else:
       return func(self, request, *args, **kwargs)
   return wrapper
