@@ -19,7 +19,8 @@ function buildHeaders(currentPath) {
   return headers;
 }
 
-const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
+const urlParams = new URLSearchParams(window.location.search);
+const password = urlParams.get('p');
 const auth_headers = buildHeaders(password);
 
 class App extends Component{

@@ -48,7 +48,6 @@ class LightOptionsView(viewsets.ModelViewSet):
     serializer_class = LightOptionSerializer
     queryset = LightPatternOption.objects.all()
 
-    @basic_authentication
     def list(self, request, *args, **kwargs):
       return super().list(request, *args, **kwargs)
 
@@ -139,7 +138,6 @@ class LightPatternsView(viewsets.ModelViewSet):
        return super().destroy(request, *args, **kwargs)
 
     @action(detail=False, methods=['GET'], name='Get last selected light pattern')
-    @basic_authentication
     def last(self, request, *args, **kwargs):         
         queryset = LightPattern.objects.last()
         serializer = self.get_serializer(queryset)
