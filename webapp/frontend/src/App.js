@@ -95,7 +95,7 @@ class App extends Component{
     axios
     .post("/api/options/reset_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
     .then((this.refresh_list()))
-    .catch((err) => console.log(err));
+    .catch((err) => this.handleAxiosError(err));
   }
 
   handle_edit_parameters = (selection_id, selection_name, new_params) => {
