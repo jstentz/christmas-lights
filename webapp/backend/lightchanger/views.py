@@ -46,7 +46,7 @@ class HomePage(View):
 
 class LightOptionsView(viewsets.ModelViewSet):
     serializer_class = LightOptionSerializer
-    queryset = LightPatternOption.objects.all()
+    queryset = LightPatternOption.objects.all().order_by('position')
 
     def list(self, request, *args, **kwargs):
       return super().list(request, *args, **kwargs)
