@@ -4,6 +4,8 @@ from lights.animations.base import BaseAnimation
 from lights.utils.colors import desaturatePixel, decayPixel
 import random
 from perlin_noise import PerlinNoise
+from typing import Optional, Collection
+from lights.utils.validation import is_valid_rgb_color
 
 desaturatePixel = decayPixel
 
@@ -26,7 +28,7 @@ def generateNoise(pixels, frequency):
   return noise
 
 class Embers(BaseAnimation):
-  def __init__(self, pixels, *, color=(255, 195, 0), fps=30):
+  def __init__(self, pixels, *, fps: Optional[int] = 30, color: Collection[int] = (255, 195, 0)):
     super().__init__(pixels, fps=fps)
     # self.color = desaturatePixel(*color, 0.8)
     self.color = color
@@ -80,3 +82,13 @@ class Embers(BaseAnimation):
         desaturationValue = max(min(desaturationValue + currOctaveValue, 1), 0)
 
       self.pixels[i] = desaturatePixel(*self.color, desaturationValue)
+
+  @classmethod
+  def validate_parameters(cls, parameters):
+    super().validate_parameters(parameters)
+    full_parameters = {**cls.get_default_parameters(), **parameters}
+    color = full_parameters['color']
+
+    if not is_valid_rgb_color(color):
+      raise TypeError("color must be a valid rgb color tuple")
+  

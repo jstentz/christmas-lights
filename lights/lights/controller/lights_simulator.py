@@ -4,7 +4,10 @@ import math
 import os
 import signal
 import time
-import tkinter
+try:
+  import tkinter
+except ImportError:
+  pass
 
 from multiprocessing import Process, Queue
 from sty import bg
