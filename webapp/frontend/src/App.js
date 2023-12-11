@@ -19,14 +19,15 @@ function buildHeaders(currentPath) {
   return headers;
 }
 
-const password = window.location.pathname.substring(1, window.location.pathname.length - 1);
+const urlParams = new URLSearchParams(window.location.search);
+const password = urlParams.get('p');
 const auth_headers = buildHeaders(password);
 
 class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      light_pattern_list: [],
+      light_pattern_dict: {},
       selected_light_pattern: null,
       error_message: {
         message: "",
@@ -41,9 +42,9 @@ class App extends Component{
       axios.get("/api/selections/last/", auth_headers)
     ])
     .then(axios.spread((res1, res2) => {
-      const light_pattern_list = this.convert_to_dict(res1.data);
+      const light_pattern_dict = this.convert_to_dict(res1.data);
       const light_pattern_selection = res2.data.light_pattern_id;
-      this.setState({light_pattern_list: light_pattern_list, selected_light_pattern: light_pattern_selection});
+      this.setState({light_pattern_dict: light_pattern_dict, selected_light_pattern: light_pattern_selection});
     }))
     .catch((err) => this.handleAxiosError(err));
   }
@@ -55,13 +56,12 @@ class App extends Component{
       light_pattern_dict[ lp_list[i].id ] = lp_list[i];
     }
     return light_pattern_dict;
-
   };
 
   refresh_list = () => {
     axios
       .get("/api/options/", auth_headers)
-      .then((res) => this.setState({ light_pattern_list: this.convert_to_dict(res.data)}))
+      .then((res) => this.setState({ light_pattern_dict: this.convert_to_dict(res.data)}))
       .catch((err) => this.handleAxiosError(err));
   };
 
@@ -94,7 +94,7 @@ class App extends Component{
     axios
     .post("/api/options/reset_parameters/", {"light_pattern_id": selection_id, "light_pattern_name": selection_name}, auth_headers)
     .then((this.refresh_list()))
-    .catch((err) => console.log(err));
+    .catch((err) => this.handleAxiosError(err));
   }
 
   handle_edit_parameters = (selection_id, selection_name, new_params) => {
@@ -117,14 +117,14 @@ class App extends Component{
 
   render_choices = () => {
     var selection_text, selection_description;
-    if(this.state.selected_light_pattern === null || this.state.light_pattern_list === null || this.state.light_pattern_list.length === 0) {
+    if(this.state.selected_light_pattern === null || this.state.light_pattern_dict === null || this.state.light_pattern_dict.length === 0) {
       selection_text = "None! Select one below.";
       selection_description = "None! Select one below.";
     } else {
-      selection_text = this.state.light_pattern_list[this.state.selected_light_pattern].title;
-      selection_description = this.state.light_pattern_list[this.state.selected_light_pattern].description;
+      selection_text = this.state.light_pattern_dict[this.state.selected_light_pattern].title;
+      selection_description = this.state.light_pattern_dict[this.state.selected_light_pattern].description;
     }
-    const light_pattern_list = Object.values(this.state.light_pattern_list);
+    const light_pattern_list = Object.values(this.state.light_pattern_dict).sort((a, b) => a.position - b.position);
 
     return (
       <NextUIProvider>

@@ -4,6 +4,7 @@ from django.db import models
 
 class LightPatternOption(models.Model):
     title = models.TextField(max_length=100, default="")
+    position = models.IntegerField(default=-1)
     description = models.TextField(max_length=1000)
     image_url = models.TextField(null=True)
     animation_id = models.TextField(default="")

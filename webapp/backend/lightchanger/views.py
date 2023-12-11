@@ -24,7 +24,7 @@ def basic_authentication(func):
   @wraps(func)
   def wrapper(self, request, *args, **kwargs):
     if not is_request_authenticated(request):
-      return Response(status=401)
+      return Response(status=401, data="Unauthorized: Make sure you've scanned the qr-code at the base of the tree.")
     else:
       return func(self, request, *args, **kwargs)
   return wrapper
@@ -46,9 +46,8 @@ class HomePage(View):
 
 class LightOptionsView(viewsets.ModelViewSet):
     serializer_class = LightOptionSerializer
-    queryset = LightPatternOption.objects.all()
+    queryset = LightPatternOption.objects.all().order_by('position')
 
-    @basic_authentication
     def list(self, request, *args, **kwargs):
       return super().list(request, *args, **kwargs)
 
@@ -139,7 +138,6 @@ class LightPatternsView(viewsets.ModelViewSet):
        return super().destroy(request, *args, **kwargs)
 
     @action(detail=False, methods=['GET'], name='Get last selected light pattern')
-    @basic_authentication
     def last(self, request, *args, **kwargs):         
         queryset = LightPattern.objects.last()
         serializer = self.get_serializer(queryset)
