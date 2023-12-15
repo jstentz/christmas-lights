@@ -95,9 +95,8 @@ class MergeSort(BaseAnimation):
     if self.parallel:
       self.renderNextFrame = self.renderParallel
     else:
-      self.seqGenerator = self.renderSequentialGen()
       self.mergerIdx = 0
-      self.renderNextFrame = self.renderSequentialNotGenerator
+      self.renderNextFrame = self.renderSequential
     self.reset()
 
   def reset(self):
@@ -124,35 +123,6 @@ class MergeSort(BaseAnimation):
         self.phase = "merge"
 
   def renderSequential(self):
-    try:
-      next(self.seqGenerator)
-    except StopIteration:
-      self.reset()
-      self.seqGenerator = self.renderSequentialGen()
-
-  def renderSequentialGen(self):
-    while True:
-      for idx, merger in enumerate(self.mergers):
-        if self.phase == "merge":
-          while not merger.step(self.brightnesses, self.pixels, self.focusColor):
-            yield
-          self.phase = "present"
-          yield
-        if self.phase == "present":
-          while not merger.finish(self.brightnesses, self.pixels, self.finishColor):
-            yield
-          if idx == len(self.mergers) - 1:
-            if len(self.mergers) == 1:
-              return
-            else:
-              newMergers = [MergeSort.Merger.fromMergers(self.mergers[i], self.mergers[i+1]) for i in range(0, len(self.mergers) // 2 * 2, 2)]
-              if len(self.mergers) % 2 != 0:
-                newMergers.append(self.mergers[-1])
-              self.mergers = newMergers        
-          self.phase = "merge"
-      yield
-
-  def renderSequentialNotGenerator(self):
     if self.phase == "merge":
       if self.mergers[self.mergerIdx].step(self.brightnesses, self.pixels, self.focusColor):
         self.phase = "present"
@@ -160,7 +130,7 @@ class MergeSort(BaseAnimation):
       if self.mergers[self.mergerIdx].finish(self.brightnesses, self.pixels, self.finishColor):
         self.mergerIdx += 1
         self.phase = "merge"
-      if self.mergerIdx >= len(self.mergers) - 1:
+      if self.mergerIdx >= len(self.mergers):
         self.mergerIdx = 0
         if self._generate_next_mergers():
           self.reset()
