@@ -1,5 +1,6 @@
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import hsv_to_rgb
+from lights.utils.validation import is_valid_rgb_color, is_valid_inclusive_range
 from typing import Optional, Collection
 import numpy as np
 import random
@@ -84,13 +85,16 @@ class MergeSort(BaseAnimation):
                brightnessRange: Collection[int] = (0, 255), 
                focusColor: Collection[int] = (255, 0, 0), 
                finishColor: Collection[int] = (255, 255, 255), 
-               parallel: bool = False):
+               parallel: bool = False,
+               finishWaitTime: float = 3):
     super().__init__(pixels, fps)
     self.hue = hue
     self.brightnessRange = brightnessRange
     self.focusColor = focusColor
     self.finishColor = finishColor
     self.parallel = parallel
+    self.finishFrames = int(self.fps * finishWaitTime) if self.fps is not None else 60 * finishWaitTime
+    self.t = 0
     self.sortedColors = [(hue / 255, 1.0, b) for b in np.linspace(brightnessRange[0] / 255, brightnessRange[1] / 255, len(self.pixels))]
     if self.parallel:
       self.renderNextFrame = self.renderParallel
@@ -119,8 +123,14 @@ class MergeSort(BaseAnimation):
         finished &= merger.finish(self.brightnesses, self.pixels, self.finishColor)
       if finished:
         if self._generate_next_mergers():
-          self.reset()
-        self.phase = "merge"
+          self.t = 0
+          self.phase = "finished"
+        else:
+          self.phase = "merge"
+    elif self.phase == "finished":
+      self.t += 1
+      if self.t >= self.finishFrames:
+        self.reset()
 
   def renderSequential(self):
     if self.phase == "merge":
@@ -133,7 +143,14 @@ class MergeSort(BaseAnimation):
       if self.mergerIdx >= len(self.mergers):
         self.mergerIdx = 0
         if self._generate_next_mergers():
-          self.reset()
+          self.t = 0
+          self.phase = "finished"
+        else:
+          self.phase = "merge"
+    elif self.phase == "finished":
+      self.t += 1
+      if self.t >= self.finishFrames:
+        self.reset()
 
   def _generate_next_mergers(self):
     if len(self.mergers) == 1:
@@ -143,15 +160,25 @@ class MergeSort(BaseAnimation):
       newMergers.append(self.mergers[-1])
     self.mergers = newMergers
     return False
-    
+
   @classmethod
   def validate_parameters(cls, parameters):
     super().validate_parameters(parameters)
     full_parameters = {**cls.get_default_parameters(), **parameters}
     hue = full_parameters['hue']
     brightnessRange = full_parameters['brightnessRange']
+    focusColor = full_parameters['focusColor']
+    finishColor = full_parameters['finishColor']
+    # no need to validate parallel since it's already confirmed a boolean
+    finishWaitTime = full_parameters['finishWaitTime']
 
     if hue < 0 or hue > 255:
       raise TypeError("hue must be a value in [0, 255]")
-    if len(brightnessRange) != 2 or brightnessRange[0] >= brightnessRange[1]:
+    if not is_valid_inclusive_range(brightnessRange, 0, 255):
       raise TypeError("brightnessRange must be a valid range tuple")
+    if not is_valid_rgb_color(focusColor):
+      raise TypeError("focusColor must be a valid rgb color")
+    if not is_valid_rgb_color(finishColor):
+      raise TypeError("finishColor must be a valid rgb color")
+    if not (0 <= finishWaitTime <= 10):
+      raise TypeError("finishWaitTime must be in [0, 10]")
