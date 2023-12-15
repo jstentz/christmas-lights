@@ -12,3 +12,4 @@ gunicorn
 perlin_noise
 requests
 typeguard
+numpy
