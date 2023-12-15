@@ -78,15 +78,17 @@ class MergeSort(BaseAnimation):
     self.hue = hue
     self.brightnessRange = brightnessRange
     self.focusColor = (focusColor[0] / 255, focusColor[1] / 255, focusColor[2] / 255)
-    self.phase = "merge" # "present"
-    self.mergers: Collection[MergeSort.Merger] = [MergeSort.Merger(l, l+1, l+2) for l in range(0, len(self.pixels), 2)]
     self.sortedColors = [(hue / 255, 1.0, b) for b in np.linspace(brightnessRange[0] / 255, brightnessRange[1] / 255, len(self.pixels))]
-    random.shuffle(self.sortedColors)
+    self.reset()
     self.rgbColors = [tuple(hsv_to_rgb(*hsv)) for hsv in self.sortedColors]
     self.pixels[:] = self.rgbColors
+
+  def reset(self):
+    self.phase = "merge"
+    self.mergers: Collection[MergeSort.Merger] = [MergeSort.Merger(l, l+1, l+2) for l in range(0, len(self.pixels), 2)]
+    random.shuffle(self.sortedColors)
     
   def renderNextFrame(self):
-    # print(self.phase, len(self.mergers))
     if self.phase == "merge":
       finished = True
       for merger in self.mergers:
@@ -98,11 +100,14 @@ class MergeSort(BaseAnimation):
       for merger in self.mergers:
         finished &= merger.finish(self.sortedColors, self.focusColor)
       if finished:
-        newMergers = [MergeSort.Merger.fromMergers(self.mergers[i], self.mergers[i+1]) for i in range(0, len(self.mergers) // 2 * 2, 2)]
-        if len(self.mergers) % 2 != 0:
-          newMergers.append(self.mergers[-1])
-        self.mergers = newMergers
-        self.phase = "merge"
+        if len(self.mergers) == 1:
+          self.reset()
+        else:
+          newMergers = [MergeSort.Merger.fromMergers(self.mergers[i], self.mergers[i+1]) for i in range(0, len(self.mergers) // 2 * 2, 2)]
+          if len(self.mergers) % 2 != 0:
+            newMergers.append(self.mergers[-1])
+          self.mergers = newMergers
+          self.phase = "merge"
 
     self.pixels[:] = [tuple(hsv_to_rgb(*hsv)) for hsv in self.sortedColors]
     
