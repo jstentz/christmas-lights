@@ -24,6 +24,12 @@ if __name__ == '__main__':
   parser.add_argument('-t',
                       help='simulate in the terminal',
                       action='store_true')
+  parser.add_argument('-g',
+                      help='simulate using a tkinter gui',
+                      action='store_true')
+  parser.add_argument('-n',
+                      help='no simulation, just repeatedly generate frames but do not display them. Useful for benchmarking animations',
+                      action='store_true')
   parser.add_argument('-i', 
                       help='show example usage for the selected animation', 
                       action='store_true')
@@ -58,11 +64,16 @@ if __name__ == '__main__':
     from lights.constants import PIN, NUM_PIXELS, ORDER
   else:
     PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
-    from lights.controller.lights_simulator import TerminalLightsSimulator, TkLightsSimulator
-    if args.t:
-      LightsController = TerminalLightsSimulator
-    else:
+    if args.g:
+      from lights.controller.lights_simulator_tkinter import TkLightsSimulator
       LightsController = TkLightsSimulator
+    elif args.n:
+      from lights.controller.lights_simulator_noop import NoopLightsSimulator
+      LightsController = NoopLightsSimulator
+    else: # default, simulate in the terminal
+      from lights.controller.lights_simulator_terminal import TerminalLightsSimulator
+      LightsController = TerminalLightsSimulator
+
 
   # Run animation.
   pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
