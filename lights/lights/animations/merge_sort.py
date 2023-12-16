@@ -8,17 +8,17 @@ import random
 class MergeSort(BaseAnimation):
   def __init__(self, pixels, *, 
                fps: Optional[int] = 60,
-               hueRange: Collection[int] = (0, 50), 
-               focusColor: Collection[int] = (255, 255, 255), 
+               hueRange: Collection[int] = (0, 75), 
+               focusColor: Collection[int] = (0, 0, 0), 
                finishColor: Collection[int] = (255, 255, 255), 
                parallel: bool = True,
-               finishWaitTime: float = 3):
+               finishWaitTime: float = 1):
     super().__init__(pixels, fps)
     self.hueRange = hueRange
     self.focusColor = focusColor
     self.finishColor = finishColor
     self.parallel = parallel
-    self.finishFrames = int(self.fps * finishWaitTime) if self.fps is not None else 60 * finishWaitTime
+    self.finishFrames = int(self.fps * finishWaitTime) if self.fps is not None else int(60 * finishWaitTime)
     self.t = 0
     self.colors = [(b, 1.0, 1.0) for b in np.linspace(hueRange[0] / 255, hueRange[1] / 255, len(self.pixels))]
 
@@ -31,6 +31,7 @@ class MergeSort(BaseAnimation):
 
   def reset(self):
     self.phase = "merge"
+    self.t = 0
     self.mergers: Collection[Merger] = [Merger(l, l+1, l+2) for l in range(0, len(self.pixels), 2)]
     random.shuffle(self.colors)
     self.pixels[:] = [tuple(hsv_to_rgb(*hsv)) for hsv in self.colors]
@@ -48,11 +49,15 @@ class MergeSort(BaseAnimation):
       for merger in self.mergers:
         finished &= merger.finish(self.brightnesses, self.pixels, self.finishColor)
       if finished:
+        self.t = 0
         if self._generate_next_mergers():
-          self.t = 0
           self.phase = "finished"
         else:
-          self.phase = "merge"
+          self.phase = "wait"
+    elif self.phase == "wait":
+      self.t += 1
+      if self.t >= self.finishFrames:
+        self.phase = "merge"
     elif self.phase == "finished":
       self.t += 1
       if self.t >= self.finishFrames:
@@ -72,7 +77,7 @@ class MergeSort(BaseAnimation):
           self.t = 0
           self.phase = "finished"
         else:
-          self.phase = "merge"
+          self.phase = "wait"
     elif self.phase == "finished":
       self.t += 1
       if self.t >= self.finishFrames:

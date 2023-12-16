@@ -26,4 +26,5 @@ class TerminalLightsSimulator(BaseLightsSimulator):
     print(s, end='', flush=True)
 
   def __del__(self):
+    os.system('tput init')
     cursor.show()
