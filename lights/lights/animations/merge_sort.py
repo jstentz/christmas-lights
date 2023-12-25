@@ -6,21 +6,21 @@ import numpy as np
 import random
 
 class MergeSort(BaseAnimation):
-  def __init__(self, pixels, *, 
+  def __init__(self, frameBuf, *, 
                fps: Optional[int] = 60,
                hueRange: Collection[int] = (0, 75), 
                focusColor: Collection[int] = (0, 0, 0), 
                finishColor: Collection[int] = (255, 255, 255), 
                parallel: bool = True,
                finishWaitTime: float = 1):
-    super().__init__(pixels, fps)
+    super().__init__(frameBuf, fps)
     self.hueRange = hueRange
     self.focusColor = focusColor
     self.finishColor = finishColor
     self.parallel = parallel
     self.finishFrames = int(self.fps * finishWaitTime) if self.fps is not None else int(60 * finishWaitTime)
     self.t = 0
-    self.colors = [(b, 1.0, 1.0) for b in np.linspace(hueRange[0] / 255, hueRange[1] / 255, len(self.pixels))]
+    self.colors = [(b, 1.0, 1.0) for b in np.linspace(hueRange[0] / 255, hueRange[1] / 255, len(self.frameBuf))]
 
     if self.parallel:
       self.renderNextFrame = self.renderParallel
@@ -32,22 +32,22 @@ class MergeSort(BaseAnimation):
   def reset(self):
     self.phase = "merge"
     self.t = 0
-    self.mergers: Collection[Merger] = [Merger(l, l+1, l+2) for l in range(0, len(self.pixels), 2)]
+    self.mergers: Collection[Merger] = [Merger(l, l+1, l+2) for l in range(0, len(self.frameBuf), 2)]
     random.shuffle(self.colors)
-    self.pixels[:] = [tuple(hsv_to_rgb(*hsv)) for hsv in self.colors]
+    self.frameBuf[:] = [tuple(hsv_to_rgb(*hsv)) for hsv in self.colors]
     self.brightnesses = [hsv[0] for hsv in self.colors]
     
   def renderParallel(self):
     if self.phase == "merge":
       finished = True
       for merger in self.mergers:
-        finished &= merger.step(self.brightnesses, self.pixels, self.focusColor)
+        finished &= merger.step(self.brightnesses, self.frameBuf, self.focusColor)
       if finished:
         self.phase = "present"
     elif self.phase == "present":
       finished = True
       for merger in self.mergers:
-        finished &= merger.finish(self.brightnesses, self.pixels, self.finishColor)
+        finished &= merger.finish(self.brightnesses, self.frameBuf, self.finishColor)
       if finished:
         self.t = 0
         if self._generate_next_mergers():
@@ -65,10 +65,10 @@ class MergeSort(BaseAnimation):
 
   def renderSequential(self):
     if self.phase == "merge":
-      if self.mergers[self.mergerIdx].step(self.brightnesses, self.pixels, self.focusColor):
+      if self.mergers[self.mergerIdx].step(self.brightnesses, self.frameBuf, self.focusColor):
         self.phase = "present"
     elif self.phase == "present":
-      if self.mergers[self.mergerIdx].finish(self.brightnesses, self.pixels, self.finishColor):
+      if self.mergers[self.mergerIdx].finish(self.brightnesses, self.frameBuf, self.finishColor):
         self.mergerIdx += 1
         self.phase = "merge"
       if self.mergerIdx >= len(self.mergers):
@@ -136,9 +136,9 @@ class Merger:
       
       if not self.init:
         if self.li < self.m:
-          pixels[self.li], self.lColor = focusColor, pixels[self.li]
+          pixels[self.li], self.lColor = focusColor, pixels[self.li].tolist()
         if self.ri < self.r:
-          pixels[self.ri], self.rColor = focusColor, pixels[self.ri]
+          pixels[self.ri], self.rColor = focusColor, pixels[self.ri].tolist()
         self.init = True
       
       if self.li >= self.m:
@@ -173,7 +173,7 @@ class Merger:
       pixels[self.li] = self.lColor
       self.li += 1
       if self.li < self.m:
-        pixels[self.li], self.lColor = focusColor, pixels[self.li]
+        pixels[self.li], self.lColor = focusColor, pixels[self.li].tolist()
 
     def _advance_right(self, brightnesses, pixels, focusColor):
       self.aux[self.li - self.l + self.ri - self.m] = self.rColor
@@ -181,4 +181,4 @@ class Merger:
       pixels[self.ri] = self.rColor
       self.ri += 1
       if self.ri < self.r:
-        pixels[self.ri], self.rColor = focusColor, pixels[self.ri]
+        pixels[self.ri], self.rColor = focusColor, pixels[self.ri].tolist()

@@ -3,9 +3,9 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class SingleColor(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = None, color: Collection[int] = (255,255,255)):
-    super().__init__(pixels, fps=fps)
-    self.pixels.fill(color)
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, color: Collection[int] = (255,255,255)):
+    super().__init__(frameBuf, fps=fps)
+    self.frameBuf[:] = color
 
   def renderNextFrame(self):
     pass
