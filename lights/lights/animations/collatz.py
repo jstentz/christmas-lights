@@ -1,4 +1,4 @@
-from numpy import ndarray
+import numpy as np
 from lights.animations.base import BaseAnimation
 from typing import Optional
 import random
@@ -30,9 +30,7 @@ class Collatz(BaseAnimation):
         self.frameBuf[index] = (255, 255, 255)
 
         # Decay all pixels
-        for i in range(NUM_PIXELS):
-            color = self.frameBuf[i]
-            self.frameBuf[i] = tuple(int(c * decay) for c in color)
+        self.frameBuf[:] = (self.frameBuf * decay).astype(np.uint8)
 
         # Update the current number for the next frame
         self.number = current_number

@@ -3,8 +3,6 @@ django-cors-headers
 djangorestframework
 pyserial
 qrcodegen
-adafruit-circuitpython-neopixel
-adafruit-blinka
 flask
 sty
 cursor

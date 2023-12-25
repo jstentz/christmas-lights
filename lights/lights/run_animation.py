@@ -55,31 +55,11 @@ if __name__ == '__main__':
 
   kwargs = json.loads(args.args)
 
-  # # Setup.
-  # if args.r:
-  #   #from neopixel import NeoPixel as LightsController
-  #   from lights.controller.serial_pixels import SerialPixels as LightsController
-  #   from lights.constants import PIN, NUM_PIXELS, ORDER
-  # else:
-  #   PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
-  #   if args.g:
-  #     from lights.controller.lights_simulator_tkinter import TkLightsSimulator
-  #     LightsController = TkLightsSimulator
-  #   elif args.n:
-  #     from lights.controller.lights_simulator_noop import NoopLightsSimulator
-  #     LightsController = NoopLightsSimulator
-  #   else: # default, simulate in the terminal
-  #     from lights.controller.lights_simulator_terminal import TerminalLightsSimulator
-  #     LightsController = TerminalLightsSimulator
-
-
-  # Run animation.
-  # pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
-  
+  # Setup.
   try:
     executor = Executor(args.animation_name, args.controller_name, 500, kwargs)
   except Exception as e:
-    # printExampleUsage(animation)
+    printExampleUsage(animation)
     raise e
 
   executor.run()
