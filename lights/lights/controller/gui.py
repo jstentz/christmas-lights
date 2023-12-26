@@ -48,8 +48,8 @@ class TkLightsGui():
     canvas.after(10, self.step, canvas)
 
 class GuiController(BaseController):
-  def __init__(self, n_pixels):
-    super().__init__(n_pixels)
+  def __init__(self, animation, animation_kwargs, n_pixels):
+    super().__init__(animation, animation_kwargs, n_pixels)
     self.pixelQueue = Queue()
     self.guiProcess = Process(target=TkLightsGui.new, args=(self.pixelQueue, ))
     self.guiProcess.start()

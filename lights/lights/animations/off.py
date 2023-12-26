@@ -8,6 +8,6 @@ class Off(BaseAnimation):
     self.firstFrame = True
 
   def renderNextFrame(self):
-    while self.running and not self.firstFrame:
+    while not self.firstFrame:
       pass
     self.firstFrame = False

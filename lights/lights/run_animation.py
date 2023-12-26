@@ -3,8 +3,6 @@ import os
 import argparse
 import json
 
-from lights.execute import Executor
-
 # Animation imports.
 from lights.animations import NAME_TO_ANIMATION
 from lights.animations.base import BaseAnimation
@@ -47,6 +45,7 @@ if __name__ == '__main__':
     exit(0)
 
   animation = NAME_TO_ANIMATION[args.animation_name]
+  controller = NAME_TO_CONTROLLER[args.controller_name]
   kwargs_start = 2
 
   if args.i:
@@ -57,9 +56,9 @@ if __name__ == '__main__':
 
   # Setup.
   try:
-    executor = Executor(args.animation_name, args.controller_name, 500, kwargs)
+    c = controller(args.animation_name, kwargs, 500)
   except Exception as e:
     printExampleUsage(animation)
     raise e
 
-  executor.run()
+  c.run()
