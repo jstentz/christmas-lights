@@ -11,7 +11,6 @@ class BrightnessWave(BaseAnimation):
     self.step = step
 
   def renderNextFrame(self):
-    # Define an update function for the animation to change colors
     self.t += self.step
     colors = self.frameBuf.astype(float)
     colorin = (np.sin(3 * (POINTS_3D[:, 0] + self.t)) / 1.3) < POINTS_3D[:, 2]
