@@ -1,4 +1,5 @@
 import numpy as np
+from lights.utils.colors import hsv_to_rgb
 from typing import Optional
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
@@ -35,7 +36,7 @@ class SweepingPlanes(BaseAnimation):
 
     # make vector pointing towards the center of tree
     self.plane = -self.point / np.linalg.norm(self.point)
-    self.color = (np.random.rand(3) * 255).astype(np.int8)
+    self.color = np.array(hsv_to_rgb(np.random.rand(), 1.0, 1.0))
     
 
   def renderNextFrame(self):
