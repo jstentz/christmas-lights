@@ -5,11 +5,12 @@ from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
 class SweepingPlanes(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.05, bandwidth : float = 0.2):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.05, bandwidth : float = 0.2, decay : float = 0.85):
     super().__init__(frameBuf, fps)
 
     self.speed = speed
     self.bandwidth = bandwidth
+    self.decay = decay
 
     # center the points at the mid points
     min_pt = np.min(POINTS_3D, axis=0)
@@ -45,27 +46,11 @@ class SweepingPlanes(BaseAnimation):
     distances = np.abs(np.dot(self.CENTERED_POINTS_3D, self.plane) + d) / np.linalg.norm(self.plane)
     within = distances < self.bandwidth
     self.frameBuf[within] = self.color
-    self.frameBuf[np.logical_not(within)] = np.zeros(3)
+    # self.frameBuf[np.logical_not(within)] = np.zeros(3)
+    self.frameBuf[np.logical_not(within)] = self.frameBuf[np.logical_not(within)].astype(np.float64) * self.decay
 
     # move the plane (move the point in the direction normal to the plane)
     self.point += self.plane * self.speed
 
     if np.linalg.norm(self.point) > self.radius:
       self.generateRandomPlane()
-
-    
-
-'''
-find a points perpendicular distance to a plane in 3d space (dot product?)
-then set its brightness based on the square distance to the line
-generate another plane
-
-a plane in 3d space is defined by 
-
-pick a point on the plane r0, and a normal vector to the plane n
-points on the plane r satisfy
-
-n * (r - r0) = 0
-
-
-'''

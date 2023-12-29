@@ -4,7 +4,7 @@ from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
 class Fire(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, brightness : int = 255, speed : float = 0.2, radius_sq : float = 0.06, particles : int = 70):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, brightness : int = 255, speed : float = 0.2, radius_sq : float = 0.06, particles : int = 20):
     super().__init__(frameBuf, fps)
     self.min_alt = np.min(POINTS_3D[:, 2])
     self.max_alt = np.max(POINTS_3D[:, 2])
