@@ -68,16 +68,16 @@ class FastFire(BaseAnimation):
     condition2 = np.logical_and(brightness <= 0.95, brightness > 0.85)
     condition3 = brightness <= 0.85
     # self.frameBuf[condition1] = np.array([self.max_brightness, self.max_brightness, (brightness[condition1]-0.95)*self.max_brightness/0.05])
-    self.frameBuf[condition1, 0] = self.max_brightness
     self.frameBuf[condition1, 1] = self.max_brightness
+    self.frameBuf[condition1, 0] = self.max_brightness
     self.frameBuf[condition1, 2] = (brightness[condition1]-0.95)*self.max_brightness/0.05
     
-    self.frameBuf[condition2, 0] = (brightness[condition2]-0.85)*self.max_brightness/0.1
-    self.frameBuf[condition2, 1] = self.max_brightness
+    self.frameBuf[condition2, 1] = (brightness[condition2]-0.85)*self.max_brightness/0.1
+    self.frameBuf[condition2, 0] = self.max_brightness
     self.frameBuf[condition2, 2] = 0.0
 
-    self.frameBuf[condition3, 0] = 0.0
-    self.frameBuf[condition3, 1] = brightness[condition3]*self.max_brightness/0.85
+    self.frameBuf[condition3, 1] = 0.0
+    self.frameBuf[condition3, 0] = brightness[condition3]*self.max_brightness/0.85
     self.frameBuf[condition3, 2] = 0.0
 
     # self.frameBuf[condition2] = np.array([(brightness[condition2]-0.85)*self.max_brightness/0.1, self.max_brightness, 0.0])
