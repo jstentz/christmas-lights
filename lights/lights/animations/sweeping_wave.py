@@ -1,16 +1,15 @@
 import numpy as np
-from lights.utils.colors import hsv_to_rgb
+from matplotlib.colors import hsv_to_rgb
 from typing import Optional
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
-class SweepingPlanes(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.05, bandwidth : float = 0.2, decay : float = 0.85):
+class SweepingWave(BaseAnimation):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.05, drop_off : float = 3.0, margin : float = 1.0):
     super().__init__(frameBuf, fps)
 
     self.speed = speed
-    self.bandwidth = bandwidth
-    self.decay = decay
+    self.drop_off = drop_off
 
     # center the points at the mid points
     min_pt = np.min(POINTS_3D, axis=0)
@@ -20,7 +19,7 @@ class SweepingPlanes(BaseAnimation):
     self.CENTERED_POINTS_3D = POINTS_3D - mid_point
 
     # possibly add some to this so the band of light starts outside the tree
-    self.radius = np.max(np.linalg.norm(self.CENTERED_POINTS_3D, axis=1)) + bandwidth
+    self.radius = np.max(np.linalg.norm(self.CENTERED_POINTS_3D, axis=1)) + margin
     self.generateRandomPlane()
   
   # pick a random point along the sphere that circumscribes the points
@@ -37,16 +36,21 @@ class SweepingPlanes(BaseAnimation):
 
     # make vector pointing towards the center of tree
     self.plane = -self.point / np.linalg.norm(self.point)
-    self.color = np.array(hsv_to_rgb(np.random.rand(), 1.0, 1.0))
+    self.hue = np.random.rand()
     
 
   def renderNextFrame(self):
     # d is distance from origin
     d = np.dot(-self.plane, self.point)
-    distances = np.abs(np.dot(self.CENTERED_POINTS_3D, self.plane) + d) / np.linalg.norm(self.plane)
-    within = distances < self.bandwidth
-    self.frameBuf[within] = self.color
-    self.frameBuf[np.logical_not(within)] = self.frameBuf[np.logical_not(within)].astype(np.float64) * self.decay
+    dists = (np.abs(np.dot(self.CENTERED_POINTS_3D, self.plane) + d) / np.linalg.norm(self.plane))
+    dists = np.exp(-dists * self.drop_off)
+
+    hsv = np.empty((len(self.frameBuf), 3)).astype(np.float64)
+    hsv[:, 0] = self.hue
+    hsv[:, 1] = 1.0
+    hsv[:, 2] = dists
+
+    self.frameBuf[:] = hsv_to_rgb(hsv) * 255
 
     # move the plane (move the point in the direction normal to the plane)
     self.point += self.plane * self.speed
