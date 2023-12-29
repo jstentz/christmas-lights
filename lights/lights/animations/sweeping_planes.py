@@ -35,6 +35,7 @@ class SweepingPlanes(BaseAnimation):
 
     # make vector pointing towards the center of tree
     self.plane = -self.point / np.linalg.norm(self.point)
+    self.color = (np.random.rand(3) * 255).astype(np.int8)
     
 
   def renderNextFrame(self):
@@ -42,8 +43,8 @@ class SweepingPlanes(BaseAnimation):
     d = np.dot(-self.plane, self.point)
     distances = np.abs(np.dot(self.CENTERED_POINTS_3D, self.plane) + d) / np.linalg.norm(self.plane)
     within = distances < self.bandwidth
-    self.frameBuf[within] = np.array([255, 255, 255])
-    self.frameBuf[np.logical_not(within)] = np.zeros(3) + 20
+    self.frameBuf[within] = self.color
+    self.frameBuf[np.logical_not(within)] = np.zeros(3)
 
     # move the plane (move the point in the direction normal to the plane)
     self.point += self.plane * self.speed
