@@ -51,22 +51,25 @@ class Fire(BaseAnimation):
     f[nottest] = 0.0
 
     result += np.sum(f, axis=0)
-    brightness = 1.0 - np.clip(result - 0.2, 0.0, 1.0)
+    brightness = 1.0 - np.clip(result - 0.2, 0.2, 1.0)
 
-    condition1 = brightness > 0.95
-    condition2 = np.logical_and(brightness <= 0.95, brightness > 0.85)
-    condition3 = brightness <= 0.85
+    thresh1 = 0.85
+    thresh2 = 0.65
+
+    condition1 = brightness > thresh1
+    condition2 = np.logical_and(brightness <= thresh1, brightness > thresh2)
+    condition3 = brightness <= thresh2
 
     self.frameBuf[condition1, 1] = self.max_brightness
     self.frameBuf[condition1, 0] = self.max_brightness
-    self.frameBuf[condition1, 2] = (brightness[condition1]-0.95)*self.max_brightness/0.05
+    self.frameBuf[condition1, 2] = (brightness[condition1]-thresh1)*self.max_brightness/(1 - thresh1)
     
-    self.frameBuf[condition2, 1] = (brightness[condition2]-0.85)*self.max_brightness/0.1
+    self.frameBuf[condition2, 1] = (brightness[condition2]-thresh2)*self.max_brightness/(1 - thresh2)
     self.frameBuf[condition2, 0] = self.max_brightness
     self.frameBuf[condition2, 2] = 0.0
 
     self.frameBuf[condition3, 1] = 0.0
-    self.frameBuf[condition3, 0] = brightness[condition3]*self.max_brightness/0.85
+    self.frameBuf[condition3, 0] = brightness[condition3]*self.max_brightness/thresh2
     self.frameBuf[condition3, 2] = 0.0
     self.step_particles()
 
