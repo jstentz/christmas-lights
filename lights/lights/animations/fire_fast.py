@@ -5,32 +5,7 @@ from typing import Optional
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
-class Particle:
-  def __init__(self):
-    self.x = random.random() * math.pi*2.0
-    self.y = random.random() * 2.0 - 0.5
-    self.dx = (random.random() - 0.5) * 0.1
-
-  def step(self, t):
-    self.y += 0.1 * t
-    self.x += self.dx * t
-    if self.y > 1.5:
-      self.y -= 2.0
-
-  def dist_sq(self, x, y):
-    dx = (self.x + math.pi - x) % (2.0*math.pi) - math.pi
-    dy = self.y - y
-    return dx*dx + dy*dy
-
-  def value_at(self, x, y, radius_sq):
-    scale = self.y + 1.0
-    f = self.dist_sq(x, y) / (radius_sq * scale * scale)
-    if f < 1.0:
-      return (1.0 - f * f) * self.y
-    else:
-      return 0.0
-
-class Fire(BaseAnimation):
+class FastFire(BaseAnimation):
   def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, brightness : int = 255, speed : float = 0.2, radius_sq : float = 0.1, particles : int = 50):
     super().__init__(frameBuf, fps)
     self.min_alt = np.min(POINTS_3D[:, 2])
@@ -49,7 +24,12 @@ class Fire(BaseAnimation):
     self.num_particles = particles
 
     # Create the particles
-    self.particles = [Particle() for _ in range(self.num_particles)]
+    # stores x, y, and dx
+    self.particles = np.random.rand(self.num_particles, 3)
+    # scale the dimensions as the other guy does
+    self.particles[:, 0] *= 2.0 * np.pi
+    self.particles[:, 1] = 2.0 * self.particles[:, 1] - 0.5 
+    self.particles[:, 2] = (self.particles[:, 2] - 0.5) * 0.1
 
   def renderNextFrame(self):
     for i in range(len(POINTS_3D)):
@@ -59,12 +39,27 @@ class Fire(BaseAnimation):
       # convert to rgb from grb
       self.frameBuf[i] = np.array([color[1], color[0], color[2]])
 
+    # do get_colour_3d but on all them at once
+    # colors = 
+
     self.step_particles()
 
   def get_colour(self, x, y):
     result = y*0.5
-    for p in self.particles:
-      result += p.value_at(x, y, self.radius_sq)
+    # do value_at for all the particles at once
+    # values = np.copy(self.particles)
+    scale = self.particles[:, 1] + 1.0
+
+    dxs = (self.particles[:, 0] + np.pi - x) % (2.0 * np.pi) - np.pi
+    dys = self.particles[:, 1] - y
+    f = (dxs * dxs + dys * dys) / (self.radius_sq * scale * scale)
+
+    test = f < 1.0
+    nottest = np.logical_not(test)
+    f[test] = (1.0 - f[test]**2) * self.particles[test, 1]
+    f[nottest] = 0.0
+
+    result += np.sum(f)
     brightness = 1.0 - min(max(result-0.2, 0.0), 1.0)
 
     # try basing the hue on brightness value? eh that's kinda hard
@@ -81,5 +76,7 @@ class Fire(BaseAnimation):
     return self.get_colour(theta, (y - self.min_alt)/(self.max_alt - self.min_alt))
 
   def step_particles(self):
-    for p in self.particles:
-      p.step(self.speed)
+    # move the particles
+    self.particles[:, 1] += 0.1 * self.speed
+    self.particles[:, 0] += self.particles[:, 2] * self.speed
+    self.particles[self.particles[:, 1] > 1.5, 1] -= 2.0
