@@ -20,7 +20,7 @@ class SweepingPlanes(BaseAnimation):
     self.CENTERED_POINTS_3D = POINTS_3D - mid_point
 
     # possibly add some to this so the band of light starts outside the tree
-    self.radius = np.max(np.linalg.norm(self.CENTERED_POINTS_3D, axis=1))
+    self.radius = np.max(np.linalg.norm(self.CENTERED_POINTS_3D, axis=1)) + bandwidth
     self.generateRandomPlane()
   
   # pick a random point along the sphere that circumscribes the points
