@@ -18,6 +18,7 @@ class TerminalController(BaseController):
   def display(self, frame: ndarray):
     self.tcols, _ = os.get_terminal_size()
     num_rows_last_print = self.n_pixels // self.tcols
+    frame = frame.astype(np.uint8)
 
     s = self.bg(frame[:, 0], frame[:, 1], frame[:, 2])
 

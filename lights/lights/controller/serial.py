@@ -1,4 +1,4 @@
-from numpy import ndarray
+import numpy as np
 from lights.controller.base import BaseController
 import serial
 import threading
@@ -10,9 +10,8 @@ class SerialController(BaseController):
     self.display_buffer = None
     self.transmit_thread: threading.Thread = None
 
-  def display(self, frame: ndarray):
-    # assumes frame has dtype 'uint8'
-    self._transmit(frame.tobytes())
+  def display(self, frame: np.ndarray):
+    self._transmit(frame.astype(np.uint8).tobytes())
 
   def _transmit(self, buffer: bytes):
     if self.transmit_thread is not None:
@@ -22,6 +21,5 @@ class SerialController(BaseController):
     self.transmit_thread.start()
 
   def _send_data(self):
-    # print(len(self.display_buffer))
     self.usb_serial.write(self.display_buffer)
     self.usb_serial.flush()

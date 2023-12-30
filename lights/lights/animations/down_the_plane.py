@@ -14,15 +14,12 @@ class DownThePlane(BaseAnimation):
 
   def renderNextFrame(self):
     # Define an update function for the animation to change colors
-    colors = self.frameBuf.astype(float)
-    colors *= self.decay
+    self.frameBuf *= self.decay
     self.angle += self.step
     plane1 = np.array([np.sin(self.angle), np.cos(self.angle), 0])
     plane2 = np.array([np.sin(self.angle - np.pi/2), np.cos(self.angle - np.pi/2), 0])
 
     dots1 = POINTS_3D @ plane1.reshape((-1, 1))
     dots2 = POINTS_3D @ plane2.reshape((-1, 1))
-    colors[(np.abs(dots1) < self.epsilon).reshape((-1,))] = (255, 0, 0)
-    colors[(np.abs(dots2) < self.epsilon).reshape((-1,))] = (0, 255, 0)
-
-    self.frameBuf[:] = colors.astype(np.uint8)
+    self.frameBuf[(np.abs(dots1) < self.epsilon).reshape((-1,))] = (255, 0, 0)
+    self.frameBuf[(np.abs(dots2) < self.epsilon).reshape((-1,))] = (0, 255, 0)

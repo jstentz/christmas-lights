@@ -30,7 +30,7 @@ class Collatz(BaseAnimation):
         self.frameBuf[index] = (255, 255, 255)
 
         # Decay all pixels
-        self.frameBuf[:] = (self.frameBuf * decay).astype(np.uint8)
+        self.frameBuf[:] = self.frameBuf * decay
 
         # Update the current number for the next frame
         self.number = current_number

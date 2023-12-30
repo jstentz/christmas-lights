@@ -14,7 +14,7 @@ class BaseController:
       raise TypeError(f"Animation {animation} not found.")
     self.animation_class = NAME_TO_ANIMATION[animation]
     self.animation_class.validate_parameters(animation_kwargs)
-    self.frameBuf = np.zeros((n_pixels, 3), dtype='uint8')
+    self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
     self.running = False
     signal.signal(signal.SIGTERM, self._handle_sigterm)
