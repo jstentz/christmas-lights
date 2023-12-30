@@ -3,10 +3,10 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class Single(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = None, color: Collection[int] = (230, 80, 255), light: int = 0):
-    super().__init__(pixels, fps=fps)
-    self.pixels.fill((0, 0, 0))
-    self.pixels[light] = color
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, color: Collection[int] = (230, 80, 255), light: int = 0):
+    super().__init__(frameBuf, fps=fps)
+    self.frameBuf[:] = 0
+    self.frameBuf[light] = color
     
   def renderNextFrame(self):
     pass

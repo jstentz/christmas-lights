@@ -5,20 +5,20 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class Snowflakes(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = 30, density: float = .005, decayRate: float = .99, color: Collection[int] = (148,231,255)):
-    super().__init__(pixels, fps=fps)
+  def __init__(self, frameBuf, *, fps: Optional[int] = 30, density: float = .005, decayRate: float = .99, color: Collection[int] = (148,231,255)):
+    super().__init__(frameBuf, fps=fps)
     self.density = density
     self.decayRate = decayRate
     self.color = color
 
   def renderNextFrame(self):
     blank = [0, 0, 0]
-    for i in range(len(self.pixels)):
-      self.pixels[i] = decayPixel(*self.pixels[i], self.decayRate)
-      if self.pixels[i] == list(blank):
+    for i in range(len(self.frameBuf)):
+      self.frameBuf[i] = decayPixel(*self.frameBuf[i], self.decayRate)
+      if self.frameBuf[i].tolist() == list(blank):
         n = random.uniform(0, 1)
         if n < self.density:
-          self.pixels[i] = self.color
+          self.frameBuf[i] = self.color
 
   @classmethod
   def validate_parameters(cls, parameters):

@@ -4,13 +4,12 @@ from lights.utils.colors import randomColor, brightnessFrame
 from typing import Optional
 
 class Streamers(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = None, numStreamers: int = 15, streamersLen: int = 20):
-    super().__init__(pixels, fps=fps)
-    self.pixels = pixels
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, numStreamers: int = 15, streamersLen: int = 20):
+    super().__init__(frameBuf, fps=fps)
     self.numStreamers = numStreamers
     self.streamersLen = streamersLen
     
-    NUM_PIXELS = len(pixels)
+    NUM_PIXELS = len(self.frameBuf)
 
     self.streamers = [
                       (
@@ -32,8 +31,8 @@ class Streamers(BaseAnimation):
     
     
     # update the pixels with brightness frame
-    NUM_PIXELS = len(self.pixels)
-    self.pixels.fill((0, 0, 0))
+    NUM_PIXELS = len(self.frameBuf)
+    self.frameBuf[:] = 0
 
     for headLoc, color, _, movingUp in self.streamers:
       frame = brightnessFrame(color, self.streamersLen)
@@ -42,7 +41,7 @@ class Streamers(BaseAnimation):
           loc = (headLoc + i) % NUM_PIXELS
         else:
           loc = (headLoc - i) % NUM_PIXELS
-        self.pixels[loc] = frame[i]
+        self.frameBuf[loc] = frame[i]
     self.t += 1
 
   @classmethod

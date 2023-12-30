@@ -28,8 +28,8 @@ def generateNoise(pixels, frequency):
   return noise
 
 class Embers(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = 30, color: Collection[int] = (255, 195, 0)):
-    super().__init__(pixels, fps=fps)
+  def __init__(self, frameBuf, *, fps: Optional[int] = 30, color: Collection[int] = (255, 195, 0)):
+    super().__init__(frameBuf, fps=fps)
     # self.color = desaturatePixel(*color, 0.8)
     self.color = color
 
@@ -61,7 +61,7 @@ class Embers(BaseAnimation):
 
   def shiftNoise(self, octave):
     self.noise[0][octave] = self.noise[1][octave]
-    self.noise[1][octave] = generateNoise(self.pixels, self.frequencies[octave])
+    self.noise[1][octave] = generateNoise(self.frameBuf, self.frequencies[octave])
     self.frames[octave] = 0
 
   def renderNextFrame(self):
@@ -70,7 +70,7 @@ class Embers(BaseAnimation):
         self.shiftNoise(octave)
       self.frames[octave] += 1
 
-    for i in range(len(self.pixels)):
+    for i in range(len(self.frameBuf)):
       # Base noise calculation
       t = self.frames[0] / self.durationsInFrames[0]
       desaturationValue = 1 - (lerp(self.noise[0][0][i], self.noise[1][0][i], t) * 0.7)
@@ -81,7 +81,7 @@ class Embers(BaseAnimation):
         currOctaveValue = (lerp(self.noise[0][j][i], self.noise[1][j][i], t) - 0.5) * 0.5 ** j
         desaturationValue = max(min(desaturationValue + currOctaveValue, 1), 0)
 
-      self.pixels[i] = desaturatePixel(*self.color, desaturationValue)
+      self.frameBuf[i] = desaturatePixel(*self.color, desaturationValue)
 
   @classmethod
   def validate_parameters(cls, parameters):

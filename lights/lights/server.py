@@ -32,7 +32,7 @@ def receive_data():
   if p is not None:
     p.terminate()
     p.wait()
-  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-r', '-a', animation, '--args', json.dumps(parameters)])
+  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-c', 'SerialController', '-a', animation, '--args', json.dumps(parameters)])
   s.release()
   return 'Success!'
 

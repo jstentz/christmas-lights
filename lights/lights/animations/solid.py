@@ -4,15 +4,15 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class Solid(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = None, color: Collection[int] = (255, 255, 255), brightness: float = 1):
-    super().__init__(pixels, fps=fps)
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, color: Collection[int] = (255, 255, 255), brightness: float = 1):
+    super().__init__(frameBuf, fps=fps)
     self.color = color
     self.brightness = brightness
     
   def renderNextFrame(self):
     h, s, _ = rgb_to_hsv(*self.color)
     c = hsv_to_rgb(h, s, self.brightness)
-    self.pixels.fill(c)
+    self.frameBuf[:] = c
         
   @classmethod
   def validate_parameters(cls, parameters):

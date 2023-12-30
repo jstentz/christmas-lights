@@ -1,4 +1,5 @@
-from lights.controller.lights_simulator_base import BaseLightsSimulator
+from numpy import ndarray
+from lights.controller.base import BaseController
 import math
 import signal
 import time
@@ -46,26 +47,19 @@ class TkLightsGui():
       self.draw(canvas, pixels)
     canvas.after(10, self.step, canvas)
 
-class TkLightsSimulator(BaseLightsSimulator):
-  def __init__(self, pin, n: int, *, bpp: int = 3, brightness: float = 1.0, auto_write: bool = True, pixel_order: str = None):
-    super().__init__(
-      n, brightness=brightness, byteorder=pixel_order, auto_write=auto_write
-    )
+class GuiController(BaseController):
+  def __init__(self, animation, animation_kwargs, n_pixels):
+    super().__init__(animation, animation_kwargs, n_pixels)
     self.pixelQueue = Queue()
     self.guiProcess = Process(target=TkLightsGui.new, args=(self.pixelQueue, ))
     self.guiProcess.start()
 
-  def show(self):
+  def display(self, frame: ndarray):
     if not self.guiProcess.is_alive():
       signal.raise_signal(signal.SIGINT)
 
-    pixels = []
-    for pixel in self:
-      r, g, b = pixel[self._byteorder[0]], pixel[self._byteorder[1]], pixel[self._byteorder[2]]
-      pixels.append((r, g, b))
-    self.pixelQueue.put(pixels)
+    self.pixelQueue.put(frame.tolist())
     time.sleep(0.02)
-
     
-  def __del__(self):
+  def shutdown(self):
     self.guiProcess.terminate()

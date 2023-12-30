@@ -4,13 +4,13 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class GameOfLife(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = 5, color: Collection[int] = (0, 255, 0)):
-    super().__init__(pixels, fps=fps)
-    self.state = [True, True] + [False for _ in range(len(self.pixels) - 2)]
+  def __init__(self, frameBuf, *, fps: Optional[int] = 5, color: Collection[int] = (0, 255, 0)):
+    super().__init__(frameBuf, fps=fps)
+    self.state = [True, True] + [False for _ in range(len(self.frameBuf) - 2)]
     self.color = color
 
   def renderNextFrame(self):
-    NUM_PIXELS = len(self.pixels)
+    NUM_PIXELS = len(self.frameBuf)
     # update state 
     newState = copy.copy(self.state)
     for i in range(len(self.state)):
@@ -25,9 +25,9 @@ class GameOfLife(BaseAnimation):
         newState[i] = True
 
       if newState[i]:
-        self.pixels[i] = self.color
+        self.frameBuf[i] = self.color
       else:
-        self.pixels[i] = (0, 0, 0)
+        self.frameBuf[i] = (0, 0, 0)
     self.state = newState
 
   @classmethod

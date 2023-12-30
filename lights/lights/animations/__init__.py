@@ -3,8 +3,9 @@ from pkgutil import iter_modules
 from pathlib import Path
 from importlib import import_module
 from lights.animations.base import BaseAnimation
+from typing import Dict, List, Type
 
-ANIMATIONS = []
+ANIMATIONS: List[Type[BaseAnimation]] = []
 
 # adapted from https://julienharbulot.com/python-dynamical-import.html
 # iterate through the modules in the current package
@@ -20,4 +21,4 @@ for (_, module_name, _) in iter_modules([str(package_dir)]):
             # Add the class to this package's variables
             ANIMATIONS.append(attribute)
 
-NAME_TO_ANIMATION = {animation.__name__: animation for animation in ANIMATIONS}
+NAME_TO_ANIMATION: Dict[str, Type[BaseAnimation]] = {animation.__name__: animation for animation in ANIMATIONS}

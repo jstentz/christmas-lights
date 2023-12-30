@@ -1,16 +1,17 @@
+import numpy as np
 from lights.animations.base import BaseAnimation
 from typing import Optional
 import random
 
 class Collatz(BaseAnimation):
-    def __init__(self, pixels, *, fps: Optional[int] = None, start_number: int = 499, decay: float = 0.85):
-        super().__init__(pixels, fps=fps)
+    def __init__(self, frameBuf, *, fps: Optional[int] = None, start_number: int = 499, decay: float = 0.85):
+        super().__init__(frameBuf, fps=fps)
         self.number = random.randint(2, start_number)
         self.start_number = start_number
         self.decay = decay
 
     def renderNextFrame(self):
-        NUM_PIXELS = len(self.pixels)
+        NUM_PIXELS = len(self.frameBuf)
         if self.number == 1:
             self.number = random.randint(2, self.start_number)
         current_number = self.number
@@ -26,12 +27,10 @@ class Collatz(BaseAnimation):
         index = current_number % NUM_PIXELS
 
         # Turn on the corresponding pixel
-        self.pixels[index] = (255, 255, 255)
+        self.frameBuf[index] = (255, 255, 255)
 
         # Decay all pixels
-        for i in range(NUM_PIXELS):
-            color = self.pixels[i]
-            self.pixels[i] = tuple(int(c * decay) for c in color)
+        self.frameBuf[:] = self.frameBuf * decay
 
         # Update the current number for the next frame
         self.number = current_number

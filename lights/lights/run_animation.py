@@ -7,6 +7,9 @@ import json
 from lights.animations import NAME_TO_ANIMATION
 from lights.animations.base import BaseAnimation
 
+# Controller imports.
+from lights.controller import NAME_TO_CONTROLLER
+
 def printExampleUsage(animation: BaseAnimation):
   print("Example usage:")
   print("python", os.path.basename(__file__), '-a', animation.exampleUsage())
@@ -18,23 +21,15 @@ if __name__ == '__main__':
                       help='the class name of the animation', 
                       type=str,
                       required='-l' not in sys.argv)
-  parser.add_argument('-r', 
-                      help='run on hardware', 
-                      action='store_true')
-  parser.add_argument('-t',
-                      help='simulate in the terminal',
-                      action='store_true')
-  parser.add_argument('-g',
-                      help='simulate using a tkinter gui',
-                      action='store_true')
-  parser.add_argument('-n',
-                      help='no simulation, just repeatedly generate frames but do not display them. Useful for benchmarking animations',
-                      action='store_true')
+  parser.add_argument('-c', '--controller_name', 
+                      help='the class name of the controller', 
+                      type=str,
+                      default='TerminalController')
   parser.add_argument('-i', 
                       help='show example usage for the selected animation', 
                       action='store_true')
   parser.add_argument('-l',
-                      help='list all available animations',
+                      help='list all available animations and controllers',
                       action='store_true')
   parser.add_argument('--args', 
                       help='custom arguments for the selected animation',
@@ -45,10 +40,12 @@ if __name__ == '__main__':
   # Parse command line arguments.
 
   if args.l:
-    print('Available animations:\n', "\n".join(NAME_TO_ANIMATION.keys()), sep='')
+    print('Available controllers:\n', "\n".join(NAME_TO_CONTROLLER.keys()), sep='')
+    print('\nAvailable animations:\n', "\n".join(NAME_TO_ANIMATION.keys()), sep='')
     exit(0)
 
   animation = NAME_TO_ANIMATION[args.animation_name]
+  controller = NAME_TO_CONTROLLER[args.controller_name]
   kwargs_start = 2
 
   if args.i:
@@ -58,31 +55,10 @@ if __name__ == '__main__':
   kwargs = json.loads(args.args)
 
   # Setup.
-  if args.r:
-    #from neopixel import NeoPixel as LightsController
-    from lights.controller.serial_pixels import SerialPixels as LightsController
-    from lights.constants import PIN, NUM_PIXELS, ORDER
-  else:
-    PIN, NUM_PIXELS, ORDER = 0, 500, "RGB"
-    if args.g:
-      from lights.controller.lights_simulator_tkinter import TkLightsSimulator
-      LightsController = TkLightsSimulator
-    elif args.n:
-      from lights.controller.lights_simulator_noop import NoopLightsSimulator
-      LightsController = NoopLightsSimulator
-    else: # default, simulate in the terminal
-      from lights.controller.lights_simulator_terminal import TerminalLightsSimulator
-      LightsController = TerminalLightsSimulator
-
-
-  # Run animation.
-  pixels = LightsController(PIN, NUM_PIXELS, auto_write=False, pixel_order=ORDER)
-  
   try:
-    animation.validate_parameters(kwargs)
-    a = animation(pixels, **kwargs)
+    c = controller(args.animation_name, kwargs, 500)
   except Exception as e:
     printExampleUsage(animation)
     raise e
 
-  a.run()
+  c.run()

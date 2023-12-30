@@ -5,18 +5,18 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class Snake(BaseAnimation):
-  def __init__(self, pixels, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), isRainbow: bool = False):
-    super().__init__(pixels, fps=fps)
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), isRainbow: bool = False):
+    super().__init__(frameBuf, fps=fps)
     self.numFood = numFood
     self.isRainbow = isRainbow
     self.foodColor = foodColor
     self.snakeColor = snakeColor
-    self.food = random.sample(range(len(self.pixels)), self.numFood)
-    self.body = [random.randint(0, len(self.pixels) - 1)]
-    self.S = set([i for i in range(len(pixels))]) # set of all indices
+    self.food = random.sample(range(len(self.frameBuf)), self.numFood)
+    self.body = [random.randint(0, len(self.frameBuf) - 1)]
+    self.S = set([i for i in range(len(self.frameBuf))]) # set of all indices
     
   def renderNextFrame(self):
-    NUM_PIXELS = len(self.pixels)
+    NUM_PIXELS = len(self.frameBuf)
   
     # max length snake
     if len(set(self.body)) == NUM_PIXELS:
@@ -59,13 +59,13 @@ class Snake(BaseAnimation):
 
     for i in range(NUM_PIXELS):
       if i in self.food:
-        self.pixels[i] = self.foodColor
+        self.frameBuf[i] = self.foodColor
       else:
-        self.pixels[i] = (0, 0, 0)
+        self.frameBuf[i] = (0, 0, 0)
 
     for i in range(len(uniqueBodyList)):
       pixelIdx = uniqueBodyList[i]
-      self.pixels[pixelIdx] = snakeFrame[i]
+      self.frameBuf[pixelIdx] = snakeFrame[i]
 
   @classmethod
   def validate_parameters(cls, parameters):
