@@ -5,7 +5,7 @@ from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
 class BouncingGradient(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, speed : float = 0.05):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, speed : float = 0.02):
     super().__init__(frameBuf, fps)
     # create the bounding box
     self.mins = np.min(POINTS_3D, axis=0)

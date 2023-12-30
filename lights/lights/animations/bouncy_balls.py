@@ -4,7 +4,7 @@ from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
 class BouncyBalls(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, speed : float = 0.05, radius : float = 0.5):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, speed : float = 0.03, radius : float = 0.5):
     super().__init__(frameBuf, fps)
     self.radius = radius
 
