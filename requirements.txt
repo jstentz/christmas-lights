@@ -12,8 +12,12 @@ charset-normalizer==2.1.1
     # via requests
 click==8.1.3
     # via flask
+contourpy==1.2.0
+    # via matplotlib
 cursor==1.3.5
     # via -r requirements.in
+cycler==0.12.1
+    # via matplotlib
 django==4.1.4
     # via
     #   -r requirements.in
@@ -25,6 +29,8 @@ djangorestframework==3.14.0
     # via -r requirements.in
 flask==2.2.2
     # via -r requirements.in
+fonttools==4.47.0
+    # via matplotlib
 gunicorn==20.1.0
     # via -r requirements.in
 idna==3.4
@@ -33,22 +39,39 @@ itsdangerous==2.1.2
     # via flask
 jinja2==3.1.2
     # via flask
+kiwisolver==1.4.5
+    # via matplotlib
 markupsafe==2.1.1
     # via
     #   jinja2
     #   werkzeug
-numpy==1.26.2
+matplotlib==3.8.2
     # via -r requirements.in
+numpy==1.26.2
+    # via
+    #   -r requirements.in
+    #   contourpy
+    #   matplotlib
+packaging==23.2
+    # via matplotlib
 perlin-noise==1.12
     # via -r requirements.in
+pillow==10.1.0
+    # via matplotlib
+pyparsing==3.1.1
+    # via matplotlib
 pyserial==3.5
     # via -r requirements.in
+python-dateutil==2.8.2
+    # via matplotlib
 pytz==2022.7
     # via djangorestframework
 qrcodegen==1.8.0
     # via -r requirements.in
 requests==2.28.1
     # via -r requirements.in
+six==1.16.0
+    # via python-dateutil
 sqlparse==0.4.3
     # via django
 sty==1.0.4

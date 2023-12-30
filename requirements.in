@@ -11,3 +11,4 @@ perlin_noise
 requests
 typeguard
 numpy
+matplotlib
