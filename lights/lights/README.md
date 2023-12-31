@@ -61,7 +61,7 @@ self.frameBuf[:] = np.array([255, 255, 255])
 
 ### Important note
 
-Since the numpy array pointed to by `self.frameBuf` is used to update the lights, it is critical that all changes made to `self.frameBuf` are done in place. Here is an example of what not to do:
+Since the numpy array pointed to by `self.frameBuf` is used to update the lights, it is critical that all changes made to `self.frameBuf` are done in place. Do not break the alias! Here is an example of what not to do and how to fix it:
 
 ```python
 # Attempting to make all the lights blue.
