@@ -12,7 +12,7 @@ class MatplotlibController(BaseController):
     screencolor = 'black'
     self.fig = plt.figure(figsize=(10, 10), facecolor=screencolor)
     self.ax = self.fig.add_subplot(111, projection=Axes3D.name)
-    self.ax.set_facecolor(screencolor)
+    # self.ax.set_facecolor(screencolor)
     self.points = POINTS_3D
     self.sizes = 100 * np.ones(n_pixels)
     self.scatter = self.ax.scatter(self.points[:, 0], self.points[:, 1], self.points[:, 2], c=self.frameBuf / 255, s=self.sizes, marker='o', edgecolors=None, alpha=0.4)
@@ -21,8 +21,14 @@ class MatplotlibController(BaseController):
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
     self.ani = FuncAnimation(self.fig, self.update, interval=self.animation.period * 1000, frames=None, cache_frame_data=False)
-    plt.grid(False)
-    plt.axis('off')
+    self.ax.set_autoscale_on(True)
+    self.ax.margins(0.0)
+    self.fig.set_size_inches(4.2, 3.15)
+    self.scatter.set_sizes(20 * np.ones(len(self.points)))
+    #self.ax.set_zlim(-1, 1)
+    # self.ax.set_box_aspect((1, 1, 1), zoom=1.5)
+    # plt.grid(False)
+    # plt.axis('off')
     plt.show()
 
   def record(self, duration, output):
@@ -31,12 +37,13 @@ class MatplotlibController(BaseController):
     period = self.animation.period if self.animation.period != 0 else 1/60
     self.ani = FuncAnimation(self.fig, self.update, interval=self.animation.period * 1000, frames=int(duration / period), cache_frame_data=False)
     self.ax.set_autoscale_on(True)
+    self.ax.margins(0.0)
     self.fig.set_size_inches(4.2, 3.15)
     self.scatter.set_sizes(20 * np.ones(len(self.points)))
     #self.ax.set_zlim(-1, 1)
     self.ax.set_box_aspect((1, 1, 1), zoom=1.5)
-    plt.grid(False)
-    plt.axis('off')
+    # plt.grid(False)
+    # plt.axis('off')
     self.ani.save(output)
 
   def update(self, frame):
