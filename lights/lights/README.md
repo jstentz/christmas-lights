@@ -82,7 +82,7 @@ to make the operation in-place.
 
 ### 3D animations
 
-To support animations that rely on the spatial location of the lights on the tree, we provide another `(500, 3)`-shaped array of the points locations. Each row corresponds to a single (x, y, z) location. The points have been centered around their mean and scaled such that all coordinates are within the range [-1, +1]. Each row in the array of points maps directly to the same row in `self.frameBuf`. To access these points, use the following import line:
+To support animations that rely on the spatial location of the lights on the tree, we provide another `(500, 3)`-shaped array of the points' 3D locations. Each row corresponds to a single (x, y, z) coordinate. The points have been centered around their mean and scaled such that all coordinates are within the range [-1, +1]. Each row in the array of points maps directly to the same row in `self.frameBuf`. To access these points, use the following import:
 
 ```python
 from lights.utils.geometry import POINTS_3D
@@ -90,7 +90,7 @@ from lights.utils.geometry import POINTS_3D
 
 ### Efficiency
 
-Since the animations are currently being run on a Raspberry Pi, efficiency is imperative. Please take advantage of numpy's vectorized operations as much as humanly possible. Generally, avoiding significant looping within Python is the most important.
+Since the animations are currently run on a Raspberry Pi, efficiency is imperative. Please take advantage of numpy's vectorized operations as much as possible. Generally, avoiding significant looping within Python is the most important.
 
 Here is an example of converting slow, unvectorized code into fast, vectorized code.
 
