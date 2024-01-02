@@ -141,15 +141,16 @@ python run_animation.py -c TerminalController -a AnimationClassName
 You can stop the simulation by closing the graphics window or sending a SIGINT (`ctrl + c`).
 
 ### Passing arguments
-If your animation has arguments, you can provide them to the simulator using the `--args` flag
+If your animation has arguments, you can provide them to the controller using the `--args` flag
+
 
 ```shell
-python run_animation.py -c ControllerName -a AnimationClassName --args custom_arg_1='value' color=255,0,0 fps=30
+python run_animation.py -c ControllerName -a AnimationClassName --args '{"custom_arg_1": null, "color": [255,0,0], "fps": 30}'
 ```
 
-Custom arguments are parsed with `ast.literal_eval`, so they can be any valid python expression. More specifically, the left side of the '=' must be a valid python variable name, and the right side a valid expression. One caveat is that tuples cannot have parenthesis, so a tuple typically expressed as `(0, 255, 255)` must be passed as `0,255,255`.
+Custom arguments are parsed as json strings. 
 
 You can also see the optional parameters for a given animation using `-i`
 ```shell
-python run_animation.py -a AnimationClassName -i
+python run_animation.py -c ControllerName -a AnimationClassName -i
 ```
