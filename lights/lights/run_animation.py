@@ -10,9 +10,9 @@ from lights.animations.base import BaseAnimation
 # Controller imports.
 from lights.controller import NAME_TO_CONTROLLER
 
-def printExampleUsage(animation: BaseAnimation):
+def printExampleUsage(animation: BaseAnimation, controller_name : str):
   print("Example usage:")
-  print("python", os.path.basename(__file__), '-a', animation.exampleUsage())
+  print("python", os.path.basename(__file__), '-c', controller_name, '-a', animation.exampleUsage())
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(prog="run_animation", 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
   parser.add_argument('-c', '--controller_name', 
                       help='the class name of the controller', 
                       type=str,
-                      default='TerminalController')
+                      default='MatplotlibController')
   parser.add_argument('-i', 
                       help='show example usage for the selected animation', 
                       action='store_true')
@@ -49,7 +49,7 @@ if __name__ == '__main__':
   kwargs_start = 2
 
   if args.i:
-    printExampleUsage(animation)
+    printExampleUsage(animation, args.controller_name)
     exit(-1)
 
   kwargs = json.loads(args.args)
