@@ -24,11 +24,12 @@ class CandyCane(BaseAnimation):
     self.t = 0
 
     # generate a random initial angle for the plane
-    self.plane = self.generateRandomPlane()
-    self.target = self.generateRandomPlane()
+    self.plane = CandyCane.generateRandomPlane()
+    self.target = CandyCane.generateRandomPlane()
   
   # pick a random unit vector in 3D space
-  def generateRandomPlane(self):
+  @staticmethod
+  def generateRandomPlane():
     while np.all((plane := np.random.normal(size=3)) == 0.0):
       pass
     return plane / np.linalg.norm(plane)
@@ -51,4 +52,4 @@ class CandyCane(BaseAnimation):
     # TODO: make this related to rotation_speed so we don't overstep it 
     epsilon = 0.01
     if np.linalg.norm(self.plane - self.target) < epsilon:
-      self.target = self.generateRandomPlane()
+      self.target = CandyCane.generateRandomPlane()
