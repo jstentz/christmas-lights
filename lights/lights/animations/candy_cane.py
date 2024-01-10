@@ -17,11 +17,7 @@ class CandyCane(BaseAnimation):
     max_pt = np.max(POINTS_3D, axis=0)
     mid_point = (max_pt + min_pt) / 2
     self.CENTERED_POINTS_3D = POINTS_3D - mid_point
-
-    # self.colors = np.array([(255, 0, 0), (255, 255, 255), (0, 255, 0), (255, 255, 255)]) # red, white, green, white
-    self.colors = np.array([(255, 0, 0), (255, 255, 255)]) # red, white
-    # self.colors = np.array([(255, 0, 0), (255, 255, 255), (0, 0, 255), (255, 255, 255)]) # red, white, blue
-
+    self.colors = colors
     self.t = 0
 
     # generate a random initial angle for the plane
