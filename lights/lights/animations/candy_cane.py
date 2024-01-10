@@ -1,10 +1,11 @@
 import numpy as np
-from typing import Optional
+from typing import Optional, Collection
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 
 class CandyCane(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02, rotation_speed : float = 0.01, bandwidth : float = 0.8):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02, 
+               rotation_speed : float = 0.01, bandwidth : float = 0.8, colors : Collection[Collection[int]] = ((255, 0, 0), (255, 255, 255))):
     super().__init__(frameBuf, fps)
 
     self.speed = speed
