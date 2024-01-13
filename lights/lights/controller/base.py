@@ -15,16 +15,15 @@ class BaseController:
     self.animation_class.validate_parameters(animation_kwargs)
     self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
-    self.running = False
+    self.exited = False
 
   def run(self):
     # Render first frame immediately. This ensures snappy transitions between animations
     # using different frame rates.
-    self.running = True
     self.animation.renderNextFrame()
     self.display(self.frameBuf)
 
-    while self.running:
+    while not self.exited:
       start = time.time()
       self.animation.renderNextFrame()
       end = time.time()
@@ -39,7 +38,7 @@ class BaseController:
     self.shutdown()
 
   def stop(self):
-    self.running = False
+    self.exited = True
 
   def display(self, frame: np.ndarray):
     pass
