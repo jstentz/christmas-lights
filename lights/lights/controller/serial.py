@@ -13,6 +13,10 @@ class SerialController(BaseController):
   def display(self, frame: np.ndarray):
     self._transmit(frame.astype(np.uint8).tobytes())
 
+  def shutdown(self):
+    if self.transmit_thread is not None:
+      self.transmit_thread.join()
+
   def _transmit(self, buffer: bytes):
     if self.transmit_thread is not None:
       self.transmit_thread.join()

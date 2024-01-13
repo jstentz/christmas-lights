@@ -1,7 +1,6 @@
 import numpy as np
 from lights.animations import NAME_TO_ANIMATION
 from typing import Dict
-import signal
 import numpy as np
 import time
 
@@ -17,8 +16,6 @@ class BaseController:
     self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
     self.running = False
-    signal.signal(signal.SIGTERM, self._handle_sigterm)
-    signal.signal(signal.SIGINT, self._handle_sigint)
 
   def run(self):
     # Render first frame immediately. This ensures snappy transitions between animations
@@ -38,18 +35,14 @@ class BaseController:
     
     self.frameBuf[:] = 0
     self.display(self.frameBuf)
+    self.animation.shutdown()
     self.shutdown()
+
+  def stop(self):
+    self.running = False
 
   def display(self, frame: np.ndarray):
     pass
 
   def shutdown(self):
     pass
-
-  def _handle_sigterm(self, *args):
-    self.animation.shutdown()
-    self.running = False
-
-  def _handle_sigint(self, *args):
-    self.animation.shutdown()
-    self.running = False

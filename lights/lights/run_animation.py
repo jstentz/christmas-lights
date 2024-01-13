@@ -2,6 +2,9 @@ import sys
 import os
 import argparse
 import json
+import threading
+import signal
+from lights.constants import NUM_PIXELS
 
 # Animation imports.
 from lights.animations import NAME_TO_ANIMATION
@@ -10,7 +13,36 @@ from lights.animations.base import BaseAnimation
 # Controller imports.
 from lights.controller import NAME_TO_CONTROLLER
 
-def printExampleUsage(animation: BaseAnimation, controller_name : str):
+# Starts running the animation in a separate thread. Note you must call stop() before attempting to join() to avoid hanging.
+class ThreadedAnimationRunner(threading.Thread):
+  def __init__(self, animation_name: str, controller_name: str, parameters: str) -> None:
+    super().__init__()
+    self.ar = AnimationRunner(animation_name, controller_name, parameters)
+
+  def run(self) -> None:
+    self.ar.run()
+
+  def stop(self):
+    self.ar.stop()
+
+
+class AnimationRunner():
+  def __init__(self, animation_name: str, controller_name: str, parameters: str) -> None:
+    self.animation_class = NAME_TO_ANIMATION[animation_name]
+    self.controller_class = NAME_TO_CONTROLLER[controller_name]
+    kwargs = json.loads(parameters)
+
+    self.c = self.controller_class(animation_name, kwargs, NUM_PIXELS)
+
+  def run(self):
+    self.c.run()
+
+  def stop(self):
+    self.c.stop()
+
+
+def print_example_usage(animation_name: str, controller_name : str):
+  animation = NAME_TO_ANIMATION[animation_name]
   print("Example usage:")
   print("python", os.path.basename(__file__), '-c', controller_name, '-a', animation.exampleUsage())
 
@@ -43,22 +75,23 @@ if __name__ == '__main__':
     print('Available controllers:\n', "\n".join(NAME_TO_CONTROLLER.keys()), sep='')
     print('\nAvailable animations:\n', "\n".join(NAME_TO_ANIMATION.keys()), sep='')
     exit(0)
-
-  animation = NAME_TO_ANIMATION[args.animation_name]
-  controller = NAME_TO_CONTROLLER[args.controller_name]
-  kwargs_start = 2
-
+  
   if args.i:
-    printExampleUsage(animation, args.controller_name)
+    print_example_usage(args.animation_name, args.controller_name)
     exit(-1)
-
-  kwargs = json.loads(args.args)
-
-  # Setup.
+  
   try:
-    c = controller(args.animation_name, kwargs, 500)
+    ar = AnimationRunner(args.animation_name, args.controller_name, args.args)
   except Exception as e:
-    printExampleUsage(animation)
+    print_example_usage(args.animation_name, args.controller_name)
     raise e
 
-  c.run()
+  def _handle_sigterm(*args):
+    ar.stop()
+
+  def _handle_sigint(*args):
+    ar.stop()
+
+  signal.signal(signal.SIGTERM, _handle_sigterm)
+  signal.signal(signal.SIGINT, _handle_sigint)
+  ar.run()
