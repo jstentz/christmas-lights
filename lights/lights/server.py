@@ -1,38 +1,28 @@
 from flask import Flask, request
-import subprocess
 import pathlib
-from typing import Optional
-import sys
+from typing import Any, Optional
 from threading import Semaphore
-import json
-
-# ID_TO_FILENAME = {
-#   0: 'redlights.py',
-#   1: 'greenlights.py',
-#   2: 'snake.py',
-#   3: 'snowflakes.py',
-#   4: 'rainbow.py'
-# }
+from lights.run_animation import ThreadedAnimationRunner
 
 BASE_PATH = pathlib.Path(__file__).parent
 RUN_ANIMATION_PATH = BASE_PATH / 'run_animation.py'
 
-p: Optional[subprocess.Popen[bytes]] = None
+ar: Optional[ThreadedAnimationRunner] = None
 s = Semaphore()
 
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def receive_data():
-  global p
+  global ar
   data = request.get_json()
   animation = data['light_pattern_name']
   parameters = data['parameters']
   s.acquire()
-  if p is not None:
-    p.terminate()
-    p.wait()
-  p = subprocess.Popen([sys.executable, RUN_ANIMATION_PATH, '-c', 'SerialController', '-a', animation, '--args', json.dumps(parameters)])
+  if ar is not None:
+    ar.stop()
+    ar.join()
+  ar = ThreadedAnimationRunner(animation, 'SerialController', parameters)
   s.release()
   return 'Success!'
 
