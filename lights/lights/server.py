@@ -24,6 +24,7 @@ def receive_data():
     ar.stop()
     ar.join()
   ar = ThreadedAnimationRunner(animation, 'SerialController', json.dumps(parameters))
+  ar.start()
   s.release()
   return 'Success!'
 
