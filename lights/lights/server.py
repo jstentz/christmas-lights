@@ -1,8 +1,9 @@
 from flask import Flask, request
 import pathlib
-from typing import Any, Optional
+from typing import Optional
 from threading import Semaphore
 from lights.run_animation import ThreadedAnimationRunner
+import json
 
 BASE_PATH = pathlib.Path(__file__).parent
 RUN_ANIMATION_PATH = BASE_PATH / 'run_animation.py'
@@ -22,7 +23,7 @@ def receive_data():
   if ar is not None:
     ar.stop()
     ar.join()
-  ar = ThreadedAnimationRunner(animation, 'SerialController', parameters)
+  ar = ThreadedAnimationRunner(animation, 'SerialController', json.dumps(parameters))
   s.release()
   return 'Success!'
 
