@@ -1,24 +1,28 @@
 from lights.animations.base import BaseAnimation
 from lights.utils.colors import decayPixel
-import random
 from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
+import numpy as np
+from matplotlib.colors import rgb_to_hsv, hsv_to_rgb
 
 class Snowflakes(BaseAnimation):
   def __init__(self, frameBuf, *, fps: Optional[int] = 30, density: float = .005, decayRate: float = .99, color: Collection[int] = (148,231,255)):
     super().__init__(frameBuf, fps=fps)
     self.density = density
     self.decayRate = decayRate
-    self.color = color
+    self.color = rgb_to_hsv(np.array(color) / 255)
+    self.hsvFrame = np.zeros(self.frameBuf.shape)
+    self.blankThresh = 1/255
 
   def renderNextFrame(self):
-    blank = [0, 0, 0]
-    for i in range(len(self.frameBuf)):
-      self.frameBuf[i] = decayPixel(*self.frameBuf[i], self.decayRate)
-      if self.frameBuf[i].tolist() == list(blank):
-        n = random.uniform(0, 1)
-        if n < self.density:
-          self.frameBuf[i] = self.color
+    # decay all existing snowflakes.
+    self.hsvFrame[:, 2] *= self.decayRate
+    # randomly spawn new snowflakes.
+    rands = np.random.uniform(0, 1, size=len(self.hsvFrame))
+    self.hsvFrame[np.logical_and(self.hsvFrame[:, 2] < self.blankThresh, rands < self.density)] = self.color
+
+    # convert to rgb.
+    self.frameBuf[:] = hsv_to_rgb(self.hsvFrame) * 255
 
   @classmethod
   def validate_parameters(cls, parameters):
