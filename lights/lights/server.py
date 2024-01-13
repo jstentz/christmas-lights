@@ -23,8 +23,11 @@ def receive_data():
   if ar is not None:
     ar.stop()
     ar.join()
-  ar = ThreadedAnimationRunner(animation, 'SerialController', json.dumps(parameters))
-  ar.start()
+  try:
+    ar = ThreadedAnimationRunner(animation, 'SerialController', json.dumps(parameters))
+    ar.start()
+  except Exception as e:
+    print(e)
   s.release()
   return 'Success!'
 
