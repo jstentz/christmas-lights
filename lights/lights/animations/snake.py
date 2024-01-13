@@ -5,12 +5,14 @@ from typing import Optional, Collection
 from lights.utils.validation import is_valid_rgb_color
 
 class Snake(BaseAnimation):
-  def __init__(self, frameBuf, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), isRainbow: bool = False):
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), 
+               isRainbow: bool = False, maxLen: int = 60):
     super().__init__(frameBuf, fps=fps)
     self.numFood = numFood
     self.isRainbow = isRainbow
     self.foodColor = foodColor
     self.snakeColor = snakeColor
+    self.maxLen = maxLen
     self.food = random.sample(range(len(self.frameBuf)), self.numFood)
     self.body = [random.randint(0, len(self.frameBuf) - 1)]
     self.S = set([i for i in range(len(self.frameBuf))]) # set of all indices
@@ -19,7 +21,7 @@ class Snake(BaseAnimation):
     NUM_PIXELS = len(self.frameBuf)
   
     # max length snake
-    if len(set(self.body)) == NUM_PIXELS:
+    if len(set(self.body)) >= self.maxLen:
       self.food = random.sample(range(NUM_PIXELS), self.numFood)
       self.body = [random.randint(0, NUM_PIXELS - 1)]
       # reset
