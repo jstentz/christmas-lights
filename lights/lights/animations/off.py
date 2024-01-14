@@ -5,9 +5,6 @@ class Off(BaseAnimation):
   def __init__(self, frameBuf, *, fps: Optional[int] = None):
     super().__init__(frameBuf, fps=fps)
     self.frameBuf[:] = 0
-    self.firstFrame = True
 
   def renderNextFrame(self):
-    while not self.firstFrame:
-      pass
-    self.firstFrame = False
+    pass
