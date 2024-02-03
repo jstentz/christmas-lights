@@ -30,6 +30,7 @@ img {
   border-radius: 5px; /* 5px rounded corners */
   position: relative;
   width: 100%;
+  min-width: 320px;
 }
 
 .card-background {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Grid } from '@nextui-org/react';
 import Icon from './cog-white.png';
+import { Grid, Text, Button } from '@radix-ui/themes';
 
 export class GridItem extends Component {
   constructor(props) {
@@ -56,7 +56,6 @@ export class GridItem extends Component {
     const cardClassName = this.state.cardClickAnimation ? "card run-click-animation" : "card";
 
     const displayCard = (
-      <Grid xs={12} sm={4} md={3} lg={2}>
         <div className={cardClassName} onClick={this.handleCardClicked} onAnimationEnd={() => this.setState({cardClickAnimation: false})}>
           <img className="card-background" src={this.props.image_url} alt={this.props.light_name} />
           <img src={Icon} className="edit-button" onClick={this.handleEditButtonClick} alt="edit" />
@@ -64,7 +63,6 @@ export class GridItem extends Component {
             <h4><b>{this.props.name}</b></h4>
           </div>
         </div>
-      </Grid>
     );
     
     const editingCard = (

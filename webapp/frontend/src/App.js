@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { Theme } from '@radix-ui/themes';
 import axios from "axios";
-import { Grid, Text} from '@nextui-org/react';
 import './App.css';
-import { NextUIProvider } from '@nextui-org/react';
+import { Flex, Text, Button, Grid } from '@radix-ui/themes';
 import { GridItem } from './GridItem'
 import { ErrorMessage } from './ErrorMessage'
-
+import '@radix-ui/themes/styles.css';
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -127,7 +127,7 @@ class App extends Component{
     const light_pattern_list = Object.values(this.state.light_pattern_dict).sort((a, b) => a.position - b.position);
 
     return (
-      <NextUIProvider>
+      <Theme>
         <ErrorMessage 
           message={this.state.error_message.message} 
           hide={this.state.error_message.hidden} 
@@ -138,11 +138,12 @@ class App extends Component{
           textGradient: "45deg, $red600 35%, $green600 65%",
           textAlign: "center",        }}
         weight="bold">Plaid Family Holiday Lights</Text>
-        <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select a light pattern. Watch the tree change. Enjoy!</Text>
+        <Text h3 color="#2A2B2A" css={{textAlign: "center"}}>Select from the animations below</Text>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}><Button><Text h3>Or... create your own!</Text></Button></div>
         <Text h4 color="#706C61" css={{textAlign:"center"}}>Current Selection: {selection_text}</Text>
         <Text color="#706C61" css={{textAlign:"center"}}>{selection_description}</Text>
         <div className="outer-container">
-        <Grid.Container gap={2} className="grid-container">
+        <Grid gap="2" columns="5" className="grid-container">
           {light_pattern_list.map((choice) => 
           <GridItem 
             selectionCallback={this.handle_selection}
@@ -155,9 +156,9 @@ class App extends Component{
             light_id={choice.id} 
             light_name={choice.animation_id}/>
           )}
-        </Grid.Container>
+        </Grid>
         </div>
-      </NextUIProvider>
+      </Theme>
 
     );
  
