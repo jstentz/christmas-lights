@@ -90,7 +90,6 @@ const Home = () => {
   };
 
   const handleResetParameters = (selection_id: number, selection_name: string) => {
-    console.log(lightPatternDict);
     instance
       .post("/api/options/reset_parameters/", { "light_pattern_id": selection_id, "light_pattern_name": selection_name })
       .catch((err) => handleAxiosError(err));

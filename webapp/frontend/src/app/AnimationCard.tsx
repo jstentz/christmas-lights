@@ -41,7 +41,7 @@ const AnimationCard = (props: any) => {
     props.selectionCallback(props.light_id, props.light_name);
   };
 
-  const cardClassName = `${cardClickAnimation ? 'animate-click' : ''} relative rounded-lg overflow-hidden shadow-md hover:shadow-lg`;
+  const cardClassName = `${cardClickAnimation ? 'animate-click' : ''} relative aspect-4/3 rounded-lg overflow-hidden shadow-md hover:shadow-lg`;
 
   const displayCard = (
     <div className={cardClassName} onClick={handleCardClicked} onAnimationEnd={() => setCardClickAnimation(false)}>
