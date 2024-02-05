@@ -154,6 +154,11 @@ CORS_ORIGIN_WHITELIST = [
      'http://localhost:3000'
 ]
 
+CORS_ALLOW_HEADERS = [
+    "API_AUTH",
+    "content-type"
+]
+
 STATIC_URL = os.path.join(BASE_DIR, 'static/')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_content/')
