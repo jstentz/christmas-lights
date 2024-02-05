@@ -11,7 +11,7 @@ class LightOptionSerializer(serializers.ModelSerializer):
     # create a meta class
     class Meta:
         model = LightPatternOption
-        fields = ('id', 'position', 'title', 'description', 'image_url', 'animation_id', 'parameters_json')
+        fields = ('id', 'position', 'title', 'description', 'image_url', 'animation_id', 'parameters_json', 'default_parameters_json')
 
 
 class LightPatternSerializer(serializers.ModelSerializer):

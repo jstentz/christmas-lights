@@ -3,12 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import AnimationCard from "./AnimationCard";
 import ErrorMessage from './ErrorMessage';
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 import axios from "axios";
 
 interface LightPattern {
-  id: number, 
-  length: number, 
+  id: number,
+  animation_id: number,
+  image_url: string,
+  parameters_json: string,
+  default_parameters_json: string,
   title: string, 
   description: string
 }
@@ -61,13 +64,6 @@ const Home = () => {
     return lightPatternDict;
   };
 
-  const refreshList = () => {
-    instance
-      .get("/api/options/")
-      .then((res) => setLightPatternDict(convertToDict(res.data)))
-      .catch((err) => handleAxiosError(err));
-  };
-
   const getSelectedLightPattern = () => {
     instance
       .get("/api/selections/last/")
@@ -94,9 +90,9 @@ const Home = () => {
   };
 
   const handleResetParameters = (selection_id: number, selection_name: string) => {
+    console.log(lightPatternDict);
     instance
       .post("/api/options/reset_parameters/", { "light_pattern_id": selection_id, "light_pattern_name": selection_name })
-      .then(() => refreshList())
       .catch((err) => handleAxiosError(err));
   };
 
@@ -150,7 +146,8 @@ const Home = () => {
               selectionCallback={handleSelection}
               resetParametersCallback={handleResetParameters}
               editParametersCallback={handleEditParameters}
-              params={choice.parameters_json} 
+              params={choice.parameters_json}
+              default_params={choice.default_parameters_json}
               name={choice.title} 
               image_url={choice.image_url} 
               key={choice.id} 

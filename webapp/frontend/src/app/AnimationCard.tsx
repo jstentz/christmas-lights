@@ -19,6 +19,7 @@ const AnimationCard = (props: any) => {
   const handleResetButtonClick = (e: any) => {
     e.preventDefault();
     props.resetParametersCallback(props.light_id, props.light_name);
+    setParameters(props.default_params);
   };
 
   const handleChange = (parameter_key: string, e: any) => {

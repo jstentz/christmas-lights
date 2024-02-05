@@ -83,9 +83,10 @@ class LightOptionsView(viewsets.ModelViewSet):
 
       default_parameters = animation.get_default_parameters()
       existing.parameters_json = animation.serialize_parameters(default_parameters)
+      existing.default_parameters_json = existing.parameters_json
       existing.save()
       
-      return Response(200)
+      return Response(existing.parameters_json, 200)
 
     @action(detail=False, methods=['POST'], name='Validate and update new animation parameters')
     @basic_authentication
