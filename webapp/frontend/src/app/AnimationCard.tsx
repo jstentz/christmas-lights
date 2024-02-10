@@ -1,26 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useBackend } from '@/hooks/backend';
 
 const AnimationCard = (props: any) => {
+  const {selectAnimation, updateParameters, resetParameters} = useBackend();
   const [editing, setEditing] = useState(false);
   const [cardClickAnimation, setCardClickAnimation] = useState(false);
   const [parameters, setParameters] = useState(props.params);
-
-  const handleEditButtonClick = (e: any) => {
-    e.stopPropagation();
-    setEditing(true);
-  };
-
-  const handleCancelButtonClick = (e: any) => {
-    setEditing(false);
-  };
-
-  const handleResetButtonClick = (e: any) => {
-    e.preventDefault();
-    props.resetParametersCallback(props.light_id, props.light_name);
-    setParameters(props.default_params);
-  };
 
   const handleChange = (parameter_key: string, e: any) => {
     setParameters((oldState: any) => ({
@@ -32,13 +19,29 @@ const AnimationCard = (props: any) => {
   const handleParameterEdit = (e: any) => {
     e.preventDefault();
     setEditing(false);
-    props.editParametersCallback(props.light_id, props.light_name, parameters);
+    updateParameters(props.light_id, parameters);
   };
+
+  const handleResetButtonClick = (e: any) => {
+    e.stopPropagation();
+    resetParameters(props.light_id);
+    setParameters(props.default_params);
+  }
+
+  const handleEditButtonClick = (e: any) => {
+    e.stopPropagation();
+    setEditing(true);
+  }
+
+  const handleCancelButtonClick = (e: any) => {
+    e.stopPropagation();
+    setEditing(false);
+  }
 
   const handleCardClicked = (e: any) => {
     e.stopPropagation();
     setCardClickAnimation(true);
-    props.selectionCallback(props.light_id, props.light_name);
+    selectAnimation(props.light_id);
   };
 
   const cardClassName = `${cardClickAnimation ? 'animate-click' : ''} relative aspect-4/3 rounded-lg overflow-hidden shadow-md hover:shadow-lg`;
