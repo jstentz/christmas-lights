@@ -3,14 +3,16 @@
 import { BackendContextProvider } from "@/context/backend";
 import { useSearchParams } from "next/navigation";
 import { App } from './app';
+import { store } from "@/lib/store";
+import { Provider } from 'react-redux'
 
 const Home = () => {
   const password = useSearchParams().get('p') || "";
   
   return (
-    <BackendContextProvider apiAuth={password}>
-      <App />
-    </BackendContextProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
   );
 }
 
