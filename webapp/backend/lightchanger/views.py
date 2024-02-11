@@ -11,7 +11,7 @@ from django.conf import settings
 from functools import wraps
 import json, requests
 
-from lights.animations import NAME_TO_ANIMATION
+from lights.lights.animations import NAME_TO_ANIMATION
 
 
 def is_request_authenticated(request):
@@ -75,9 +75,9 @@ class LightOptionsView(viewsets.ModelViewSet):
     @basic_authentication
     def reset_parameters(self, request, *args, **kwargs):
       light_pattern_json = request.data
-      light_pattern_name = light_pattern_json['light_pattern_name']
       light_pattern_id = light_pattern_json['light_pattern_id']
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      light_pattern_name = existing.animation_id
       
       animation = NAME_TO_ANIMATION[light_pattern_name]
 
@@ -92,10 +92,10 @@ class LightOptionsView(viewsets.ModelViewSet):
     @basic_authentication
     def update_parameters(self, request, *args, **kwargs):
       light_pattern_json = request.data
-      light_pattern_name = light_pattern_json['light_pattern_name']
       light_pattern_id = light_pattern_json['light_pattern_id']
       new_parameters = light_pattern_json['parameters']
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      light_pattern_name = existing.animation_id
       
       animation = NAME_TO_ANIMATION[light_pattern_name]
 
@@ -149,8 +149,8 @@ class LightPatternsView(viewsets.ModelViewSet):
     def updatepi(self, request, *args, **kwargs):
         request_data = request.data.copy()
         light_pattern_id = request_data['light_pattern_id']
-        light_pattern_name = request_data['light_pattern_name']
         light_pattern = LightPatternOption.objects.get(pk=light_pattern_id)
+        light_pattern_name = light_pattern.animation_id
 
         animation = NAME_TO_ANIMATION[light_pattern_name]
         parameters = animation.deserialize_parameters(light_pattern.parameters_json)
