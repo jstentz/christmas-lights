@@ -1,13 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { animationReducer } from '@/reducers/rootReducer'
+import { createAnimationSlice } from '@/reducers/rootReducer'
 
-export const store = configureStore({
-  reducer: {
-    animation: animationReducer,
-  }
-})
+export const createStore = (apiAuth: string) => {
+  const animationSlice = createAnimationSlice(apiAuth);
+  return configureStore({
+    reducer: {
+      animation: animationSlice.reducer
+    }
+  });
+};
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<ReturnType<typeof createStore>['getState']>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = ReturnType<typeof createStore>['dispatch'];
