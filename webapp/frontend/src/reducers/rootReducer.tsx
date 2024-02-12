@@ -16,23 +16,22 @@ export type AnimationsState = {
     [index: number]: Animation,
   },
   selectedAnimation: number,
+  apiAuth: string,
 };
 
-const initialState: AnimationsState = {
-  animations: {},
-  selectedAnimation: 0, 
-}
-
-export const animationSlice = createSlice({
-  name: 'animation',
-  initialState: initialState,
-  reducers: {
-    selectAnimation: (state, action) => {
-      state.selectedAnimation = action.payload
+export const createAnimationSlice = (apiAuth: string) => {
+  const initialState: AnimationsState = {
+    animations: {},
+    selectedAnimation: 0,
+    apiAuth: apiAuth,
+  };
+  return createSlice({
+    name: 'animation',
+    initialState: initialState,
+    reducers: {
+      selectAnimation: (state, action) => {
+        state.selectedAnimation = action.payload
+      }
     }
-  }
-});
-
-export const { selectAnimation } = animationSlice.actions
-
-export const animationReducer = animationSlice.reducer
+  });
+};
