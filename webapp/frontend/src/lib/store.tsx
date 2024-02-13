@@ -1,16 +1,28 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { createAnimationSlice } from '@/reducers/rootReducer'
+import { animationSlice } from '@/reducers/rootReducer'
+import axios from 'axios';
 
 export const createStore = (apiAuth: string) => {
-  const animationSlice = createAnimationSlice(apiAuth);
+
+  const instance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
+  });
+  // instance.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+  // instance.defaults.xsrfCookieName = "csrftoken";
+  instance.defaults.headers.common['API_AUTH'] = apiAuth;
+
   return configureStore({
     reducer: {
       animation: animationSlice.reducer
-    }
+    },
+    middleware: (getDefaultMiddleware) => 
+      getDefaultMiddleware(
+        {
+          thunk: {extraArgument: instance},
+        }
+      )
   });
 };
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<ReturnType<typeof createStore>['getState']>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = ReturnType<typeof createStore>['dispatch'];

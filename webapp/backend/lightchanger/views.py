@@ -11,7 +11,7 @@ from django.conf import settings
 from functools import wraps
 import json, requests
 
-from lights.lights.animations import NAME_TO_ANIMATION
+from lights.animations import NAME_TO_ANIMATION
 
 
 def is_request_authenticated(request):
