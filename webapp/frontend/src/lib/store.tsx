@@ -7,8 +7,6 @@ export const createStore = (apiAuth: string) => {
   const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
   });
-  // instance.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-  // instance.defaults.xsrfCookieName = "csrftoken";
   instance.defaults.headers.common['API_AUTH'] = apiAuth;
 
   return configureStore({
