@@ -50,7 +50,7 @@ export const selectAnimation = createAppAsyncThunk<number, number>(
     };
 
     return axiosInstance.post('/api/selections/', selectionPayload)
-      .then(() => animationId)
+      .then(() => animationId);
   }
 );
 
@@ -65,18 +65,43 @@ export const getAnimations = createAppAsyncThunk<AnimationsMap>(
 
 export const getSelectedAnimation = createAppAsyncThunk<number>(
   'animations/getSelectedAnimation',
-  async (animationId, thunkAPI) => {
+  async (_, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
     const res = await axiosInstance.get('/api/selections/last/');
     return res.data.light_pattern_id;
   }
 );
 
+export const resetParameters = createAppAsyncThunk<void, number>(
+  'animations/resetParameters',
+  (animationId, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const resetPayload = {
+      light_pattern_id: animationId,
+    };
+
+    return axiosInstance.post('/api/options/reset_parameters/', resetPayload);
+  }
+)
+
+export const updateParameters = createAppAsyncThunk<void, {animationId: number, newParams: {}}>(
+  'animations/updateParameters',
+  ({animationId, newParams}, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const updatePayload = {
+      light_pattern_id: animationId,
+      parameters: newParams,
+    };
+
+    return axiosInstance.post('/api/options/update_parameters/', updatePayload);
+  }
+)
+
 export const animationSlice = createSlice({
   name: 'animation',
   initialState: initialState,
   reducers: {
-    clearError: (state, _) => {
+    clearError: (state) => {
       state.error = null;
     }
   },

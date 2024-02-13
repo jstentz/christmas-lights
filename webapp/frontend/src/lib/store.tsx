@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { animationSlice } from '@/reducers/rootReducer'
+import { animationSlice } from '@/reducers/animationsReducer';
 import axios from 'axios';
 
 export const createStore = (apiAuth: string) => {
