@@ -1,12 +1,10 @@
 "use client";
 
-import { useBackend } from "@/hooks/backend";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import AnimationCard from "./AnimationCard";
 import ErrorMessage from "./ErrorMessage";
-import { getAnimations, getSelectedAnimation, selectAllAnimations, selectSelectedAnimation, selectStatus } from "@/reducers/rootReducer";
+import { getAnimations, getSelectedAnimation, selectAllAnimations, selectSelectedAnimation, selectStatus } from "@/reducers/animationsReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { useSelectedLayoutSegment } from "next/navigation";
 
 interface LightPattern {
   id: number,
