@@ -113,6 +113,7 @@ export function BackendContextProvider({ children, apiAuth } : React.PropsWithCh
     async (animation_id: number) => {
       const resetPayload = {
         light_pattern_id: animation_id,
+        light_pattern_name: animations[animation_id].animation_id,
       };
       const res = await postAPI("/api/options/reset_parameters/", JSON.stringify(resetPayload), apiAuth)
       if(!res.ok) {
@@ -126,6 +127,7 @@ export function BackendContextProvider({ children, apiAuth } : React.PropsWithCh
     async (animation_id: number, new_params: {}) => {
       const updatePayload = {
         light_pattern_id: animation_id,
+        light_pattern_name: animations[animation_id].animation_id,
         parameters: new_params,
       };
       const res = await postAPI("/api/options/update_parameters/", JSON.stringify(updatePayload), apiAuth);
