@@ -1,16 +1,18 @@
 "use client";
 
-import { BackendContextProvider } from "@/context/backend";
 import { useSearchParams } from "next/navigation";
 import { App } from './app';
+import { createStore } from "@/lib/store";
+import { Provider } from 'react-redux'
 
 const Home = () => {
   const password = useSearchParams().get('p') || "";
+  const store = createStore(password);
   
   return (
-    <BackendContextProvider apiAuth={password}>
-      <App />
-    </BackendContextProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
   );
 }
 
