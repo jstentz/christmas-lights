@@ -9,6 +9,7 @@ class LightPatternOption(models.Model):
     image_url = models.TextField(null=True)
     animation_id = models.TextField(default="")
     parameters_json = models.JSONField()
+    default_parameters_json = models.JSONField()
 
 class LightPattern(models.Model):
     light_pattern_id = models.ForeignKey(LightPatternOption, on_delete=models.CASCADE)

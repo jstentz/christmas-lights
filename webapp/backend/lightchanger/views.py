@@ -83,6 +83,7 @@ class LightOptionsView(viewsets.ModelViewSet):
 
       default_parameters = animation.get_default_parameters()
       existing.parameters_json = animation.serialize_parameters(default_parameters)
+      existing.default_parameters_json = existing.parameters_json
       existing.save()
       
       return Response(200)
