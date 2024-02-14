@@ -1,27 +1,42 @@
 "use client";
 
 import { Dialog, Button } from "@radix-ui/themes";
-import { FC } from "react";
-import { selectEditorOpen, closeEditor, selectAnimationById, selectEditingAnimation } from "@/reducers/animationsReducer";
+import { FC, useState } from "react";
+import { updateParameters } from "@/reducers/animationsReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 
-export type EditDialog = {};
+export type EditDialog = {
+  animationId: number,
+  animationTitle: string,
+  open: boolean,
+  parameters: {[index: string]: string},
+  defaultParameters: {[index: string]: string},
+  onClose: () => void,
+};
 
-export const EditDialog: FC<EditDialog> = (props) => {
+export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, open, parameters, defaultParameters, onClose}) => {
   const dispatch = useAppDispatch();
-  const open = useAppSelector(selectEditorOpen);
-  const animationId = useAppSelector(selectEditingAnimation);
-  const animation = useAppSelector(selectAnimationById(animationId))
+  const [newParameters, setNewParameters] = useState(parameters);
+
+  const handleOnClose = (e: any) => {
+    e.stopPropagation();
+    onClose();
+  }
 
   return (
     <Dialog.Root open={open}>
       <Dialog.Content>
         <Dialog.Title>Users</Dialog.Title>
         <Dialog.Description>
-          The following users have access to this project.
+          Edit parameters for {animationTitle}
         </Dialog.Description>
-        <p>{open ? animation.description : ""}</p>
-        <Dialog.Close onClick={() => dispatch(closeEditor())}>
+        {Object.entries(parameters).map(([key, _]) => (
+          <div>
+            <p>{key}</p>
+            <p>{parameters[key]}</p>
+          </div>
+        ))}
+        <Dialog.Close onClick={handleOnClose}>
           <Button variant="soft" color="gray">
             Close
           </Button>

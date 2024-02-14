@@ -5,26 +5,6 @@ import AnimationCard from "./AnimationCard";
 import ErrorMessage from "./ErrorMessage";
 import { getAnimations, getSelectedAnimation, selectAllAnimations, selectSelectedAnimation, selectStatus } from "@/reducers/animationsReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { EditDialog } from "./EditDialog";
-
-interface LightPattern {
-  id: number,
-  animation_id: number,
-  image_url: string,
-  parameters_json: string,
-  default_parameters_json: string,
-  title: string, 
-  description: string
-}
-
-interface LightPatternList {
-  [index: number]: LightPattern
-}
-
-interface ErrorState {
-  message: string,
-  hidden: boolean
-}
 
 export const App = () => {
 
@@ -54,7 +34,6 @@ export const App = () => {
   return (
     <div className="bg-gray-200 p-4">
       <ErrorMessage />
-      <EditDialog />
       <p className="leading-tight text-center max-w-fit mx-auto text-5xl font-extrabold text-transparent bg-clip-text text-center bg-gradient-to-r from-rose-600 to-green-600">
           Plaid Family Lights
       </p>
@@ -70,16 +49,7 @@ export const App = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
         {lightPatternList.map((choice) => 
             <AnimationCard 
-              selectionCallback={() => {}}
-              resetParametersCallback={() => {}}
-              editParametersCallback={() => {}}
-              params={choice.parameters_json}
-              default_params={choice.default_parameters_json}
-              name={choice.title} 
-              image_url={choice.image_url} 
-              key={choice.id} 
-              light_id={choice.id} 
-              light_name={choice.animation_id}
+              animation={choice}
             />
           )}
       </div>
