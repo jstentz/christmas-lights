@@ -2,25 +2,21 @@ import { configureStore } from '@reduxjs/toolkit'
 import { animationSlice } from '@/reducers/animationsReducer';
 import axios from 'axios';
 
-export const createStore = (apiAuth: string) => {
+export const axiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
+});
 
-  const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
-  });
-  instance.defaults.headers.common['API_AUTH'] = apiAuth;
+export const store = configureStore({
+  reducer: {
+    animation: animationSlice.reducer
+  },
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware(
+      {
+        thunk: {extraArgument: axiosInstance},
+      }
+    )
+});
 
-  return configureStore({
-    reducer: {
-      animation: animationSlice.reducer
-    },
-    middleware: (getDefaultMiddleware) => 
-      getDefaultMiddleware(
-        {
-          thunk: {extraArgument: instance},
-        }
-      )
-  });
-};
-
-export type RootState = ReturnType<ReturnType<typeof createStore>['getState']>;
-export type AppDispatch = ReturnType<typeof createStore>['dispatch'];
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

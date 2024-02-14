@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, isRejected } from "@reduxjs/toolkit";
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { AppDispatch, RootState } from "@/lib/store";
 
 export type Animation = {
@@ -44,13 +44,20 @@ export const selectAnimation = createAppAsyncThunk<number, number>(
     const axiosInstance = thunkAPI.extra;
     const date = new Date();
     date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+
     const selectionPayload = {
       light_pattern_id: animationId,
       timestamp: date.toISOString(),
     };
+    const updatePayload = {
+      light_pattern_id: animationId,
+    };
 
-    return axiosInstance.post('/api/selections/', selectionPayload)
-      .then(() => animationId);
+    return axios.all([
+      axiosInstance.post('/api/selections/', selectionPayload),
+      axiosInstance.post('/api/selections/updatepi/', updatePayload),
+    ])
+      .then(axios.spread((res1, res2) => animationId))
   }
 );
 
