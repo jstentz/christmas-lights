@@ -5,6 +5,7 @@ import AnimationCard from "./AnimationCard";
 import ErrorMessage from "./ErrorMessage";
 import { getAnimations, getSelectedAnimation, selectAllAnimations, selectSelectedAnimation, selectStatus } from "@/reducers/animationsReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { EditDialog } from "./EditDialog";
 
 interface LightPattern {
   id: number,
@@ -53,6 +54,7 @@ export const App = () => {
   return (
     <div className="bg-gray-200 p-4">
       <ErrorMessage />
+      <EditDialog />
       <p className="leading-tight text-center max-w-fit mx-auto text-5xl font-extrabold text-transparent bg-clip-text text-center bg-gradient-to-r from-rose-600 to-green-600">
           Plaid Family Lights
       </p>
