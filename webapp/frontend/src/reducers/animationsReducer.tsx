@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, isRejected } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isPending, isRejected } from "@reduxjs/toolkit";
 import axios, { AxiosInstance } from "axios";
 import { AppDispatch, RootState } from "@/lib/store";
 
@@ -135,6 +135,9 @@ export const animationSlice = createSlice({
       .addMatcher(isRejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || null;
+      })
+      .addMatcher(isPending, (state, _) => {
+        state.error = null;
       })
   }
 });
