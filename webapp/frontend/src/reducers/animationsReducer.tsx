@@ -6,8 +6,8 @@ export type Animation = {
   id: number,
   animation_id: number,
   image_url: string,
-  parameters_json: string,
-  default_parameters_json: string,
+  parameters_json: {[index: string]: string},
+  default_parameters_json: {[index: string]: string},
   title: string,
   description: string,
   position: number,
@@ -21,8 +21,6 @@ export type AnimationsState = {
   animations: AnimationsMap,
   selectedAnimation: number,
   status: 'idle' | 'loading' | 'succeeded' | 'failed',
-  editorOpen: boolean,
-  editingAnimation: number,
   error: string | null,
 };
 
@@ -30,8 +28,6 @@ const initialState: AnimationsState = {
   animations: {},
   selectedAnimation: 0,
   status: 'idle',
-  editorOpen: false,
-  editingAnimation: 0,
   error: null,
 };
 
@@ -114,13 +110,6 @@ export const animationSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
-    },
-    openEditor: (state, action) => {
-      state.editorOpen = true;
-      state.editingAnimation = action.payload;
-    },
-    closeEditor: (state) => {
-      state.editorOpen = false;
     }
   },
   extraReducers(builder) {
@@ -153,20 +142,14 @@ export const animationSlice = createSlice({
   }
 });
 
-export const { clearError, openEditor, closeEditor } = animationSlice.actions;
+export const { clearError } = animationSlice.actions;
 
 export default animationSlice.reducer;
 
 export const selectAllAnimations = (state: RootState) => state.animation.animations;
-
-export const selectAnimationById = (animationId: number) => (state: RootState) => state.animation.animations[animationId];
 
 export const selectSelectedAnimation = (state: RootState) => state.animation.selectedAnimation;
 
 export const selectStatus = (state: RootState) => state.animation.status;
 
 export const selectError = (state: RootState) => state.animation.error;
-
-export const selectEditorOpen = (state: RootState) => state.animation.editorOpen;
-
-export const selectEditingAnimation = (state: RootState) => state.animation.editingAnimation;
