@@ -35,6 +35,7 @@ const AnimationCard: FC<AnimationCard> = ({animation}) => {
   const cardClassName = `${cardClickAnimation ? 'animate-click' : ''} relative aspect-4/3 rounded-lg overflow-hidden shadow-md hover:shadow-lg`;
 
   const displayCard = (
+    <div>
     <div className={cardClassName} onClick={handleCardClicked} onAnimationEnd={() => setCardClickAnimation(false)}>
       <img className="w-full h-auto object-cover" src={animation.image_url} alt={animation.title} />
       <div className="absolute top-4 right-4" onClick={handleEditButtonClick}>
@@ -43,11 +44,11 @@ const AnimationCard: FC<AnimationCard> = ({animation}) => {
       <div className="px-3 py-2 absolute bottom-0 left-0">
         <p className="font-bold text-white text-xl">{animation.title}</p>
       </div>
+      </div>
       {editing ? 
         <EditDialog 
           animationId={animation.id}
           animationTitle={animation.title}
-          open={editing}
           parameters={animation.parameters_json}
           defaultParameters={animation.default_parameters_json}
           onClose={handleCancelButtonClick}

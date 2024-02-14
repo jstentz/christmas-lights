@@ -8,23 +8,23 @@ import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 export type EditDialog = {
   animationId: number,
   animationTitle: string,
-  open: boolean,
   parameters: {[index: string]: string},
   defaultParameters: {[index: string]: string},
   onClose: () => void,
 };
 
-export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, open, parameters, defaultParameters, onClose}) => {
+export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, parameters, defaultParameters, onClose}) => {
   const dispatch = useAppDispatch();
   const [newParameters, setNewParameters] = useState(parameters);
 
-  const handleOnClose = (e: any) => {
-    e.stopPropagation();
-    onClose();
+  const handleOnOpenChange = (open: boolean) => {
+    if(!open) {
+      onClose();
+    }
   }
 
   return (
-    <Dialog.Root open={open}>
+    <Dialog.Root open={true} defaultOpen={true} onOpenChange={handleOnOpenChange}>
       <Dialog.Content>
         <Dialog.Title>Users</Dialog.Title>
         <Dialog.Description>
@@ -36,7 +36,7 @@ export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, open, p
             <p>{parameters[key]}</p>
           </div>
         ))}
-        <Dialog.Close onClick={handleOnClose}>
+        <Dialog.Close>
           <Button variant="soft" color="gray">
             Close
           </Button>
