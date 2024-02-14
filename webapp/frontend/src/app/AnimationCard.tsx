@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { selectAnimation, updateParameters, resetParameters } from '@/reducers/animationsReducer';
+import { selectAnimation, updateParameters, resetParameters, openEditor } from '@/reducers/animationsReducer';
 import { useAppDispatch } from '@/hooks/hooks';
 
 const AnimationCard = (props: any) => {
@@ -31,7 +31,8 @@ const AnimationCard = (props: any) => {
 
   const handleEditButtonClick = (e: any) => {
     e.stopPropagation();
-    setEditing(true);
+    dispatch(openEditor(props.light_id));
+    // setEditing(true);
   }
 
   const handleCancelButtonClick = (e: any) => {
