@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import AnimationCard from "./AnimationCard";
 import ErrorMessage from "./ErrorMessage";
+import { Header } from "./Header";
 import { getAnimations, getSelectedAnimation, selectAllAnimations, selectSelectedAnimation, selectStatus } from "@/reducers/animationsReducer";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 
@@ -32,9 +33,11 @@ export const App = () => {
   const lightPatternList = Object.values(animations).sort((a, b) => a.position - b.position);
 
   return (
-    <div className="bg-gray-200 p-4">
+    <div>
+      <Header title="Plaid Family Lights" selectedAnimationName={selectionText} />
+    <div className="p-4 pt-20">
       <ErrorMessage />
-      <p className="leading-tight text-center max-w-fit mx-auto text-5xl font-extrabold text-transparent bg-clip-text text-center bg-gradient-to-r from-rose-600 to-green-600">
+      {/* <p className="leading-tight text-center max-w-fit mx-auto text-5xl font-extrabold text-transparent bg-clip-text text-center bg-gradient-to-r from-rose-600 to-green-600">
           Plaid Family Lights
       </p>
       <p className="text-2xl text-center text-slate-800 font-bold">
@@ -45,7 +48,7 @@ export const App = () => {
       </p>
       <p className="pb-4 text-md text-center text-slate-700">
           {selectionDescription}
-      </p>
+      </p> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
         {lightPatternList.map((choice) => 
             <AnimationCard 
@@ -54,6 +57,7 @@ export const App = () => {
             />
           )}
       </div>
+  </div>
   </div>
   );
 }
