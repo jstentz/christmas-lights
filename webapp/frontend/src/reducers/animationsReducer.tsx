@@ -2,12 +2,16 @@ import { createAsyncThunk, createSlice, isPending, isRejected } from "@reduxjs/t
 import axios, { AxiosInstance } from "axios";
 import { AppDispatch, RootState } from "@/lib/store";
 
+export type AnimationParams = {
+  [index: string]: string,
+}
+
 export type Animation = {
   id: number,
   animation_id: number,
   image_url: string,
-  parameters_json: {[index: string]: string},
-  default_parameters_json: {[index: string]: string},
+  parameters_json: AnimationParams,
+  default_parameters_json: AnimationParams,
   title: string,
   description: string,
   position: number,
@@ -87,11 +91,11 @@ export const resetParameters = createAppAsyncThunk<void, number>(
       light_pattern_id: animationId,
     };
 
-    return axiosInstance.post('/api/options/reset_parameters/', resetPayload);
+    return axiosInstance.post('/api/options/reset_parameters/', resetPayload).then(() => {});
   }
 )
 
-export const updateParameters = createAppAsyncThunk<void, {animationId: number, newParams: {}}>(
+export const updateParameters = createAppAsyncThunk<{animationId: number, params: AnimationParams}, {animationId: number, newParams: AnimationParams}>(
   'animations/updateParameters',
   ({animationId, newParams}, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
@@ -100,7 +104,8 @@ export const updateParameters = createAppAsyncThunk<void, {animationId: number, 
       parameters: newParams,
     };
 
-    return axiosInstance.post('/api/options/update_parameters/', updatePayload);
+    return axiosInstance.post('/api/options/update_parameters/', updatePayload)
+      .then(() => ({animationId: animationId, params: newParams}));
   }
 )
 
@@ -131,6 +136,9 @@ export const animationSlice = createSlice({
       })
       .addCase(getSelectedAnimation.fulfilled, (state, action) => {
         state.selectedAnimation = action.payload;
+      })
+      .addCase(updateParameters.fulfilled, (state, action) => {
+        state.animations[action.payload.animationId].parameters_json = action.payload.params;
       })
       .addMatcher(isRejected, (state, action) => {
         state.status = 'failed';
