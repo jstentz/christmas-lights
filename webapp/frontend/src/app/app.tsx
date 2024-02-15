@@ -50,6 +50,7 @@ export const App = () => {
         {lightPatternList.map((choice) => 
             <AnimationCard 
               animation={choice}
+              key={choice.id}
             />
           )}
       </div>
