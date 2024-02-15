@@ -43,7 +43,7 @@ const AnimationCard: FC<AnimationCard> = ({animation}) => {
         <GearIcon color="white" height={25} width={25} />
       </div>
       <div className="px-3 py-2 absolute bottom-0 left-0">
-        <p className="font-bold text-white text-xl">{animation.title}</p>
+        <p className="font-bold text-slate-200 text-xl">{animation.title}</p>
       </div>
       </div>
       {editing ? 
