@@ -39,7 +39,7 @@ const AnimationCard: FC<AnimationCard> = ({animation}) => {
     <div>
     <div className={cardClassName} onClick={handleCardClicked} onAnimationEnd={() => setCardClickAnimation(false)}>
       <img className="w-full h-auto object-cover" src={animation.image_url} alt={animation.title} />
-      <div className="absolute top-4 right-4" onClick={handleEditButtonClick}>
+      <div className="absolute top-3 right-3" onClick={handleEditButtonClick}>
         <GearIcon color="white" height={25} width={25} />
       </div>
       <div className="px-3 py-2 absolute bottom-0 left-0">

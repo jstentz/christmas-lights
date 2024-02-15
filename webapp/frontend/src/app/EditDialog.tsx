@@ -1,7 +1,6 @@
 "use client";
 
 import { Dialog, Button, Code, TextField, Text } from "@radix-ui/themes";
-import * as Form from '@radix-ui/react-form';
 import { FC, useState, MouseEvent, FormEvent } from "react";
 import { updateParameters, resetParameters } from "@/reducers/animationsReducer";
 import { useAppDispatch } from "@/hooks/hooks";
@@ -39,34 +38,30 @@ export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, paramet
   };
 
   return (
-    <Dialog.Root open={true} defaultOpen={true}>
-      <Dialog.Content>
+    <Dialog.Root open={true} defaultOpen={false}>
+      <Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()}>
         <Dialog.Title>Edit parameters for <Code>{animationTitle}</Code></Dialog.Title>
-        <Form.Root onSubmit={handleSubmit}>
+        <form onSubmit={() => {}}>
           {Object.entries(parameters).map(([key, _]) => (
-            <Form.Field name={key} className="pb-2" key={key}>
-              <Form.Label>
+            <div className="pb-2" key={key}>
+              <label>
                 <div className="pb-1"><Text size="2" color="gray">{key}</Text></div>
-              </Form.Label>
-              <Form.Control asChild><TextField.Input value={newParameters[key]} onChange={(e) => handleOnChange(key, e)}/></Form.Control>
-            </Form.Field>
+              </label>
+              <TextField.Input value={newParameters[key]} onChange={(e) => handleOnChange(key, e)}/>
+            </div>
           ))}
           <div className="flex justify-between pt-2">
             <Button variant="soft" color="red" onClick={handleReset}>
               Reset
             </Button>
             <div className="flex justify-end gap-2">
-              <Dialog.Close>
-                <Button variant="soft" color="gray" onClick={() => onClose()}>
-                  Close
-                </Button>
-              </Dialog.Close>
-              <Form.FormSubmit asChild>
-                <Button variant="soft" color="green">Save</Button>
-              </Form.FormSubmit>
+              <Button variant="soft" color="gray" onClick={() => onClose()}>
+                Close
+              </Button>
+              <Button variant="soft" color="green" onClick={(e) => handleSubmit(e)}>Save</Button>
             </div>
           </div>
-        </Form.Root>
+        </form>
       </Dialog.Content>
     </Dialog.Root>
   )
