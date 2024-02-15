@@ -43,6 +43,7 @@ else:
 
 ALLOWED_HOSTS = [
   "lights.ryanstentz.com",
+  "lights-staging.ryanstentz.com",
   "localhost",
   "127.0.0.1"
 ]
