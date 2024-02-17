@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useBackend } from '@/hooks/backend';
+import { selectAnimation, updateParameters, resetParameters } from '@/reducers/animationsReducer';
+import { useAppDispatch } from '@/hooks/hooks';
 
 const AnimationCard = (props: any) => {
-  const {selectAnimation, updateParameters, resetParameters} = useBackend();
+  const dispatch = useAppDispatch();
   const [editing, setEditing] = useState(false);
   const [cardClickAnimation, setCardClickAnimation] = useState(false);
   const [parameters, setParameters] = useState(props.params);
@@ -19,12 +20,12 @@ const AnimationCard = (props: any) => {
   const handleParameterEdit = (e: any) => {
     e.preventDefault();
     setEditing(false);
-    updateParameters(props.light_id, parameters);
+    dispatch(updateParameters({animationId: props.light_id, newParams: parameters}));
   };
 
   const handleResetButtonClick = (e: any) => {
     e.stopPropagation();
-    resetParameters(props.light_id);
+    dispatch(resetParameters(props.light_id));
     setParameters(props.default_params);
   }
 
@@ -41,7 +42,7 @@ const AnimationCard = (props: any) => {
   const handleCardClicked = (e: any) => {
     e.stopPropagation();
     setCardClickAnimation(true);
-    selectAnimation(props.light_id);
+    dispatch(selectAnimation(props.light_id));
   };
 
   const cardClassName = `${cardClickAnimation ? 'animate-click' : ''} relative aspect-4/3 rounded-lg overflow-hidden shadow-md hover:shadow-lg`;
