@@ -16,6 +16,7 @@ class SerialController(BaseController):
   def shutdown(self):
     if self.transmit_thread is not None:
       self.transmit_thread.join()
+    self.usb_serial.close()
 
   def _transmit(self, buffer: bytes):
     if self.transmit_thread is not None:

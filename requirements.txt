@@ -4,10 +4,19 @@
 #
 #    pip-compile requirements.in
 #
+annotated-types==0.6.0
+    # via pydantic
+anyio==4.3.0
+    # via
+    #   httpx
+    #   openai
 asgiref==3.6.0
     # via django
 certifi==2022.12.7
-    # via requests
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
 charset-normalizer==2.1.1
     # via requests
 click==8.1.3
@@ -18,6 +27,8 @@ cursor==1.3.5
     # via -r requirements.in
 cycler==0.12.1
     # via matplotlib
+distro==1.9.0
+    # via openai
 django==4.1.4
     # via
     #   -r requirements.in
@@ -33,14 +44,25 @@ fonttools==4.47.0
     # via matplotlib
 gunicorn==20.1.0
     # via -r requirements.in
+h11==0.14.0
+    # via httpcore
+httpcore==1.0.3
+    # via httpx
+httpx==0.26.0
+    # via openai
 idna==3.4
-    # via requests
+    # via
+    #   anyio
+    #   httpx
+    #   requests
 itsdangerous==2.1.2
     # via flask
 jinja2==3.1.2
     # via flask
 kiwisolver==1.4.5
     # via matplotlib
+marko==2.0.2
+    # via -r requirements.in
 markupsafe==2.1.1
     # via
     #   jinja2
@@ -52,12 +74,18 @@ numpy==1.26.2
     #   -r requirements.in
     #   contourpy
     #   matplotlib
+openai==1.12.0
+    # via -r requirements.in
 packaging==23.2
     # via matplotlib
 perlin-noise==1.12
     # via -r requirements.in
 pillow==10.1.0
     # via matplotlib
+pydantic==2.6.1
+    # via openai
+pydantic-core==2.16.2
+    # via pydantic
 pyparsing==3.1.1
     # via matplotlib
 pyserial==3.5
@@ -72,12 +100,24 @@ requests==2.28.1
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
+sniffio==1.3.0
+    # via
+    #   anyio
+    #   httpx
+    #   openai
 sqlparse==0.4.3
     # via django
 sty==1.0.4
     # via -r requirements.in
+tqdm==4.66.2
+    # via openai
 typeguard==2.13.3
     # via -r requirements.in
+typing-extensions==4.9.0
+    # via
+    #   openai
+    #   pydantic
+    #   pydantic-core
 urllib3==1.26.13
     # via requests
 werkzeug==2.2.2
