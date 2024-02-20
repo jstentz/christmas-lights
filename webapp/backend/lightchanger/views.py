@@ -197,7 +197,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
 
 
    @action(detail=False, methods=['POST'], name='Generate a new animation from a prompt using AI')
-   @basic_authentication
+   @admin_authentication
    def generate(self, request, *args, **kwargs):
       prompt = request.data['prompt']
       if len(prompt) > settings.MAX_PROMPT_LENGTH:
@@ -219,7 +219,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       return Response(status=200, data=generated_animation_entry.pk)
    
    @action(detail=False, methods=['POST'], name='Preview a generated animation on the tree')
-   @basic_authentication
+   @admin_authentication
    def preview(self, request, *args, **kwargs):
       pass
    
