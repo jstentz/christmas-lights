@@ -12,3 +12,5 @@ requests
 typeguard
 numpy
 matplotlib
+openai
+marko

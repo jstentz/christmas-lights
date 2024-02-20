@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from lightchanger.views import HomePage, LightOptionsView, LightPatternsView
+from lightchanger.views import HomePage, LightOptionsView, LightPatternsView, GeneratedAnimationsView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -23,6 +23,7 @@ router = routers.DefaultRouter()
 # register the router
 router.register(r'options', LightOptionsView, 'option')
 router.register(r'selections', LightPatternsView)
+router.register(r'generate', GeneratedAnimationsView)
 
 
 urlpatterns = [

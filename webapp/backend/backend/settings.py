@@ -25,21 +25,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
 # Basic Authorization:
-API_AUTH_KEY = 'API_AUTH'
+API_AUTH_HEADER= 'API_AUTH'
+API_AUTH_ENV = 'API_AUTH'
+ADMIN_API_AUTH_ENV = 'ADMIN_API_AUTH'
 if DEBUG:
   # SECURITY WARNING: keep the secret key used in production secret!
   SECRET_KEY = 'django-insecure-026(81kz90bga8ww%l)m=(co^5#fx*2$i7ml=dp_8&$5c^+$8%'
   API_AUTH = None
+  ADMIN_API_AUTH = None
 else:
   try:
     SECRET_KEY = os.environ['SECRET_KEY']
   except KeyError as e:
-    raise RuntimeError("Running with DEBUG=False, but couldn't find a SECRET_KEY in environment.") from e
+    raise RuntimeError("Running with DEBUG=False but couldn't find a SECRET_KEY in environment.") from e
   
   try:
-    API_AUTH = json.loads(os.environ[API_AUTH_KEY])
+    API_AUTH = json.loads(os.environ[API_AUTH_ENV])
   except KeyError as e:
-    raise RuntimeError("Running with DEBUG=False, but couldn't find an API_AUTH in environment.") from e
+    raise RuntimeError("Running with DEBUG=False but couldn't find an API_AUTH in environment.") from e
+  
+  try:
+    ADMIN_API_AUTH = json.loads(os.environ[ADMIN_API_AUTH_ENV])
+  except KeyError as e:
+    raise RuntimeError("Running with DEBUG=False but couldn't find an ADMIN_API_ATH in environment.") from e
 
 ALLOWED_HOSTS = [
   "lights.ryanstentz.com",
@@ -51,6 +59,60 @@ ALLOWED_HOSTS = [
 # Lights Controller Configuration:
 LIGHTS_CONTROLLER_ENDPOINT = "http://192.168.1.25:8000/"
 
+# Animation Generation Configuration:
+MAX_PROMPT_LENGTH=150
+MAX_TITLE_LENGTH=30
+MAX_AUTHOR_LENGTH=30
+SYSTEM_MESSAGE = '''
+Given a user-supplied prompt, generate a python file with code that produces a light animation that adheres to template displayed below. Only respond with valid python.
+
+Follow these steps when generating the code:
+Step 1 - Think about assumptions that must be made about the prompt. Then write down a one sentence summary of the assumptions as a comment in the top of the python file.
+Step 2 - Write a one sentence interpretation of what the animation should do as a comment in the top of the generated python file.
+Step 3 - Use the interpretation, assumptions, and ambiguities from the previous steps to write the python code to create the animation that matches the prompt. 
+         The python code should conform to the template below. You cannot use any variables or attributes in the code that you have not declared.
+
+```
+import numpy as np 
+from typing import Optional, Collection
+from lights.animations.base import BaseAnimation # this is the class that all animations should inherit from
+
+# This is an example of an animation class that sets all of the lights in the array to the input color.
+class UniformColorLights(BaseAnimation): # All animations should inherit from the parent class 'BaseAnimation'
+  """This is an example class for the light animation where all of the lights in the input frameBuf 
+  will be set to red."""
+
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, color: Collection[int] = (255, 0, 0)):
+    """
+    Sets up the specific animation parameters. 
+
+    Required:
+    These parameters must be present in the __init__ function for all animation classes.
+     - frameBuf [np.ndarray]: A N x 3 array of RGB color values where N is the number of lights  
+     - fps [int | None]: The speed of the animation in frames per second 
+
+    Optional:
+    These parameters always follow the required parameters and are specific to this animation. Be creative and add these parameters to further customize the animation.
+    - color [tuple[int]]: Desired color for the lights as RGB. The default is red.
+    """
+    super().__init__(frameBuf, fps) # A call to the parent's __init__ function must be present here
+    self.color = color # initialize the input color value
+
+  def renderNextFrame(self):
+    """
+    This function should generate the next animation frame and store in the class's frameBuf attribute. 
+
+    IMPORTANT! The frameBuf is a shared buffer, so all modifications must be in place. Operations that create a copy of the frameBuf will not work. 
+    """
+    self.frameBuf[:] = self.color # this sets every color value in the frameBuf to the input color
+```
+'''
+OPENAI_API_KEY_ENV = 'OPENAI_API_KEY'
+try:
+    OPENAI_API_KEY = os.environ[OPENAI_API_KEY_ENV]
+except KeyError:
+    print("WARNING: OPENAI_API_KEY was not found in your terminal environment variables. Endpoints that use OpenAI (e.g. /generate/generate) will not work")
+    OPENAI_API_KEY = ""
 
 # Application definition
 
