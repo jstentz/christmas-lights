@@ -20,7 +20,12 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
       <label>
         <div className="pb-1"><Text size="2" color="gray">Please describe the kind of animation you'd like to see ({prompt.length}/{maxPromptLength})</Text></div>
       </label>
-      <TextArea value={prompt} maxLength={maxPromptLength} onChange={(e) => setPrompt(e.target.value)} placeholder="e.g. 'Fill the tree with twinkling stars' or 'idk what else to put here'"/>
+      <TextArea 
+        value={prompt} 
+        maxLength={maxPromptLength} 
+        onChange={(e) => setPrompt(e.target.value)} 
+        placeholder={process.env.NEXT_PUBLIC_PROMPT_PLACEHOLDER}
+      />
     </form>
 
   const waitingScreen = 

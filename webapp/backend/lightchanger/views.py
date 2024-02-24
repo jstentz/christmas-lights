@@ -216,6 +216,8 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       generated_animation_entry.generated_animation = self._extract_code(generated_animation_entry.model_response)
       generated_animation_entry.save()
 
+      print(response)
+      
       return Response(status=200, data=generated_animation_entry.pk)
    
    @action(detail=False, methods=['POST'], name='Preview a generated animation on the tree')
