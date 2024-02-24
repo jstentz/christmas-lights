@@ -1,16 +1,5 @@
-django
-django-cors-headers
-djangorestframework
-pyserial
-qrcodegen
-flask
-sty
-cursor
-gunicorn
-perlin_noise
-requests
-typeguard
-numpy
-matplotlib
-openai
-marko
+# include requirements for running animations
+-r lights/lights/requirements.in
+
+# include requirements for running the backend
+-r webapp/backend/requirements.in

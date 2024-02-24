@@ -1,0 +1,7 @@
+django
+django-cors-headers
+djangorestframework
+gunicorn
+requests
+openai
+marko
