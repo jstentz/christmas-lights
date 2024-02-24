@@ -11,7 +11,7 @@ class BaseController:
     self.n_pixels = n_pixels
     if animation not in NAME_TO_ANIMATION:
       raise TypeError(f"Animation {animation} not found.")
-    self.animation_class = NAME_TO_ANIMATION[animation]
+    self.animation_class = NAME_TO_ANIMATION[animation]()
     self.animation_class.validate_parameters(animation_kwargs)
     self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
