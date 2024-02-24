@@ -95,7 +95,7 @@ class LightOptionsView(viewsets.ModelViewSet):
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
       light_pattern_name = existing.animation_id
       
-      animation = NAME_TO_ANIMATION[light_pattern_name]
+      animation = NAME_TO_ANIMATION[light_pattern_name]()
 
       default_parameters = animation.get_default_parameters()
       existing.parameters_json = animation.serialize_parameters(default_parameters)
@@ -113,7 +113,7 @@ class LightOptionsView(viewsets.ModelViewSet):
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
       light_pattern_name = existing.animation_id
       
-      animation = NAME_TO_ANIMATION[light_pattern_name]
+      animation = NAME_TO_ANIMATION[light_pattern_name]()
 
       try:
         parameters = animation.deserialize_parameters(new_parameters)
@@ -167,7 +167,7 @@ class LightPatternsView(viewsets.ModelViewSet):
         light_pattern = LightPatternOption.objects.get(pk=light_pattern_id)
         light_pattern_name = light_pattern.animation_id
 
-        animation = NAME_TO_ANIMATION[light_pattern_name]
+        animation = NAME_TO_ANIMATION[light_pattern_name]()
         parameters = animation.deserialize_parameters(light_pattern.parameters_json)
 
         try:

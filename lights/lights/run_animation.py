@@ -28,8 +28,8 @@ class ThreadedAnimationRunner(threading.Thread):
 
 class AnimationRunner():
   def __init__(self, animation_name: str, controller_name: str, parameters: str) -> None:
-    self.animation_class = NAME_TO_ANIMATION[animation_name]
-    self.controller_class = NAME_TO_CONTROLLER[controller_name]
+    self.animation_class = NAME_TO_ANIMATION[animation_name]()
+    self.controller_class = NAME_TO_CONTROLLER[controller_name]()
     kwargs = json.loads(parameters)
 
     self.c = self.controller_class(animation_name, kwargs, NUM_PIXELS)
@@ -42,7 +42,7 @@ class AnimationRunner():
 
 
 def print_example_usage(animation_name: str, controller_name : str):
-  animation = NAME_TO_ANIMATION[animation_name]
+  animation = NAME_TO_ANIMATION[animation_name]()
   print("Example usage:")
   print("python", os.path.basename(__file__), '-c', controller_name, '-a', animation.exampleUsage())
 
