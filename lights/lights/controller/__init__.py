@@ -1,24 +1,28 @@
-from inspect import isclass
-from pkgutil import iter_modules
 from pathlib import Path
 from importlib import import_module
 from lights.controller.base import BaseController
-from typing import Dict, List, Type
+from typing import Dict, Callable
+import os
+import ast
 
-CONTROLLERS: List[Type[BaseController]] = []
+def get_lazy_loaders() -> Dict[str, Callable[[], BaseController]]:
+  name_to_lazy_loader = {}
+  module_path = Path(__file__).resolve().parent
+  package_name = __name__
+  for file_name in os.listdir(module_path):
+    if file_name.endswith('.py'):
+      with open(os.path.join(module_path, file_name), 'r') as file:
+        tree = ast.parse(file.read(), filename=file_name)
+      module_name = os.path.splitext(file_name)[0]
 
-# adapted from https://julienharbulot.com/python-dynamical-import.html
-# iterate through the modules in the current package
-package_dir = Path(__file__).resolve().parent
-for (_, module_name, _) in iter_modules([str(package_dir)]):
+      for node in tree.body:
+        if isinstance(node, ast.ClassDef):
+          for base in node.bases:
+            if isinstance(base, ast.Name) and base.id == BaseController.__name__:
+              loader = lambda module_name=module_name, node=node: getattr(import_module(package_name + '.' + module_name), node.name)
+              name_to_lazy_loader[node.name] = loader
+              break
+  return name_to_lazy_loader
 
-    # import the module and iterate through its attributes
-    module = import_module(f"{__name__}.{module_name}")
-    for attribute_name in dir(module):
-        attribute = getattr(module, attribute_name)
-
-        if isclass(attribute) and issubclass(attribute, BaseController):            
-            # Add the class to this package's variables
-            CONTROLLERS.append(attribute)
-
-NAME_TO_CONTROLLER: Dict[str, Type[BaseController]] = {animation.__name__: animation for animation in CONTROLLERS}
+NAME_TO_CONTROLLER = get_lazy_loaders()
+CONTROLLERS = list(NAME_TO_CONTROLLER.keys())
