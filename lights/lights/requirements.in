@@ -1,0 +1,9 @@
+pyserial
+qrcodegen
+flask
+sty
+cursor
+perlin_noise
+typeguard
+numpy
+matplotlib
