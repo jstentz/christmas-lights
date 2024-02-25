@@ -42,7 +42,7 @@ def run_untrusted_animation():
     group_add=['65537'],
     devices=['/dev/ttyACM0:/dev/ttyACM0'],
     volumes={
-      generated_animation_path.parent(): {'bind': '/mnt/animations/', 'mode': 'ro'}
+      generated_animation_path.parent: {'bind': '/mnt/animations/', 'mode': 'ro'}
     }
   )
   s.release()
