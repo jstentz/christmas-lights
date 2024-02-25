@@ -18,5 +18,3 @@ reload = True
 pidfile = "dev.pid"
 # Daemonize the Gunicorn process (detach & enter background)
 daemon = False
-
-timeout = 60
