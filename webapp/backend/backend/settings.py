@@ -64,47 +64,76 @@ MAX_PROMPT_LENGTH=1000
 MAX_TITLE_LENGTH=30
 MAX_AUTHOR_LENGTH=30
 SYSTEM_MESSAGE = '''
-Given a user-supplied prompt, generate a python file with code that produces a light animation that adheres to template displayed below. Only respond with valid python.
-
-Follow these steps when generating the code:
-Step 1 - Think about assumptions that must be made about the prompt. Then write down a one sentence summary of the assumptions as a comment in the top of the python file.
-Step 2 - Write a one sentence interpretation of what the animation should do as a comment in the top of the generated python file.
-Step 3 - Use the interpretation, assumptions, and ambiguities from the previous steps to write the python code to create the animation that matches the prompt. 
-         The python code should conform to the template below. You cannot use any variables or attributes in the code that you have not declared.
+# There is a tree outside wrapped in programmable lights. Given a user-supplied prompt and the template below, generate valid python code that animates these lights. 
+# Do not use anything without either importing it or defining it. Try to make the code as concise as possible, don't add comments.
 
 ```
 import numpy as np 
 from typing import Optional, Collection
-from lights.animations.base import BaseAnimation # this is the class that all animations should inherit from
+import random
+from lights.animations.base import BaseAnimation
 
-# This is an example of an animation class that sets all of the lights in the array to the input color.
-class UniformColorLights(BaseAnimation): # All animations should inherit from the parent class 'BaseAnimation'
-  """This is an example class for the light animation where all of the lights in the input frameBuf 
-  will be set to red."""
-
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, color: Collection[int] = (255, 0, 0)):
-    """
-    Sets up the specific animation parameters. 
-
-    Required:
-    These parameters must be present in the __init__ function for all animation classes.
-     - frameBuf [np.ndarray]: A N x 3 array of RGB color values where N is the number of lights  
-     - fps [int | None]: The speed of the animation in frames per second 
-
-    Optional:
-    These parameters always follow the required parameters and are specific to this animation. Be creative and add these parameters to further customize the animation.
-    - color [tuple[int]]: Desired color for the lights as RGB. The default is red.
-    """
-    super().__init__(frameBuf, fps) # A call to the parent's __init__ function must be present here
-    self.color = color # initialize the input color value
-
+# This is an example of an animation that animates a game of 1-dimensional snake on the tree.
+class Snake(BaseAnimation): # All animations should inherit from the parent class 'BaseAnimation'
+  def __init__(self, frameBuf, *, fps: Optional[int] = None, numFood: int = 10, snakeColor: Collection[int] = (0,255,0), foodColor: Collection[int] = (255,0,0), 
+               maxLen: int = 60):
+    super().__init__(frameBuf, fps=fps)
+    self.numFood = numFood
+    self.foodColor = foodColor
+    self.snakeColor = snakeColor
+    self.maxLen = maxLen
+    self.food = random.sample(range(len(self.frameBuf)), self.numFood)
+    self.body = [random.randint(0, len(self.frameBuf) - 1)]
+    self.S = set([i for i in range(len(self.frameBuf))]) # set of all indices
+    
   def renderNextFrame(self):
-    """
-    This function should generate the next animation frame and store in the class's frameBuf attribute. 
+    NUM_PIXELS = len(self.frameBuf)
+  
+    # max length snake
+    if len(set(self.body)) >= self.maxLen:
+      self.food = random.sample(range(NUM_PIXELS), self.numFood)
+      self.body = [random.randint(0, NUM_PIXELS - 1)]
+      # reset
 
-    IMPORTANT! The frameBuf is a shared buffer, so all modifications must be in place. Operations that create a copy of the frameBuf will not work. 
-    """
-    self.frameBuf[:] = self.color # this sets every color value in the frameBuf to the input color
+    # move the snake
+    head = self.body[0]
+    nearestFood = None
+    nearestDist = None
+    for i in self.food:
+      d = abs(i - head)
+      if nearestFood == None or d < nearestDist:
+        nearestFood = i
+        nearestDist = d
+
+    dir = +1 if nearestFood > head else -1
+    newHead = head + dir
+    self.body.insert(0, newHead)
+
+    if newHead in self.food:
+      self.food.remove(newHead)
+      foodOptions = list(self.S - set(self.food) - set(self.body))
+      if foodOptions != []:
+        self.food.append(random.choice(foodOptions))
+    else:
+      self.body.pop()
+
+    # update pixels
+    uniqueBodyList = []
+    for idx in self.body:
+      if idx not in uniqueBodyList:
+        uniqueBodyList.append(idx)
+
+    snakeFrame = [self.snakeColor for _ in uniqueBodyList]
+
+    for i in range(NUM_PIXELS):
+      if i in self.food:
+        self.frameBuf[i] = self.foodColor
+      else:
+        self.frameBuf[i] = (0, 0, 0)
+
+    for i in range(len(uniqueBodyList)):
+      pixelIdx = uniqueBodyList[i]
+      self.frameBuf[pixelIdx] = snakeFrame[i]
 ```
 '''
 OPENAI_API_KEY_ENV = 'OPENAI_API_KEY'
