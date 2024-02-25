@@ -236,4 +236,20 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       res = requests.post(settings.LIGHTS_CONTROLLER_ENDPOINT + '/preview', preview_payload_json, headers={'Content-Type': 'application/json'})
       return Response(status=res.status_code)
    
-   # TODO: Will need an update function or some way of adding in the author's name to the generated animation.
+   @action(detail=False, methods=['POST'], name='Submit a generated animation for review')
+   @admin_authentication
+   def submit(self, request, *args, **kwargs):
+      generated_animation_id = request.data['generated_animation_id']
+      title = request.data['title']
+      author = request.data['author']
+
+      generated_animation_entry = GeneratedAnimation.objects.get(pk=generated_animation_id)
+      if generated_animation_entry.author != "" or generated_animation_entry.title != "":
+         return Response(status=400, data='Animation already submitted for review')
+      
+      generated_animation_entry.title = title
+      generated_animation_entry.author = author
+      generated_animation_entry.save()
+
+      return Response(status=200)
+   

@@ -37,18 +37,6 @@ export const App = () => {
       <Header title="Plaid Family Lights" selectedAnimationName={selectionText} />
     <div className="p-4 pt-20">
       <ErrorMessage />
-      {/* <p className="leading-tight text-center max-w-fit mx-auto text-5xl font-extrabold text-transparent bg-clip-text text-center bg-gradient-to-r from-rose-600 to-green-600">
-          Plaid Family Lights
-      </p>
-      <p className="text-2xl text-center text-slate-800 font-bold">
-        Select an animation
-      </p>
-      <p className="text-lg text-center font-semibold text-slate-700">
-        Current Selection: {selectionText}
-      </p>
-      <p className="pb-4 text-md text-center text-slate-700">
-          {selectionDescription}
-      </p> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
         {lightPatternList.map((choice) => 
             <AnimationCard 

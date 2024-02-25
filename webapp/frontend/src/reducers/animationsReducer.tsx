@@ -132,7 +132,23 @@ export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
       generated_animation_id: generatedAnimationId,
     };
 
-    return axiosInstance.post('/api/generate/preview/', previewPayload);
+    return axiosInstance.post('/api/generate/preview/', previewPayload)
+      .then(() => {});
+  }
+);
+
+export const submitGeneratedAnimation = createAppAsyncThunk<void, {generatedAnimationId: number, title: string, author: string}>(
+  'animations/submitGeneratedAnimation',
+  ({generatedAnimationId, title, author}, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const submitPayload = {
+      generated_animation_id: generatedAnimationId,
+      title: title,
+      author: author,
+    };
+
+    return axiosInstance.post('/api/generate/submit/', submitPayload)
+      .then(() => {});
   }
 );
 
@@ -176,7 +192,7 @@ export const animationSlice = createSlice({
       })
       .addMatcher(isRejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || null;
+        state.error = action.error.name || null;
       })
       .addMatcher(isPending, (state, _) => {
         state.error = null;
