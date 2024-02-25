@@ -31,6 +31,7 @@ def run_untrusted_animation():
   if container is not None:
     container.stop()
     container.wait()
+    container.remove()
     container = None
   with open(generated_animation_path, 'w') as f:
     f.write(animation_code)
@@ -43,8 +44,7 @@ def run_untrusted_animation():
     devices=['/dev/ttyACM0:/dev/ttyACM0'],
     volumes={
       generated_animation_path.parent: {'bind': '/mnt/animations/', 'mode': 'ro'}
-    },
-    remove=True
+    }
   )
   s.release()
   return 'Success!'
@@ -59,6 +59,7 @@ def receive_data():
   if container is not None:
     container.stop()
     container.wait()
+    container.remove()
     container = None
   if ar is not None:
     ar.stop()
