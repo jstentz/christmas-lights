@@ -213,7 +213,11 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       )
 
       generated_animation_entry.model_response = response.choices[0].message.content
-      generated_animation_entry.generated_animation = self._extract_code(generated_animation_entry.model_response)
+      try:
+         extracted_code = self._extract_code(generated_animation_entry.model_response)
+      except:
+         extracted_code = response.choices[0].message.content
+      generated_animation_entry.generated_animation = extracted_code
       generated_animation_entry.save()
       
       return Response(status=200, data=generated_animation_entry.pk)
