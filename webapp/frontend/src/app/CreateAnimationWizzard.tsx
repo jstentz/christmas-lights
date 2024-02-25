@@ -22,7 +22,7 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
   const promptScreen = 
     <form onSubmit={() => {}}>
       <label>
-        <div className="pb-1"><Text size="2" color="gray">Please describe the kind of animation you'd like to see ({prompt.length}/{maxPromptLength})</Text></div>
+        <div className="pb-1"><Text size="2" color="gray">Please describe the kind of animation you would like to see ({prompt.length}/{maxPromptLength})</Text></div>
       </label>
       <TextArea 
         value={prompt} 
@@ -77,7 +77,7 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
       dispatch(previewGeneratedAnimation(generatedAnimationId));
       handleNext(null);
     }
-  }, [status])
+  }, [status, dispatch, generatedAnimationId, handleNext]);
 
   return (
     <Dialog.Root>
