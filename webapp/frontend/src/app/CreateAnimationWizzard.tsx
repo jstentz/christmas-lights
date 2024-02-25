@@ -1,18 +1,22 @@
 "use client";
 
 import { Dialog, Button, Code, TextField, Text, TextArea } from "@radix-ui/themes";
-import { FC, useState, MouseEvent, FormEvent } from "react";
-import { updateParameters, resetParameters } from "@/reducers/animationsReducer";
-import { useAppDispatch } from "@/hooks/hooks";
+import { FC, useState, MouseEvent, FormEvent, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { selectGeneratedAnimationId, selectStatus, generateAnimation, previewGeneratedAnimation } from "@/reducers/animationsReducer";
 import { PlusCircledIcon, GearIcon, ReloadIcon } from "@radix-ui/react-icons";
 
 export type CreateAnimationWizzard = {};
 
 export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
+  const dispatch = useAppDispatch();
   const [screen, setScreen] = useState(0);
   const [prompt, setPrompt] = useState("");
   const [animationTitle, setAnimationTitle] = useState("");
   const [animationAuthor, setAnimationAuthor] = useState("");
+
+  const status = useAppSelector(selectStatus);
+  const generatedAnimationId = useAppSelector(selectGeneratedAnimationId);
 
   const maxPromptLength = Number(process.env.NEXT_PUBLIC_MAX_PROMPT_LENGTH);
   const promptScreen = 
@@ -27,6 +31,10 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
         placeholder={process.env.NEXT_PUBLIC_PROMPT_PLACEHOLDER}
       />
     </form>
+  const promptNext = (e: MouseEvent) => {
+    dispatch(generateAnimation(prompt));
+    handleNext(e);
+  };
 
   const waitingScreen = 
     <div className="flex flex-col items-center">
@@ -56,13 +64,20 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
 
   const screens = [promptScreen, waitingScreen, previewScreen];
 
-  const handleBack = (e: MouseEvent) => {
+  const handleBack = (e: MouseEvent | null) => {
     setScreen((oldScreen) => (oldScreen > 0) ? oldScreen - 1 : oldScreen);
   };
 
-  const handleNext = (e: MouseEvent) => {
+  const handleNext = (e: MouseEvent | null) => {
     setScreen((oldScreen) => (oldScreen < screens.length - 1) ? oldScreen + 1 : oldScreen);
   };
+
+  useEffect(() => {
+    if(status == 'succeeded-generate') {
+      dispatch(previewGeneratedAnimation(generatedAnimationId));
+      handleNext(null);
+    }
+  }, [status])
 
   return (
     <Dialog.Root>
@@ -82,9 +97,11 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
                 Back
               </Button>
             : null}
-            <Button variant="soft" color="green" onClick={handleNext}>
-              Next
-            </Button>
+            {screen == 0 ? 
+              <Button variant="soft" color="green" onClick={promptNext}>
+                Next
+              </Button>
+            : null}
           </div>
       </div>
       </Dialog.Content>
