@@ -75,9 +75,9 @@ export const CreateAnimationWizzard: FC<CreateAnimationWizzard> = () => {
   useEffect(() => {
     if(status == 'succeeded-generate') {
       dispatch(previewGeneratedAnimation(generatedAnimationId));
-      handleNext(null);
+      setScreen((oldScreen) => (oldScreen < screens.length - 1) ? oldScreen + 1 : oldScreen);
     }
-  }, [status, dispatch, generatedAnimationId, handleNext]);
+  }, [status, dispatch, generatedAnimationId, setScreen]);
 
   return (
     <Dialog.Root>
