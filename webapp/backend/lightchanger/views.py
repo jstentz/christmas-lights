@@ -205,7 +205,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       generated_animation_entry = GeneratedAnimation(prompt=prompt, title="", author="", generated_animation="")
 
       response = client.chat.completions.create(
-         model="gpt-3.5-turbo-0125",
+         model="gpt-4-turbo-preview",
          messages=[
             {"role": "system", "content": settings.SYSTEM_MESSAGE},
             {"role": "user", "content": prompt}
