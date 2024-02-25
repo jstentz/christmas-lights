@@ -1,17 +1,15 @@
 import numpy as np
-from lights.animations import NAME_TO_ANIMATION
-from typing import Dict
+from lights.animations import BaseAnimation
+from typing import Dict, Type
 import numpy as np
 import time
 
 # A controller is responsible for pushing frames to display, whether that display be a terminal, gui, or leds.
 class BaseController:
   
-  def __init__(self, animation: str, animation_kwargs: Dict, n_pixels: int):
+  def __init__(self, animation: Type[BaseAnimation], animation_kwargs: Dict, n_pixels: int):
     self.n_pixels = n_pixels
-    if animation not in NAME_TO_ANIMATION:
-      raise TypeError(f"Animation {animation} not found.")
-    self.animation_class = NAME_TO_ANIMATION[animation]()
+    self.animation_class = animation
     self.animation_class.validate_parameters(animation_kwargs)
     self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
