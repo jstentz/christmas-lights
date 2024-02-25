@@ -43,7 +43,8 @@ def run_untrusted_animation():
     devices=['/dev/ttyACM0:/dev/ttyACM0'],
     volumes={
       generated_animation_path.parent: {'bind': '/mnt/animations/', 'mode': 'ro'}
-    }
+    },
+    remove=True
   )
   s.release()
   return 'Success!'
