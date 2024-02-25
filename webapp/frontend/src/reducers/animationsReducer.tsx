@@ -24,8 +24,9 @@ export type AnimationsMap = {
 export type AnimationsState = {
   animations: AnimationsMap,
   selectedAnimation: number,
-  status: 'idle' | 'loading' | 'succeeded' | 'failed',
+  status: 'idle' | 'loading' | 'succeeded' | 'failed' | 'succeeded-generate',
   error: string | null,
+  generatedAnimationId: number,
 };
 
 const initialState: AnimationsState = {
@@ -33,6 +34,7 @@ const initialState: AnimationsState = {
   selectedAnimation: 0,
   status: 'idle',
   error: null,
+  generatedAnimationId: 0,
 };
 
 const createAppAsyncThunk = createAsyncThunk.withTypes<{
@@ -93,7 +95,7 @@ export const resetParameters = createAppAsyncThunk<void, number>(
 
     return axiosInstance.post('/api/options/reset_parameters/', resetPayload).then(() => {});
   }
-)
+);
 
 export const updateParameters = createAppAsyncThunk<{animationId: number, params: AnimationParams}, {animationId: number, newParams: AnimationParams}>(
   'animations/updateParameters',
@@ -107,7 +109,32 @@ export const updateParameters = createAppAsyncThunk<{animationId: number, params
     return axiosInstance.post('/api/options/update_parameters/', updatePayload)
       .then(() => ({animationId: animationId, params: newParams}));
   }
-)
+);
+
+export const generateAnimation = createAppAsyncThunk<number, string>(
+  'animations/generateAnimation',
+  (prompt, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const generatePayload = {
+      prompt: prompt,
+    };
+
+    return axiosInstance.post('/api/generate/generate/', generatePayload)
+      .then((res) => res.data);
+  }
+);
+
+export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
+  'animations/previewGeneratedAnimation',
+  (generatedAnimationId, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const previewPayload = {
+      generated_animation_id: generatedAnimationId,
+    };
+
+    return axiosInstance.post('/api/generate/preview/', previewPayload);
+  }
+);
 
 export const animationSlice = createSlice({
   name: 'animation',
@@ -140,6 +167,13 @@ export const animationSlice = createSlice({
       .addCase(updateParameters.fulfilled, (state, action) => {
         state.animations[action.payload.animationId].parameters_json = action.payload.params;
       })
+      .addCase(generateAnimation.pending, (state, _) => {
+        state.status = 'loading';
+      })
+      .addCase(generateAnimation.fulfilled, (state, action) => {
+        state.status = 'succeeded-generate';
+        state.generatedAnimationId = action.payload;
+      })
       .addMatcher(isRejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || null;
@@ -161,3 +195,5 @@ export const selectSelectedAnimation = (state: RootState) => state.animation.sel
 export const selectStatus = (state: RootState) => state.animation.status;
 
 export const selectError = (state: RootState) => state.animation.error;
+
+export const selectGeneratedAnimationId = (state: RootState) => state.animation.generatedAnimationId;

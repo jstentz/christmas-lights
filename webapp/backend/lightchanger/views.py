@@ -215,14 +215,21 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       generated_animation_entry.model_response = response.choices[0].message.content
       generated_animation_entry.generated_animation = self._extract_code(generated_animation_entry.model_response)
       generated_animation_entry.save()
-
-      print(response)
       
       return Response(status=200, data=generated_animation_entry.pk)
    
    @action(detail=False, methods=['POST'], name='Preview a generated animation on the tree')
    @admin_authentication
    def preview(self, request, *args, **kwargs):
-      pass
+      generated_animation_id = request.data['generated_animation_id']
+      generated_animation_entry = GeneratedAnimation.objects.get(pk=generated_animation_id)
+
+      preview_payload = {
+         'generated_animation': generated_animation_entry.generated_animation
+      }
+
+      preview_payload_json = json.dumps(preview_payload)
+      res = requests.post(settings.LIGHTS_CONTROLLER_ENDPOINT + '/preview', preview_payload_json, headers={'Content-Type': 'application/json'})
+      return Response(status=res.status_code)
    
    # TODO: Will need an update function or some way of adding in the author's name to the generated animation.
