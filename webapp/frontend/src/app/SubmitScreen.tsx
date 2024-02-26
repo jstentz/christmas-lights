@@ -24,11 +24,11 @@ export const SubmitScreen: FC<SubmitScreen> = ({onReset, onClose, hidden}) => {
     dispatch(previewGeneratedAnimation(animationId));
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   if(!hidden && status == 'succeeded-generate') {
-  //     previewAnimation(generatedAnimationId);
-  //   }
-  // }, [previewAnimation, generatedAnimationId, hidden, status]);
+  useEffect(() => {
+    if(!hidden && status == 'succeeded-generate') {
+      previewAnimation(generatedAnimationId);
+    }
+  }, [previewAnimation, generatedAnimationId, hidden, status]);
 
   const handleSubmit = (e: MouseEvent) => {
     e.preventDefault();
