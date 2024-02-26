@@ -142,7 +142,7 @@ class LightPatternsView(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
        return super().retrieve(request, *args, **kwargs)
 
-    @admin_authentication
+    @basic_authentication
     def create(self, request, *args, **kwargs):
        return super().create(request, *args, **kwargs)
 
