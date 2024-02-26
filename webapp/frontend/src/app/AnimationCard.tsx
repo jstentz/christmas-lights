@@ -53,6 +53,7 @@ const AnimationCard: FC<AnimationCard> = ({animation}) => {
           parameters={animation.parameters_json}
           defaultParameters={animation.default_parameters_json}
           onClose={handleCancelButtonClick}
+          onOpenChange={setEditing}
         /> : <></>}
     </div>
   );
