@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { PlusCircledIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Code } from "@radix-ui/themes";
 import { AlertDialog, Button } from "@radix-ui/themes";
-import { CreateAnimationWizzard } from "./CreateAnimationWizzard";
+import { CreateAnimationWizard } from "./CreateAnimationWizard";
 
 type Props = {
   title: string,
@@ -28,7 +28,7 @@ export const Header: FC<Props> = ({
         </p>
       </div>
 
-      <CreateAnimationWizzard />
+      <CreateAnimationWizard />
     </header>
   );
 }

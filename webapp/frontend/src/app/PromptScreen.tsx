@@ -3,18 +3,18 @@
 import { FC, useState, useCallback } from "react";
 import { useAppDispatch } from "@/hooks/hooks";
 import { generateAnimation } from "@/reducers/animationsReducer";
-import { TextArea, Dialog, Button } from "@radix-ui/themes";
+import { TextArea, Button } from "@radix-ui/themes";
 import { MouseEvent } from "react";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export type PromptScreen = {
   onNext: () => void,
   onBack: () => void,
-  onReset: () => void,
+  onClose: () => void,
   hidden: boolean,
 };
 
-export const PromptScreen: FC<PromptScreen> = ({onNext, hidden}) => {
+export const PromptScreen: FC<PromptScreen> = ({onNext, onClose, hidden}) => {
   const dispatch = useAppDispatch();
   const [prompt, setPrompt] = useState("");
 
@@ -27,6 +27,12 @@ export const PromptScreen: FC<PromptScreen> = ({onNext, hidden}) => {
     e.stopPropagation();
     submitPrompt(prompt);
   };
+
+  const onPromptClose = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClose();
+  }
 
   const maxPromptLength = Number(process.env.NEXT_PUBLIC_MAX_PROMPT_LENGTH);
   const promptScreen = (
@@ -51,9 +57,7 @@ export const PromptScreen: FC<PromptScreen> = ({onNext, hidden}) => {
         </div>
       </div>
       <div className="flex justify-between pt-4">
-        <Dialog.Close>
-          <Button variant="soft" color="red">Cancel</Button>
-        </Dialog.Close>
+        <Button variant="soft" color="red" onClick={onPromptClose}>Cancel</Button>
         <div className="flex justify-end gap-2">
           <Button variant="soft" color="green" onClick={onPromptNext}>
             Next

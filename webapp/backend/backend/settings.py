@@ -63,9 +63,10 @@ LIGHTS_CONTROLLER_ENDPOINT = "http://192.168.1.25:8000/"
 MAX_PROMPT_LENGTH=1000
 MAX_TITLE_LENGTH=30
 MAX_AUTHOR_LENGTH=30
+OPENAI_MODEL="gpt-3.5-turbo-0125"
 SYSTEM_MESSAGE = '''
-# There is a tree outside wrapped in programmable lights. Given a user-supplied prompt and the template below, generate valid python code that animates these lights according to the prompt. 
-# Do not use anything without either importing it or defining it. Keep the code concise, and don't add comments.
+There is a tree outside wrapped in programmable lights. Given a user-supplied prompt and the template below, generate valid python code that animates these lights according to the prompt. 
+Do not use anything without either importing it or defining it. Keep the code concise, and don't add comments.
 
 ```
 import numpy as np 

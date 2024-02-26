@@ -1,26 +1,31 @@
 "use client";
 
-import { FC, useEffect } from "react";
-import { Button, Dialog } from "@radix-ui/themes";
+import { FC, useEffect, MouseEvent } from "react";
+import { Button } from "@radix-ui/themes";
 import { GearIcon } from "@radix-ui/react-icons";
 import { useAppSelector } from "@/hooks/hooks";
 import { selectStatus } from "@/reducers/animationsReducer";
 
 export type WaitingScreen = {
   onNext: () => void,
-  onBack: () => void,
-  onReset: () => void,
+  onClose: () => void,
   hidden: boolean,
 };
 
-export const WaitingScreen: FC<WaitingScreen> = ({onNext, hidden}) => {
+export const WaitingScreen: FC<WaitingScreen> = ({onNext, onClose, hidden}) => {
   const status = useAppSelector(selectStatus);
 
   useEffect(() => {
-    if(status == 'succeeded-generate') {
+    if(!hidden && status == 'succeeded-generate') {
       onNext();
     }
-  }, [status, onNext]);
+  }, [status, hidden, onNext]);
+
+  const handleClose = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClose();
+  }
 
   const waitingScreen = (
     <div>
@@ -30,9 +35,7 @@ export const WaitingScreen: FC<WaitingScreen> = ({onNext, hidden}) => {
         <p>Can take upwards of 30 seconds</p>
       </div>
       <div className="flex justify-between pt-4">
-        <Dialog.Close>
-          <Button variant="soft" color="red">Cancel</Button>
-        </Dialog.Close>
+        <Button variant="soft" color="red" onClick={handleClose}>Cancel</Button>
       </div>
     </div>
   );
