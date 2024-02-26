@@ -67,6 +67,13 @@ export const selectAnimation = createAppAsyncThunk<number, number>(
   }
 );
 
+export const restartSelectedAnimation = createAppAsyncThunk<void, void>(
+  'animations/restartSelectedAnimation',
+  (_, thunkAPI) => {
+    thunkAPI.dispatch(selectAnimation(thunkAPI.getState().animation.selectedAnimation));
+  }
+);
+
 export const getAnimations = createAppAsyncThunk<AnimationsMap>(
   'animations/getAnimations',
   async (_, thunkAPI) => {

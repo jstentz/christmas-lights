@@ -11,9 +11,10 @@ export type EditDialog = {
   parameters: {[index: string]: string},
   defaultParameters: {[index: string]: string},
   onClose: () => void,
+  onOpenChange: (open: boolean) => void,
 };
 
-export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, parameters, defaultParameters, onClose}) => {
+export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, parameters, defaultParameters, onClose, onOpenChange}) => {
   const dispatch = useAppDispatch();
   const [newParameters, setNewParameters] = useState(parameters);
 
@@ -38,7 +39,7 @@ export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, paramet
   };
 
   return (
-    <Dialog.Root open={true} defaultOpen={false}>
+    <Dialog.Root open={true} defaultOpen={false} onOpenChange={onOpenChange}>
       <Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()}>
         <Dialog.Title>Edit parameters for <Code>{animationTitle}</Code></Dialog.Title>
         <form onSubmit={() => {}}>
@@ -51,15 +52,15 @@ export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, paramet
             </div>
           ))}
           <div className="flex justify-between pt-2">
-            <Button variant="soft" color="red" onClick={handleReset}>
-              Reset
-            </Button>
-            <div className="flex justify-end gap-2">
-              <Button variant="soft" color="gray" onClick={() => onClose()}>
+            <div className="flex justify-start gap-2">
+              <Button variant="soft" color="red" onClick={() => onClose()}>
                 Close
               </Button>
-              <Button variant="soft" color="green" onClick={(e) => handleSubmit(e)}>Save</Button>
+              <Button variant="soft" color="gray" onClick={handleReset}>
+                Reset
+              </Button>
             </div>
+            <Button variant="soft" color="green" onClick={(e) => handleSubmit(e)}>Save</Button>
           </div>
         </form>
       </Dialog.Content>
