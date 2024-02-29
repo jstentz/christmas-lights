@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import { ReloadIcon, StopIcon } from "@radix-ui/react-icons";
 import { Text, TextField, Button, Separator } from "@radix-ui/themes";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { previewGeneratedAnimation, selectGeneratedAnimation, selectGenerateStatus, restartSelectedAnimation, updateGeneratedAniamtionParameters } from "@/reducers/animationsReducer";
+import { previewGeneratedAnimation, selectGeneratedAnimation, selectGenerateStatus, restartSelectedAnimation, updateGeneratedAniamtionParameters, AnimationParams } from "@/reducers/animationsReducer";
 
 export type ControlScreen = {
   onNext: () => void,
@@ -19,7 +19,7 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
   const generatedAnimation = useAppSelector(selectGeneratedAnimation);
   const status = useAppSelector(selectGenerateStatus);
 
-  const [newParameters, setNewParameters] = useState(generatedAnimation?.parameters_json || {});
+  const [newParameters, setNewParameters] = useState<AnimationParams>({});
 
   const previewAnimation = useCallback((animationId: number) => {
     dispatch(previewGeneratedAnimation(animationId));
@@ -89,7 +89,8 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
       </div>
       <Separator my="3" size="4" />
       <form onSubmit={(e) => {e.preventDefault()}}>
-      {Object.entries(generatedAnimation?.parameters_json || {}).map(([key, _]) => (
+      Edit your animation's parameters
+      {Object.entries(newParameters).map(([key, _]) => (
         <div className="pb-2" key={key}>
           <label>
             <div className="pb-1"><Text size="2" color="gray">{key}</Text></div>
