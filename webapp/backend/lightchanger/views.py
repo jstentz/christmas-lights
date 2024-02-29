@@ -268,9 +268,11 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       generated_animation_id = request.data['id']
       generated_animation_entry = GeneratedAnimation.objects.get(pk=generated_animation_id)
 
+      parameters = BaseAnimation.deserialize_parameters(generated_animation_entry.parameters_json)
+
       preview_payload = {
          'generated_animation': generated_animation_entry.generated_animation,
-         'parameters_json': generated_animation_entry.parameters_json,
+         'parameters_json': parameters,
       }
 
       preview_payload_json = json.dumps(preview_payload)

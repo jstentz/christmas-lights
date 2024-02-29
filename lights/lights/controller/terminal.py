@@ -8,8 +8,8 @@ from sty import bg
 import numpy as np
 
 class TerminalController(BaseController):
-  def __init__(self, animation: str, animation_kwargs: Dict, n_pixels: int):
-    super().__init__(animation, animation_kwargs, n_pixels)
+  def __init__(self, animation: str, animation_kwargs: Dict, n_pixels: int, validate_parameters=True):
+    super().__init__(animation, animation_kwargs, n_pixels, validate_parameters=validate_parameters)
     self.bg = np.vectorize(bg)
     self.tcols, _ = os.get_terminal_size()
     os.system('cls||clear')
