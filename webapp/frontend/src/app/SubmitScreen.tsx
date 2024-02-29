@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import { ReloadIcon, StopIcon } from "@radix-ui/react-icons";
 import { Text, TextField, Button, Separator } from "@radix-ui/themes";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { previewGeneratedAnimation, selectGeneratedAnimationId, selectStatus, submitGeneratedAnimation, restartSelectedAnimation } from "@/reducers/animationsReducer";
+import { previewGeneratedAnimation, selectGeneratedAnimation, selectStatus, submitGeneratedAnimation, restartSelectedAnimation } from "@/reducers/animationsReducer";
 
 export type SubmitScreen = {
   onReset: () => void,
@@ -17,23 +17,14 @@ export const SubmitScreen: FC<SubmitScreen> = ({onReset, onClose, hidden}) => {
   const [animationTitle, setAnimationTitle] = useState("");
   const [animationAuthor, setAnimationAuthor] = useState("");
 
-  const generatedAnimationId = useAppSelector(selectGeneratedAnimationId);
-  const status = useAppSelector(selectStatus);
-
-  const previewAnimation = useCallback((animationId: number) => {
-    dispatch(previewGeneratedAnimation(animationId));
-  }, [dispatch]);
-
-  useEffect(() => {
-    if(!hidden && status == 'succeeded-generate') {
-      previewAnimation(generatedAnimationId);
-    }
-  }, [previewAnimation, generatedAnimationId, hidden, status]);
+  const generatedAnimation = useAppSelector(selectGeneratedAnimation);
 
   const handleSubmit = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(submitGeneratedAnimation({generatedAnimationId: generatedAnimationId, title: animationTitle, author: animationAuthor}));
+    if(generatedAnimation) {
+      dispatch(submitGeneratedAnimation({generatedAnimationId: generatedAnimation.id, title: animationTitle, author: animationAuthor}));
+    }
     onClose();
   };
 
@@ -49,29 +40,11 @@ export const SubmitScreen: FC<SubmitScreen> = ({onReset, onClose, hidden}) => {
     onClose();
   };
 
-  const handleStop = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dispatch(restartSelectedAnimation());
-  };
-
-  const handleRestart = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    previewAnimation(generatedAnimationId);
-  };
-
   const maxTitleLength = Number(process.env.NEXT_PUBLIC_MAX_TITLE_LENGTH);
   const maxAuthorNameLength = Number(process.env.NEXT_PUBLIC_MAX_AUTHOR_LENGTH);
 
   const submitScreen = (
     <div>
-      <p>Your animation should start playing on the tree shortly. You can stop and restart the animation using the controls below</p>
-      <div className="flex justify-center gap-2 p-2">
-        <Button color="red" onClick={handleStop}><StopIcon /></Button>
-        <Button color="gray" onClick={handleRestart}><ReloadIcon /></Button>
-      </div>
-      <Separator my="3" size="4" />
       <form>
         Want your animation featured on the homepage? Fill out the fields below!
         <label>
@@ -89,7 +62,7 @@ export const SubmitScreen: FC<SubmitScreen> = ({onReset, onClose, hidden}) => {
           Cancel
         </Button>
         <Button variant="soft" color="gray" onClick={handleReset}>
-            Restart
+          Restart
         </Button>
         </div>
         <Button variant="soft" color="green" onClick={handleSubmit}>

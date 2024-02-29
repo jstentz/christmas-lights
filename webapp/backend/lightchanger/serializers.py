@@ -27,4 +27,4 @@ class GeneratedAnimationSerializer(serializers.ModelSerializer):
     # create a meta class
     class Meta:
         model = GeneratedAnimation
-        fields = ('id', 'prompt', 'title', 'author', 'model_response', 'generated_animation')
+        fields = ('id', 'prompt', 'title', 'author', 'model_response', 'generated_animation', 'parameters_json')

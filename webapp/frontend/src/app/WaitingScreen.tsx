@@ -4,7 +4,7 @@ import { FC, useEffect, MouseEvent } from "react";
 import { Button } from "@radix-ui/themes";
 import { GearIcon } from "@radix-ui/react-icons";
 import { useAppSelector } from "@/hooks/hooks";
-import { selectStatus } from "@/reducers/animationsReducer";
+import { selectGenerateStatus } from "@/reducers/animationsReducer";
 
 export type WaitingScreen = {
   onNext: () => void,
@@ -13,10 +13,10 @@ export type WaitingScreen = {
 };
 
 export const WaitingScreen: FC<WaitingScreen> = ({onNext, onClose, hidden}) => {
-  const status = useAppSelector(selectStatus);
+  const status = useAppSelector(selectGenerateStatus);
 
   useEffect(() => {
-    if(!hidden && status == 'succeeded-generate') {
+    if(!hidden && status == 'generated') {
       onNext();
     }
   }, [status, hidden, onNext]);
