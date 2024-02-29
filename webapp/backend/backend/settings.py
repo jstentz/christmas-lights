@@ -85,7 +85,7 @@ class UniformColorLights(BaseAnimation): # All animations should inherit from th
      - fps [int | None]: The speed of the animation in frames per second 
 
     Optional:
-    These keyword parameters are specific to this animation. Be creative and add these parameters to further customize the animation.
+    These keyword parameters are specific to this animation. They MUST have a default value! Be creative and add these parameters to further customize the animation.
     - color [tuple[int]]: Desired color for the lights as RGB. The default is red.
     """
     super().__init__(frameBuf, fps) # Must be present

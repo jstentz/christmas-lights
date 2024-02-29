@@ -48,7 +48,7 @@ export const CreateAnimationWizard: FC<CreateAnimationWizard> = () => {
       <Dialog.Trigger>
         <PlusCircledIcon height={25} width={25} color="white" />
       </Dialog.Trigger>
-      <Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()}>
+      <Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()} onPointerDownOutside={(e) => e.preventDefault()}>
         <Dialog.Title>Create a new animation!</Dialog.Title>
         {promptScreen}
         {waitingScreen}
