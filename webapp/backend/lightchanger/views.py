@@ -237,9 +237,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
             {"role": "user", "content": prompt}
          ],
       )
-
-      print(response)
-
+      
       generated_animation_entry.model_response = response.choices[0].message.content
       try:
          extracted_code = self._extract_code(generated_animation_entry.model_response)
