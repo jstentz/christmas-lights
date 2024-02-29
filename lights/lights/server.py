@@ -38,7 +38,7 @@ def run_untrusted_animation():
     f.write(animation_code)
   container = d.containers.run(
     'lights', 
-    f'python run_animation.py -c SerialController --file /mnt/animations/ai.py --args {parameters} --no_validation', 
+    f'python run_animation.py -c SerialController --file /mnt/animations/ai.py --args \'{parameters}\' --no_validation', 
     detach=True,
     network_mode='none',
     group_add=['65537'],
