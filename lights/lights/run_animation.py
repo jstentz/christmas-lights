@@ -39,12 +39,12 @@ class ThreadedAnimationRunner(threading.Thread):
 
 
 class AnimationRunner():
-  def __init__(self, animation_class: Type[BaseAnimation], controller_class: Type[BaseController], parameters: str) -> None:
+  def __init__(self, animation_class: Type[BaseAnimation], controller_class: Type[BaseController], parameters: str, validate_parameters=True) -> None:
     self.animation_class = animation_class
     self.controller_class = controller_class
     kwargs = json.loads(parameters)
 
-    self.c = self.controller_class(self.animation_class, kwargs, NUM_PIXELS)
+    self.c = self.controller_class(self.animation_class, kwargs, NUM_PIXELS, validate_parameters=validate_parameters)
 
   def run(self):
     self.c.run()
@@ -88,6 +88,9 @@ if __name__ == '__main__':
   parser.add_argument('-l',
                       help='list all available animations and controllers',
                       action='store_true')
+  parser.add_argument('--no_validation',
+                      help='skips validating the supplied args list against the selected animation',
+                      action='store_true')
   parser.add_argument('--file',
                       help='runs an animation from a file',
                       type=str)
@@ -115,7 +118,7 @@ if __name__ == '__main__':
       animation_class = load_animation_from_file(args.file)
     controller_class = NAME_TO_CONTROLLER[args.controller_name]()
     print(animation_class, controller_class)
-    ar = AnimationRunner(animation_class, controller_class, args.args)
+    ar = AnimationRunner(animation_class, controller_class, args.args, validate_parameters=not args.no_validation)
   except Exception as e:
     print_example_usage(args.animation_name, args.controller_name)
     raise e

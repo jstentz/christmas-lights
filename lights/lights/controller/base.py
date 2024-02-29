@@ -7,10 +7,11 @@ import time
 # A controller is responsible for pushing frames to display, whether that display be a terminal, gui, or leds.
 class BaseController:
   
-  def __init__(self, animation: Type[BaseAnimation], animation_kwargs: Dict, n_pixels: int):
+  def __init__(self, animation: Type[BaseAnimation], animation_kwargs: Dict, n_pixels: int, validate_parameters=True):
     self.n_pixels = n_pixels
     self.animation_class = animation
-    self.animation_class.validate_parameters(animation_kwargs)
+    if validate_parameters:
+      self.animation_class.validate_parameters(animation_kwargs)
     self.frameBuf = np.zeros((n_pixels, 3), dtype='float')
     self.animation = self.animation_class(self.frameBuf, **animation_kwargs)
     self.exited = False

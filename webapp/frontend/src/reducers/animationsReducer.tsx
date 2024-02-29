@@ -43,8 +43,11 @@ const initialState: AnimationsState = {
   status: 'idle',
   error: null,
   generate: {
-    generatedAnimation: undefined,
-    status: 'idle',
+    generatedAnimation: {
+      id: 22,
+      parameters_json: {"fps": "null", "snakes_info": "[[[255, 0, 0], 10]]"},
+    },
+    status: 'generated',
   }
 };
 
@@ -154,6 +157,20 @@ export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
       .then(() => {});
   }
 );
+
+export const updateGeneratedAniamtionParameters = createAppAsyncThunk<void, {generatedAnimationId: number, parameters_json: AnimationParams}>(
+  'animations/generate/updateGeneratedAnimationParameters',
+  ({generatedAnimationId, parameters_json}, thunkAPI) => {
+    const axiosInstance = thunkAPI.extra;
+    const updatePayload = {
+      id: generatedAnimationId,
+      parameters_json: parameters_json
+    };
+
+    return axiosInstance.post('/api/generate/update_parameters/', updatePayload)
+      .then(() => {});
+  }
+)
 
 export const submitGeneratedAnimation = createAppAsyncThunk<void, {generatedAnimationId: number, title: string, author: string}>(
   'animations/generate/submitGeneratedAnimation',
