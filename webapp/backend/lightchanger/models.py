@@ -22,3 +22,4 @@ class GeneratedAnimation(models.Model):
     author = models.TextField(max_length=settings.MAX_AUTHOR_LENGTH)
     model_response = models.TextField(null=True, default="")
     generated_animation = models.TextField(null=True, default="")
+    parameters_json = models.JSONField(null=True, default=dict)

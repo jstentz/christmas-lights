@@ -12,10 +12,13 @@ from functools import wraps
 import json, requests
 from openai import OpenAI
 import marko
+from typing import Dict
+import ast
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 from lights.animations import NAME_TO_ANIMATION
+from lights.animations.base import BaseAnimation
 
 
 def is_request_authenticated(request):
@@ -194,6 +197,29 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       parsed_markdown = md.parse(model_response)
       code_blocks = [n for n in parsed_markdown.children if n.get_type() == 'FencedCode']
       return code_blocks[0].children[0].children
+   
+
+   def _get_init_func(self, parsed_animation: ast.Module) -> ast.FunctionDef | None:
+    for node in parsed_animation.body:
+      if isinstance(node, ast.ClassDef):
+        for base in node.bases:
+          if isinstance(base, ast.Name) and base.id == BaseAnimation.__name__:
+            for child_node in node.body:
+              if isinstance(child_node, ast.FunctionDef) and child_node.name == '__init__':
+                return child_node
+    return None
+
+
+   # Assumes 1 and only 1 BaseAnimation child class is defined in the source file
+   def _get_animation_parameters(self, animation_source: str) -> Dict | None:
+     parsed = ast.parse(animation_source)
+     
+     init_function = self._get_init_func(parsed)
+     if init_function is None:
+       return None
+     
+     args = init_function.args
+     return {arg.arg: json.dumps(ast.literal_eval(value)) for arg, value in zip(args.kwonlyargs, args.kw_defaults)}
 
 
    @action(detail=False, methods=['POST'], name='Generate a new animation from a prompt using AI')
@@ -202,34 +228,49 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       prompt = request.data['prompt']
       if len(prompt) > settings.MAX_PROMPT_LENGTH:
          return Response(status=400, data="Error: prompt too long")
-      generated_animation_entry = GeneratedAnimation(prompt=prompt, title="", author="", generated_animation="")
+      generated_animation_entry = GeneratedAnimation(prompt=prompt, title="", author="", generated_animation="", parameters_json=dict())
 
       response = client.chat.completions.create(
-         model="gpt-4-turbo-preview",
+         model=settings.OPENAI_MODEL,
          messages=[
             {"role": "system", "content": settings.SYSTEM_MESSAGE},
             {"role": "user", "content": prompt}
          ],
       )
 
+      print(response)
+
       generated_animation_entry.model_response = response.choices[0].message.content
       try:
          extracted_code = self._extract_code(generated_animation_entry.model_response)
       except:
          extracted_code = response.choices[0].message.content
-      generated_animation_entry.generated_animation = extracted_code
-      generated_animation_entry.save()
+
+      try:
+         parameters = self._get_animation_parameters(extracted_code)
+      except:
+         parameters = {}
       
-      return Response(status=200, data=generated_animation_entry.pk)
+      generated_animation_entry.generated_animation = extracted_code
+      generated_animation_entry.parameters_json = parameters
+      generated_animation_entry.save()
+
+      generated_animation_response = {
+         'id': generated_animation_entry.pk,
+         'parameters_json': parameters
+      }
+      
+      return Response(status=200, data=json.dumps(generated_animation_response))
    
    @action(detail=False, methods=['POST'], name='Preview a generated animation on the tree')
    @admin_authentication
    def preview(self, request, *args, **kwargs):
-      generated_animation_id = request.data['generated_animation_id']
+      generated_animation_id = request.data['id']
       generated_animation_entry = GeneratedAnimation.objects.get(pk=generated_animation_id)
 
       preview_payload = {
-         'generated_animation': generated_animation_entry.generated_animation
+         'generated_animation': generated_animation_entry.generated_animation,
+         'parameters_json': generated_animation_entry.parameters_json,
       }
 
       preview_payload_json = json.dumps(preview_payload)
@@ -239,7 +280,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
    @action(detail=False, methods=['POST'], name='Submit a generated animation for review')
    @admin_authentication
    def submit(self, request, *args, **kwargs):
-      generated_animation_id = request.data['generated_animation_id']
+      generated_animation_id = request.data['id']
       title = request.data['title']
       author = request.data['author']
 
@@ -252,4 +293,17 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       generated_animation_entry.save()
 
       return Response(status=200)
+   
+   @action(detail=False, methods=['POST'], name='Update a generated animations parameters')
+   @admin_authentication
+   def update_parameters(self, request, *args, **kwargs):
+      generated_animation_id = request.data['id']
+      new_parameters = request.data['parameters_json']
+      existing = GeneratedAnimation.objects.get(pk=generated_animation_id)
+     
+      existing.parameters_json = new_parameters
+      
+      existing.save()
+      
+      return Response(200)
    

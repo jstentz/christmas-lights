@@ -42,7 +42,7 @@ export const EditDialog: FC<EditDialog> = ({animationId, animationTitle, paramet
     <Dialog.Root open={true} defaultOpen={false} onOpenChange={onOpenChange}>
       <Dialog.Content onOpenAutoFocus={(e) => e.preventDefault()}>
         <Dialog.Title>Edit parameters for <Code>{animationTitle}</Code></Dialog.Title>
-        <form onSubmit={() => {}}>
+        <form onSubmit={(e) => {e.preventDefault()}}>
           {Object.entries(parameters).map(([key, _]) => (
             <div className="pb-2" key={key}>
               <label>

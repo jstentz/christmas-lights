@@ -17,6 +17,11 @@ export type Animation = {
   position: number,
 };
 
+export type GeneratedAnimation = {
+  id: number,
+  parameters_json: AnimationParams
+};
+
 export type AnimationsMap = {
   [index: number]: Animation,
 }
@@ -26,7 +31,10 @@ export type AnimationsState = {
   selectedAnimation: number,
   status: 'idle' | 'loading' | 'succeeded' | 'failed' | 'succeeded-generate',
   error: string | null,
-  generatedAnimationId: number,
+  generate: {
+    generatedAnimation: GeneratedAnimation | undefined,
+    status: 'idle' | 'loading' | 'generated' | 'failed'
+  },
 };
 
 const initialState: AnimationsState = {
@@ -34,7 +42,10 @@ const initialState: AnimationsState = {
   selectedAnimation: 0,
   status: 'idle',
   error: null,
-  generatedAnimationId: 0,
+  generate: {
+    generatedAnimation: undefined,
+    status: 'idle',
+  }
 };
 
 const createAppAsyncThunk = createAsyncThunk.withTypes<{
@@ -118,8 +129,8 @@ export const updateParameters = createAppAsyncThunk<{animationId: number, params
   }
 );
 
-export const generateAnimation = createAppAsyncThunk<number, string>(
-  'animations/generateAnimation',
+export const generateAnimation = createAppAsyncThunk<GeneratedAnimation, string>(
+  'animations/generate/generateAnimation',
   (prompt, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
     const generatePayload = {
@@ -127,16 +138,16 @@ export const generateAnimation = createAppAsyncThunk<number, string>(
     };
 
     return axiosInstance.post('/api/generate/generate/', generatePayload)
-      .then((res) => res.data);
+      .then((res) => JSON.parse(res.data));
   }
 );
 
 export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
-  'animations/previewGeneratedAnimation',
+  'animations/generate/previewGeneratedAnimation',
   (generatedAnimationId, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
     const previewPayload = {
-      generated_animation_id: generatedAnimationId,
+      id: generatedAnimationId,
     };
 
     return axiosInstance.post('/api/generate/preview/', previewPayload)
@@ -145,11 +156,11 @@ export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
 );
 
 export const submitGeneratedAnimation = createAppAsyncThunk<void, {generatedAnimationId: number, title: string, author: string}>(
-  'animations/submitGeneratedAnimation',
+  'animations/generate/submitGeneratedAnimation',
   ({generatedAnimationId, title, author}, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
     const submitPayload = {
-      generated_animation_id: generatedAnimationId,
+      id: generatedAnimationId,
       title: title,
       author: author,
     };
@@ -194,8 +205,11 @@ export const animationSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(generateAnimation.fulfilled, (state, action) => {
-        state.status = 'succeeded-generate';
-        state.generatedAnimationId = action.payload;
+        state.generate.status = 'generated';
+        state.generate.generatedAnimation = action.payload;
+      })
+      .addCase(previewGeneratedAnimation.pending, (state, _) => {
+        state.generate.status = 'idle';
       })
       .addMatcher(isRejected, (state, action) => {
         state.status = 'failed';
@@ -219,4 +233,6 @@ export const selectStatus = (state: RootState) => state.animation.status;
 
 export const selectError = (state: RootState) => state.animation.error;
 
-export const selectGeneratedAnimationId = (state: RootState) => state.animation.generatedAnimationId;
+export const selectGeneratedAnimation = (state: RootState) => state.animation.generate.generatedAnimation;
+
+export const selectGenerateStatus = (state: RootState) => state.animation.generate.status;
