@@ -82,14 +82,14 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
 
   const controlScreen = (
     <div>
-      <p>Your animation should start playing on the tree shortly. You can stop and restart the animation using the controls below</p>
+      <p className="pb-1">Your animation should start playing on the tree shortly. You can stop and restart the animation using the controls below</p>
       <div className="flex justify-center gap-2 p-2">
         <Button color="red" onClick={handleStop}><StopIcon /></Button>
         <Button color="gray" onClick={handleRestart}><ReloadIcon /></Button>
       </div>
       <Separator my="3" size="4" />
       <form onSubmit={(e) => {e.preventDefault()}}>
-      Edit the animation parameters
+      You can edit animation parameters below. Once done, click update and restart the animation to see your changes.
       {Object.entries(newParameters).map(([key, _]) => (
         <div className="pb-2" key={key}>
           <label>
@@ -105,11 +105,11 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
             Cancel
           </Button>
           <Button variant="soft" color="gray" onClick={handleReset}>
-            Restart
+            Start Over
           </Button>
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="soft" color="gray" onClick={handleUpdateParams}>
+          <Button variant="soft" color="blue" onClick={handleUpdateParams}>
             Update
           </Button>
           <Button variant="soft" color="green" onClick={handleNext}>
