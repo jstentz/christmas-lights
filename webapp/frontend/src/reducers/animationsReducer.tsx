@@ -32,7 +32,7 @@ export type AnimationsState = {
   status: 'idle' | 'loading' | 'succeeded' | 'failed' | 'succeeded-generate',
   error: string | null,
   generate: {
-    generatedAnimation: GeneratedAnimation | undefined,
+    generatedAnimation: GeneratedAnimation | null,
     status: 'idle' | 'loading' | 'generated' | 'failed'
   },
 };
@@ -43,11 +43,8 @@ const initialState: AnimationsState = {
   status: 'idle',
   error: null,
   generate: {
-    generatedAnimation: {
-      id: 22,
-      parameters_json: {"fps": "null", "snakes_info": "[[[255, 0, 0], 10]]"},
-    },
-    status: 'generated',
+    generatedAnimation: null,
+    status: 'idle',
   }
 };
 
