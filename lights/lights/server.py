@@ -5,6 +5,7 @@ from threading import Semaphore
 from lights.run_animation import ThreadedAnimationRunner
 import json
 import docker
+import signal
 
 BASE_PATH = pathlib.Path(__file__).parent
 RUN_ANIMATION_PATH = BASE_PATH / 'run_animation.py'
@@ -74,5 +75,22 @@ def receive_data():
   s.release()
   return 'Success!'
 
+def _shutdown():
+  if ar is not None:
+    ar.stop()
+    ar.join()
+  if container is not None:
+    container.stop()
+    container.wait()
+    container.remove()
+
+def _handle_sigterm(*args):
+  _shutdown()
+
+def _handle_sigint(*args):
+  _shutdown()
+
 if __name__ == '__main__':
+  signal.signal(signal.SIGTERM, _handle_sigterm)
+  signal.signal(signal.SIGINT, _handle_sigint)
   app.run(host="0.0.0.0", port=8000)
