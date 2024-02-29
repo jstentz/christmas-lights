@@ -23,6 +23,7 @@ def run_untrusted_animation():
   global container, ar
   data = request.get_json()
   animation_code = data['generated_animation']
+  parameters = json.dumps(data['parameters_json'])
   s.acquire()
   if ar is not None:
     ar.stop()
@@ -37,7 +38,7 @@ def run_untrusted_animation():
     f.write(animation_code)
   container = d.containers.run(
     'lights', 
-    'python run_animation.py -c SerialController --file /mnt/animations/ai.py', 
+    f'python run_animation.py -c SerialController --file /mnt/animations/ai.py --args {parameters}', 
     detach=True,
     network_mode='none',
     group_add=['65537'],
