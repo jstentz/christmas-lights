@@ -28,26 +28,28 @@ DEBUG = True
 API_AUTH_HEADER= 'API_AUTH'
 API_AUTH_ENV = 'API_AUTH'
 ADMIN_API_AUTH_ENV = 'ADMIN_API_AUTH'
-if DEBUG:
-  # SECURITY WARNING: keep the secret key used in production secret!
-  SECRET_KEY = 'django-insecure-026(81kz90bga8ww%l)m=(co^5#fx*2$i7ml=dp_8&$5c^+$8%'
-  API_AUTH = None
-  ADMIN_API_AUTH = None
-else:
-  try:
-    SECRET_KEY = os.environ['SECRET_KEY']
-  except KeyError as e:
+
+try:
+  SECRET_KEY = os.environ['SECRET_KEY']
+except KeyError as e:
+  if not DEBUG:
     raise RuntimeError("Running with DEBUG=False but couldn't find a SECRET_KEY in environment.") from e
-  
-  try:
-    API_AUTH = json.loads(os.environ[API_AUTH_ENV])
-  except KeyError as e:
+  SECRET_KEY = 'django-insecure-026(81kz90bga8ww%l)m=(co^5#fx*2$i7ml=dp_8&$5c^+$8%'
+
+try:
+  API_AUTH = json.loads(os.environ[API_AUTH_ENV])
+except KeyError as e:
+  if not DEBUG:
     raise RuntimeError("Running with DEBUG=False but couldn't find an API_AUTH in environment.") from e
+  API_AUTH = None
   
-  try:
-    ADMIN_API_AUTH = json.loads(os.environ[ADMIN_API_AUTH_ENV])
-  except KeyError as e:
+
+try:
+  ADMIN_API_AUTH = json.loads(os.environ[ADMIN_API_AUTH_ENV])
+except KeyError as e:
+  if not DEBUG:
     raise RuntimeError("Running with DEBUG=False but couldn't find an ADMIN_API_ATH in environment.") from e
+  ADMIN_API_AUTH = None
 
 ALLOWED_HOSTS = [
   "lights.ryanstentz.com",

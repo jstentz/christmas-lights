@@ -223,7 +223,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
 
 
    @action(detail=False, methods=['POST'], name='Generate a new animation from a prompt using AI')
-   @admin_authentication
+   @basic_authentication
    def generate(self, request, *args, **kwargs):
       prompt = request.data['prompt']
       if len(prompt) > settings.MAX_PROMPT_LENGTH:
@@ -237,7 +237,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
             {"role": "user", "content": prompt}
          ],
       )
-      
+
       generated_animation_entry.model_response = response.choices[0].message.content
       try:
          extracted_code = self._extract_code(generated_animation_entry.model_response)
@@ -261,7 +261,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       return Response(status=200, data=json.dumps(generated_animation_response))
    
    @action(detail=False, methods=['POST'], name='Preview a generated animation on the tree')
-   @admin_authentication
+   @basic_authentication
    def preview(self, request, *args, **kwargs):
       generated_animation_id = request.data['id']
       generated_animation_entry = GeneratedAnimation.objects.get(pk=generated_animation_id)
@@ -278,7 +278,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       return Response(status=res.status_code)
    
    @action(detail=False, methods=['POST'], name='Submit a generated animation for review')
-   @admin_authentication
+   @basic_authentication
    def submit(self, request, *args, **kwargs):
       generated_animation_id = request.data['id']
       title = request.data['title']
