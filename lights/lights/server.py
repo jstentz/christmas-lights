@@ -86,9 +86,11 @@ def _shutdown():
 
 def _handle_sigterm(*args):
   _shutdown()
+  exit(0)
 
 def _handle_sigint(*args):
   _shutdown()
+  exit(0)
 
 if __name__ == '__main__':
   signal.signal(signal.SIGTERM, _handle_sigterm)
