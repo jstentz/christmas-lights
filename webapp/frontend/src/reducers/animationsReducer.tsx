@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, isPending, isRejected } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isPending, isRejectedWithValue } from "@reduxjs/toolkit";
 import axios, { AxiosInstance } from "axios";
 import { AppDispatch, RootState } from "@/lib/store";
 
@@ -75,6 +75,7 @@ export const selectAnimation = createAppAsyncThunk<number, number>(
       axiosInstance.post('/api/selections/updatepi/', updatePayload),
     ])
       .then(axios.spread((res1, res2) => animationId))
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -87,19 +88,21 @@ export const restartSelectedAnimation = createAppAsyncThunk<void, void>(
 
 export const getAnimations = createAppAsyncThunk<AnimationsMap>(
   'animations/getAnimations',
-  async (_, thunkAPI) => {
+  (_, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
-    const res = await axiosInstance.get('/api/options/');
-    return Object.fromEntries(res.data.map((a: Animation) => [a.id, a]));
+    return axiosInstance.get('/api/options/')
+      .then((res) => Object.fromEntries(res.data.map((a: Animation) => [a.id, a])))
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
 export const getSelectedAnimation = createAppAsyncThunk<number>(
   'animations/getSelectedAnimation',
-  async (_, thunkAPI) => {
+  (_, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
-    const res = await axiosInstance.get('/api/selections/last/');
-    return res.data.light_pattern_id;
+    return axiosInstance.get('/api/selections/last/')
+      .then((res) => res.data.light_pattern_id)
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -111,7 +114,9 @@ export const resetParameters = createAppAsyncThunk<void, number>(
       light_pattern_id: animationId,
     };
 
-    return axiosInstance.post('/api/options/reset_parameters/', resetPayload).then(() => {});
+    return axiosInstance.post('/api/options/reset_parameters/', resetPayload)
+      .then(() => {})
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -125,7 +130,8 @@ export const updateParameters = createAppAsyncThunk<{animationId: number, params
     };
 
     return axiosInstance.post('/api/options/update_parameters/', updatePayload)
-      .then(() => ({animationId: animationId, params: newParams}));
+      .then(() => ({animationId: animationId, params: newParams}))
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -138,7 +144,8 @@ export const generateAnimation = createAppAsyncThunk<GeneratedAnimation, string>
     };
 
     return axiosInstance.post('/api/generate/generate/', generatePayload)
-      .then((res) => JSON.parse(res.data));
+      .then((res) => JSON.parse(res.data))
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -151,7 +158,8 @@ export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
     };
 
     return axiosInstance.post('/api/generate/preview/', previewPayload)
-      .then(() => {});
+      .then(() => {})
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -165,7 +173,8 @@ export const updateGeneratedAniamtionParameters = createAppAsyncThunk<void, {gen
     };
 
     return axiosInstance.post('/api/generate/update_parameters/', updatePayload)
-      .then(() => {});
+      .then(() => {})
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 )
 
@@ -180,7 +189,8 @@ export const submitGeneratedAnimation = createAppAsyncThunk<void, {generatedAnim
     };
 
     return axiosInstance.post('/api/generate/submit/', submitPayload)
-      .then(() => {});
+      .then(() => {})
+      .catch((err) => thunkAPI.rejectWithValue(err.response.data));
   }
 );
 
@@ -225,9 +235,9 @@ export const animationSlice = createSlice({
       .addCase(previewGeneratedAnimation.pending, (state, _) => {
         state.generate.status = 'idle';
       })
-      .addMatcher(isRejected, (state, action) => {
+      .addMatcher(isRejectedWithValue, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.name || null;
+        state.error = action.payload as string;
       })
       .addMatcher(isPending, (state, _) => {
         state.error = null;
