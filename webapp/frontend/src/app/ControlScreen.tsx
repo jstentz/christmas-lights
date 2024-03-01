@@ -89,7 +89,7 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
       </div>
       <Separator my="3" size="4" />
       <form onSubmit={(e) => {e.preventDefault()}}>
-      You can edit animation parameters below. Once done, click update and restart the animation to see your changes.
+      You can edit the animation parameters below. Once done, click update and restart the animation to see your changes.
       {Object.entries(newParameters).map(([key, _]) => (
         <div className="pb-2" key={key}>
           <label>
