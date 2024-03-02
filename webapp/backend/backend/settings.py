@@ -79,7 +79,7 @@ class UniformColorLights(BaseAnimation): # All animations should inherit from th
   """This is an example class for the light animation where all of the lights in the input frameBuf 
   will be set to red."""
 
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = None, color: Collection[int] = (255, 0, 0)):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, color: Collection[int] = (255, 0, 0)):
     """
     Required:
     These parameters must be present in the __init__ function for all animation classes.
