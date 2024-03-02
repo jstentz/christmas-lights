@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import { ReloadIcon, StopIcon } from "@radix-ui/react-icons";
 import { Text, TextField, Button, Separator } from "@radix-ui/themes";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { previewGeneratedAnimation, selectGeneratedAnimation, selectGenerateStatus, restartSelectedAnimation, updateGeneratedAniamtionParameters, AnimationParams } from "@/reducers/animationsReducer";
+import { previewGeneratedAnimation, selectGeneratedAnimation, selectGenerateStatus, restartSelectedAnimation, updateGeneratedAnimationParameters, AnimationParams } from "@/reducers/animationsReducer";
 
 export type ControlScreen = {
   onNext: () => void,
@@ -76,7 +76,7 @@ export const ControlScreen: FC<ControlScreen> = ({onNext, onReset, onClose, hidd
     e.stopPropagation();
 
     if(generatedAnimation) {
-      dispatch(updateGeneratedAniamtionParameters({generatedAnimationId: generatedAnimation.id, parameters_json: newParameters}));
+      dispatch(updateGeneratedAnimationParameters({generatedAnimationId: generatedAnimation.id, parameters_json: newParameters}));
     }
   };
 

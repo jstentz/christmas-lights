@@ -163,7 +163,7 @@ export const previewGeneratedAnimation = createAppAsyncThunk<void, number>(
   }
 );
 
-export const updateGeneratedAniamtionParameters = createAppAsyncThunk<void, {generatedAnimationId: number, parameters_json: AnimationParams}>(
+export const updateGeneratedAnimationParameters = createAppAsyncThunk<void, {generatedAnimationId: number, parameters_json: AnimationParams}>(
   'animations/generate/updateGeneratedAnimationParameters',
   ({generatedAnimationId, parameters_json}, thunkAPI) => {
     const axiosInstance = thunkAPI.extra;
