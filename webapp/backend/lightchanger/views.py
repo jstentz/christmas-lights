@@ -295,7 +295,7 @@ class GeneratedAnimationsView(viewsets.GenericViewSet):
       return Response(status=200)
    
    @action(detail=False, methods=['POST'], name='Update a generated animations parameters')
-   @admin_authentication
+   @basic_authentication
    def update_parameters(self, request, *args, **kwargs):
       generated_animation_id = request.data['id']
       new_parameters = request.data['parameters_json']
