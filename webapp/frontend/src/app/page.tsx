@@ -1,17 +1,28 @@
 "use client";
 
-import { BackendContextProvider } from "@/context/backend";
 import { useSearchParams } from "next/navigation";
 import { App } from './app';
+import { store, axiosInstance } from "@/lib/store";
+import { Provider } from 'react-redux'
+import { useMemo, Suspense } from "react";
 
 const Home = () => {
   const password = useSearchParams().get('p') || "";
-  
+  useMemo(() => axiosInstance.defaults.headers.common['API_AUTH'] = password, [password]);
+
   return (
-    <BackendContextProvider apiAuth={password}>
+    <Provider store={store}>
       <App />
-    </BackendContextProvider>
+    </Provider>
   );
 }
 
-export default Home;
+const Root = () => { 
+  return (
+    <Suspense>
+      <Home />
+    </Suspense>
+  );
+}
+
+export default Root;

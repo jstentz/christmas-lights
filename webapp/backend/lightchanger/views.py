@@ -75,9 +75,9 @@ class LightOptionsView(viewsets.ModelViewSet):
     @basic_authentication
     def reset_parameters(self, request, *args, **kwargs):
       light_pattern_json = request.data
-      light_pattern_name = light_pattern_json['light_pattern_name']
       light_pattern_id = light_pattern_json['light_pattern_id']
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      light_pattern_name = existing.animation_id
       
       animation = NAME_TO_ANIMATION[light_pattern_name]
 
@@ -92,10 +92,10 @@ class LightOptionsView(viewsets.ModelViewSet):
     @basic_authentication
     def update_parameters(self, request, *args, **kwargs):
       light_pattern_json = request.data
-      light_pattern_name = light_pattern_json['light_pattern_name']
       light_pattern_id = light_pattern_json['light_pattern_id']
       new_parameters = light_pattern_json['parameters']
       existing = LightPatternOption.objects.get(pk=light_pattern_id)
+      light_pattern_name = existing.animation_id
       
       animation = NAME_TO_ANIMATION[light_pattern_name]
 
@@ -147,10 +147,9 @@ class LightPatternsView(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'], name='Send most recent light pattern to raspberry pi')
     @basic_authentication
     def updatepi(self, request, *args, **kwargs):
-        request_data = request.data.copy()
-        light_pattern_id = request_data['light_pattern_id']
-        light_pattern_name = request_data['light_pattern_name']
+        light_pattern_id = request.data['light_pattern_id']
         light_pattern = LightPatternOption.objects.get(pk=light_pattern_id)
+        light_pattern_name = light_pattern.animation_id
 
         animation = NAME_TO_ANIMATION[light_pattern_name]
         parameters = animation.deserialize_parameters(light_pattern.parameters_json)
@@ -160,8 +159,11 @@ class LightPatternsView(viewsets.ModelViewSet):
         except TypeError as e:
           return Response(data=str(e), status=400)
 
-        request_data['parameters'] = parameters
-        light_pattern_json = json.dumps(request_data)
+        update_payload = {
+           'light_pattern_name': light_pattern_name,
+           'parameters': parameters
+        }
+        update_payload_json = json.dumps(update_payload)
 
-        requests.post(settings.LIGHTS_CONTROLLER_ENDPOINT, light_pattern_json, headers={'Content-Type': 'application/json'})
+        requests.post(settings.LIGHTS_CONTROLLER_ENDPOINT, update_payload_json, headers={'Content-Type': 'application/json'})
         return Response(status=200)
