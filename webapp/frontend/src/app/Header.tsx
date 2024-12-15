@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { PlusCircledIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Code } from "@radix-ui/themes";
 import { AlertDialog, Button } from "@radix-ui/themes";
+import { CreateAnimationWizard } from "./CreateAnimationWizard";
 
 type Props = {
   title: string,
@@ -26,25 +27,8 @@ export const Header: FC<Props> = ({
           <Code color="teal">{selectedAnimationName}</Code>
         </p>
       </div>
-      <AlertDialog.Root>
-      <AlertDialog.Trigger>
-        <PlusCircledIcon height={25} width={25} color="white" />
-      </AlertDialog.Trigger>
-      <AlertDialog.Content style={{ maxWidth: 450 }}>
-        <AlertDialog.Title>Coming Soon!</AlertDialog.Title>
-        <AlertDialog.Description size="2">
-          Check back soon for the ability to create custom animations!
-        </AlertDialog.Description>
 
-        <div className="flex justify-end gap-3 mt-4">
-          <AlertDialog.Cancel>
-            <Button variant="soft" color="green">
-              Okay!
-            </Button>
-          </AlertDialog.Cancel>
-        </div>
-      </AlertDialog.Content>
-    </AlertDialog.Root>
+      <CreateAnimationWizard />
     </header>
   );
 }

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -14,3 +15,11 @@ class LightPatternOption(models.Model):
 class LightPattern(models.Model):
     light_pattern_id = models.ForeignKey(LightPatternOption, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(null=True)
+
+class GeneratedAnimation(models.Model):
+    prompt = models.TextField(max_length=settings.MAX_PROMPT_LENGTH)
+    title = models.TextField(max_length=settings.MAX_TITLE_LENGTH)
+    author = models.TextField(max_length=settings.MAX_AUTHOR_LENGTH)
+    model_response = models.TextField(null=True, default="")
+    generated_animation = models.TextField(null=True, default="")
+    parameters_json = models.JSONField(null=True, default=dict)

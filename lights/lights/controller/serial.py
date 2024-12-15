@@ -4,8 +4,8 @@ import serial
 import threading
 
 class SerialController(BaseController):
-  def __init__(self, animation, animation_kwargs, n_pixels: int, port='/dev/ttyACM0'):
-    super().__init__(animation, animation_kwargs, n_pixels)
+  def __init__(self, animation, animation_kwargs, n_pixels: int, validate_parameters=True, port='/dev/ttyACM0'):
+    super().__init__(animation, animation_kwargs, n_pixels, validate_parameters=validate_parameters)
     self.usb_serial = serial.Serial(port)
     self.display_buffer = None
     self.transmit_thread: threading.Thread = None
@@ -16,6 +16,7 @@ class SerialController(BaseController):
   def shutdown(self):
     if self.transmit_thread is not None:
       self.transmit_thread.join()
+    self.usb_serial.close()
 
   def _transmit(self, buffer: bytes):
     if self.transmit_thread is not None:

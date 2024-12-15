@@ -38,6 +38,15 @@ def turn_on_animation(animations, animation_name, api_auth):
     raise RuntimeError(r.content)
   r.close()
 
+def preview_generated_animation(animation_id, api_auth):
+  selection = {
+    'id': animation_id
+  }
+
+  with requests.post(API_ENDPOINT + '/generate/preview/', headers={'API_AUTH': api_auth}, data=selection) as r:
+    if not (200 <= r.status_code < 300):
+      raise RuntimeError(r.content)
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(prog="backend-cli", 
                                    description="A command line interface to our christmas lights backend for programatically controlling the lights, or for those who can't view the frontend.")
@@ -57,6 +66,9 @@ if __name__ == '__main__':
   parser.add_argument('-a', '--animation_name',
                       help='selects a specified animation',
                       type=str)
+  parser.add_argument('-p', '--preview',
+                      help='previews a specified generated animation',
+                      type=str)
 
   args = parser.parse_args()
 
@@ -70,3 +82,5 @@ if __name__ == '__main__':
     turn_on_random(animations, args.auth)
   elif args.animation_name:
     turn_on_animation(animations, args.animation_name, args.auth)
+  elif args.preview:
+    preview_generated_animation(args.preview, args.auth)
