@@ -117,7 +117,6 @@ if __name__ == '__main__':
     else:
       animation_class = load_animation_from_file(args.file)
     controller_class = NAME_TO_CONTROLLER[args.controller_name]()
-    print(animation_class, controller_class)
     ar = AnimationRunner(animation_class, controller_class, args.args, validate_parameters=not args.no_validation)
   except Exception as e:
     print_example_usage(args.animation_name, args.controller_name)
