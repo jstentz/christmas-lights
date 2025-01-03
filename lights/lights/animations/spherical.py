@@ -25,14 +25,15 @@ class SphericalMiracle(BaseAnimation):
       self.r += dr
       return np.all(insideIn)
 
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, fireRate : float = 10.0, startRadius : float = 0.2, thickness : float = 0.2, speed : float = 0.10):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, sphereFrequency : float = 1.0, maxSpheres: int = 3, startRadius : float = 0.2, thickness : float = 0.2, speed : float = 0.01):
     super().__init__(frameBuf, fps)
 
-    self.fireRate = fireRate / self.fps
+    self.fireRate = sphereFrequency / self.fps
     self.startRadius = startRadius
     self.thickness = thickness
     self.speed = speed
     self.colors = np.array([[0, 255, 0], [255, 0, 0], [0, 0, 255]])
+    self.maxSpheres = maxSpheres
     self.spheres: List[self.GrowingSphere] = []
 
     self.mins, self.maxes = np.min(POINTS_3D, axis=0), np.max(POINTS_3D, axis=0)
@@ -52,7 +53,7 @@ class SphericalMiracle(BaseAnimation):
 
   def renderNextFrame(self):
     self.frameBuf[:] = np.array([0, 0, 0])
-    if np.random.rand() < self.fireRate:
+    if np.random.rand() < self.fireRate and len(self.spheres) < self.maxSpheres:
       self.createSphere()
     spheres = []
     for sphere in self.spheres:
