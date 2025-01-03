@@ -7,3 +7,4 @@ perlin_noise
 typeguard
 numpy
 matplotlib
+noise
