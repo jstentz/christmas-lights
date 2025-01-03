@@ -21,13 +21,10 @@ class Spotlight(BaseAnimation):
     distances = np.linalg.norm(POINTS_3D - self.pos, axis=1)
 
     # Normalize distances to the range [0, 1]
-    # min_distance = np.min(distances)
-    # max_distance = np.max(distances)
-    # normalized_distances = (distances - min_distance) / (max_distance - min_distance)
-    # self.frameBuf[:] = ((1 - normalized_distances) ** 4)[:, np.newaxis] * self.color
-
-    self.frameBuf[distances <= self.radius] = self.color
-    self.frameBuf[distances > self.radius] = np.zeros(3)
+    min_distance = np.min(distances)
+    max_distance = np.max(distances)
+    normalized_distances = (distances - min_distance) / (max_distance - min_distance)
+    self.frameBuf[:] = ((1 - normalized_distances) ** 6)[:, np.newaxis] * self.color
 
     # Generate Perlin noise for all three axes
     noise_values = np.array([
