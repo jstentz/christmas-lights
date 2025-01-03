@@ -5,14 +5,13 @@ from lights.utils.geometry import POINTS_3D
 from noise import pnoise3
 
 class Spotlight(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, color: Collection[int] = (255, 255, 255), speed: float = 5e-3, radius: float = 0.4):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, color: Collection[int] = (255, 255, 255), speed: float = 0.01):
     super().__init__(frameBuf, fps)
 
     self.color = color
     self.pos = np.zeros(3)
     self.time = np.random.uniform(0, 100, 3)  # Random initial time for Perlin noise
     self.speed = speed
-    self.radius = radius
     self.max_pt = np.max(POINTS_3D, axis=0)
     self.min_pt = np.min(POINTS_3D, axis=0)
 
