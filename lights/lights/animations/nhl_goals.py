@@ -5,7 +5,6 @@ from typing import Optional, Collection
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
 import threading
-import json
 
 colors_per_team = {
   'Ducks': [(252, 76, 2), (185, 151, 91), (193, 198, 200), (0, 0, 0)],
@@ -34,13 +33,68 @@ colors_per_team = {
   'Sharks': [(0, 109, 117), (234, 114, 0), (0, 0, 0)],
   'Kraken': [(0, 22, 40), (153, 217, 217), (53, 84, 100), (104, 162, 185), (233, 7, 43)],
   'Lightning': [(0, 40, 104), (255, 255, 255)],
-  'Leafs': [(0, 32, 91), (255, 255, 255)],
-  'Utah Hockey Club': [],
+  'Maple Leafs': [(0, 32, 91), (255, 255, 255)],
+  'Utah Hockey Club': [(113, 175, 229), (9, 9, 9), (255, 255, 255)],
   'Canucks': [(0, 32, 91), (10, 134, 61), (4, 28, 44), (153, 153, 154), (255, 255, 255)],
   'Golden Knights': [(185,151,91), (51,63,72), (200,16,46), (35,31,32), (255,255,255)],
   'Capitals': [(4, 30, 66), (200, 16, 46), (255,255,255)],
   'Jets': [(4,30,66), (0,76,151), (172,22,44), (123,48,62), (85,86,90), (142,144,144), (255,255,255)],
 }
+
+class NHLGoals(BaseAnimation):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02,
+               rotation_speed : float = 0.01, bandwidth : float = 0.4):
+    super().__init__(frameBuf, fps)
+
+    # start as black and white
+    self.colors = ColorWrapper(np.array([(255, 255, 255), (0, 0, 0)]))
+
+    # start listening for nhl goals
+    self.nhl_thread = threading.Thread(target=listen_for_goals, args=(self.colors,), daemon=True)
+    self.nhl_thread.start()
+
+    self.speed = speed
+    self.rotation_speed = rotation_speed
+    self.bandwidth = bandwidth
+
+    # center the points at the mid points
+    min_pt = np.min(POINTS_3D, axis=0)
+    max_pt = np.max(POINTS_3D, axis=0)
+    mid_point = (max_pt + min_pt) / 2
+    self.CENTERED_POINTS_3D = POINTS_3D - mid_point
+    self.t = 0
+
+    # generate a random initial angle for the plane
+    self.plane = NHLGoals.generateRandomPlane()
+    self.target = NHLGoals.generateRandomPlane()
+  
+  # pick a random unit vector in 3D space
+  @staticmethod
+  def generateRandomPlane():
+    while np.all((plane := np.random.normal(size=3)) == 0.0):
+      pass
+    return plane / np.linalg.norm(plane)
+
+  def renderNextFrame(self):
+    distances = np.dot(self.CENTERED_POINTS_3D, self.plane) + self.t
+    colors = self.colors.get_colors()
+    indices = ((distances // self.bandwidth) % len(colors)).astype(np.int32)
+    colors = colors[indices]
+    self.frameBuf[:] = colors
+
+    # increment the time by the speed 
+    self.t += self.speed
+
+    # make progress towards the target plane
+    diffs = self.target - self.plane
+    self.plane += diffs * self.rotation_speed
+    self.plane /= np.linalg.norm(self.plane)
+
+    # move the target if we are close to it
+    # TODO: make this related to rotation_speed so we don't overstep it 
+    epsilon = 0.01
+    if np.linalg.norm(self.plane - self.target) < epsilon:
+      self.target = NHLGoals.generateRandomPlane()
 
 class ColorWrapper:
   def __init__(self, colors: np.array) -> None:
@@ -103,57 +157,3 @@ def listen_for_goals(colors: ColorWrapper):
     known_goals_per_game = curr_goals_per_game
     time.sleep(1)
 
-class NHLGoals(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02,
-               rotation_speed : float = 0.01, bandwidth : float = 0.4):
-    super().__init__(frameBuf, fps)
-
-    # start as black and white
-    self.colors = ColorWrapper(np.array([(255, 255, 255), (0, 0, 0)]))
-
-    # start listening for nhl goals
-    self.nhl_thread = threading.Thread(target=listen_for_goals, args=(self.colors,), daemon=True)
-    self.nhl_thread.start()
-
-    self.speed = speed
-    self.rotation_speed = rotation_speed
-    self.bandwidth = bandwidth
-
-    # center the points at the mid points
-    min_pt = np.min(POINTS_3D, axis=0)
-    max_pt = np.max(POINTS_3D, axis=0)
-    mid_point = (max_pt + min_pt) / 2
-    self.CENTERED_POINTS_3D = POINTS_3D - mid_point
-    self.t = 0
-
-    # generate a random initial angle for the plane
-    self.plane = NHLGoals.generateRandomPlane()
-    self.target = NHLGoals.generateRandomPlane()
-  
-  # pick a random unit vector in 3D space
-  @staticmethod
-  def generateRandomPlane():
-    while np.all((plane := np.random.normal(size=3)) == 0.0):
-      pass
-    return plane / np.linalg.norm(plane)
-
-  def renderNextFrame(self):
-    distances = np.dot(self.CENTERED_POINTS_3D, self.plane) + self.t
-    colors = self.colors.get_colors()
-    indices = ((distances // self.bandwidth) % len(colors)).astype(np.int32)
-    colors = colors[indices]
-    self.frameBuf[:] = colors
-
-    # increment the time by the speed 
-    self.t += self.speed
-
-    # make progress towards the target plane
-    diffs = self.target - self.plane
-    self.plane += diffs * self.rotation_speed
-    self.plane /= np.linalg.norm(self.plane)
-
-    # move the target if we are close to it
-    # TODO: make this related to rotation_speed so we don't overstep it 
-    epsilon = 0.01
-    if np.linalg.norm(self.plane - self.target) < epsilon:
-      self.target = NHLGoals.generateRandomPlane()
