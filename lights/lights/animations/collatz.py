@@ -27,7 +27,7 @@ class Collatz(BaseAnimation):
         index = current_number % NUM_PIXELS
 
         # Turn on the corresponding pixel
-        self.frameBuf[index] = (255, 255, 255)
+        self.frameBuf[NUM_PIXELS - index - 1] = (255, 255, 255)
 
         # Decay all pixels
         self.frameBuf[:] = self.frameBuf * decay
