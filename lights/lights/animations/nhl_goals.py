@@ -121,7 +121,7 @@ def get_games_today() -> dict:
   return games
 
 def get_play_by_play(game: dict) -> dict:
-  response = requests.get(f'{BASE_API}/gamecenter/{game['id']}/play-by-play')
+  response = requests.get(f'{BASE_API}/gamecenter/{game["id"]}/play-by-play')
   response = response.json()
   return response
 
