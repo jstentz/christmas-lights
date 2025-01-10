@@ -3,6 +3,7 @@ import time
 import numpy as np
 from typing import Optional, Collection
 from lights.animations.base import BaseAnimation
+from lights.animations.goal_light import GoalLight
 from lights.utils.geometry import POINTS_3D
 import threading
 
@@ -57,6 +58,8 @@ class NHLGoals(BaseAnimation):
     self.rotation_speed = rotation_speed
     self.bandwidth = bandwidth
 
+    self.goalLight = GoalLight(frameBuf)
+
     # center the points at the mid points
     min_pt = np.min(POINTS_3D, axis=0)
     max_pt = np.max(POINTS_3D, axis=0)
@@ -76,6 +79,11 @@ class NHLGoals(BaseAnimation):
     return plane / np.linalg.norm(plane)
 
   def renderNextFrame(self):
+    if self.colors.get_t() > 0:
+      self.goalLight.renderNextFrame()
+      self.goalLightT -= 1 / self.fps if self.fps is not None else 1 / 60
+      return
+    
     distances = np.dot(self.CENTERED_POINTS_3D, self.plane) + self.t
     colors = self.colors.get_colors()
     indices = ((distances // self.bandwidth) % len(colors)).astype(np.int32)
@@ -99,6 +107,7 @@ class NHLGoals(BaseAnimation):
 class ColorWrapper:
   def __init__(self, colors: np.array) -> None:
     self.colors = colors
+    self.t = 0
     self.lock = threading.Lock()
 
   def update_colors(self, new_colors: np.array):
@@ -111,6 +120,12 @@ class ColorWrapper:
     colors = self.colors
     self.lock.release()
     return colors
+  
+  def get_t(self):
+    return self.t
+  
+  def set_t(self, t):
+    self.t = t
 
 BASE_API = 'https://api-web.nhle.com/v1'
 
@@ -153,6 +168,7 @@ def listen_for_goals(colors: ColorWrapper):
       scoring_team_common_name = home_team['commonName']['default'] if scoring_team_id == home_team['id'] else away_team['commonName']['default']
       scoring_team_colors = colors_per_team[scoring_team_common_name]
       colors.update_colors(np.array(scoring_team_colors))
+      colors.set_t(3)
 
     known_goals_per_game = curr_goals_per_game
     time.sleep(1)

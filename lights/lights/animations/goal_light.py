@@ -6,7 +6,7 @@ from lights.utils.geometry import POINTS_3D
 
 # NOTE: This animation assumes the points are distributed roughly in the shape of the surface of a cone or a cylinder.
 class GoalLight(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 20.0, sliceWidth: float = 150.0, backgroundColor: Collection[int] = (255, 0, 0), minSaturation: float = 0.1):
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 15.0, sliceWidth: float = 90.0, backgroundColor: Collection[int] = (255, 0, 0), minSaturation: float = 0.8):
     super().__init__(frameBuf, fps)
 
     self.speed = np.deg2rad(speed)
