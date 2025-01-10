@@ -81,7 +81,7 @@ class NHLGoals(BaseAnimation):
   def renderNextFrame(self):
     if self.colors.get_t() > 0:
       self.goalLight.renderNextFrame()
-      self.goalLightT -= 1 / self.fps if self.fps is not None else 1 / 60
+      self.colors.t -= 1 / self.fps if self.fps is not None else 1 / 60
       return
     
     distances = np.dot(self.CENTERED_POINTS_3D, self.plane) + self.t
