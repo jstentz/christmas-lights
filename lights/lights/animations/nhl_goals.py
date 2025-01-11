@@ -6,6 +6,8 @@ from lights.animations.base import BaseAnimation
 from lights.animations.goal_light import GoalLight
 from lights.utils.geometry import POINTS_3D
 import threading
+import vlc
+import os
 
 colors_per_team = {
   'Ducks': [(252, 76, 2), (185, 151, 91), (193, 198, 200), (0, 0, 0)],
@@ -41,6 +43,43 @@ colors_per_team = {
   'Capitals': [(4, 30, 66), (200, 16, 46), (255,255,255)],
   'Jets': [(4,30,66), (0,76,151), (172,22,44), (123,48,62), (85,86,90), (142,144,144), (255,255,255)],
 }
+
+songs_per_team = {
+  'Ducks': 'audio/ducks.mp3',
+  'Bruins': 'audio/bruins.mp3',
+  'Sabres': 'audio/sabres.mp3',
+  'Flames': 'audio/flames.mp3',
+  'Hurricanes': 'audio/hurricanes.mp3',
+  'Blackhawks': 'audio/blackhawks.mp3',
+  'Avalanche': 'audio/avalanche.mp3',
+  'Blue Jackets': 'audio/blue_jackets.mp3',
+  'Stars': 'audio/stars.mp3',
+  'Red Wings': 'audio/red_wings.mp3',
+  'Oilers': 'audio/oilers.mp3',
+  'Panthers': 'audio/panthers.mp3',
+  'Kings': 'audio/kings.mp3',
+  'Wild': 'audio/wild.mp3',
+  'Canadiens': 'audio/canadiens.mp3',
+  'Predators': 'audio/predators.mp3',
+  'Devils': 'audio/devils.mp3',
+  'Islanders': 'audio/islanders.mp3',
+  'Rangers': 'audio/rangers.mp3',
+  'Senators': 'audio/senators.mp3',
+  'Flyers': 'audio/flyers.mp3',
+  'Penguins': 'audio/penguins.mp3',
+  'Blues': 'audio/blues.mp3',
+  'Sharks': 'audio/sharks.mp3',
+  'Kraken': 'audio/kraken.mp3',
+  'Lightning': 'audio/lightning.mp3',
+  'Maple Leafs': 'audio/leafs.mp3',
+  'Utah Hockey Club': 'audio/hockey_club.mp3',
+  'Canucks': 'audio/canucks.mp3',
+  'Golden Knights': 'audio/golden_knights.mp3',
+  'Capitals': 'audio/capitals.mp3',
+  'Jets': 'audio/jets.mp3',
+}
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 class NHLGoals(BaseAnimation):
   def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02,
@@ -153,6 +192,9 @@ def listen_for_goals(colors: ColorWrapper):
   games = get_games_today()
   known_goals_per_game = get_goals_per_game(games)
 
+  instance = vlc.Instance()
+  player = instance.media_player_new()
+
   while True:
     curr_goals_per_game = get_goals_per_game(games)
     
@@ -169,6 +211,9 @@ def listen_for_goals(colors: ColorWrapper):
       scoring_team_colors = colors_per_team[scoring_team_common_name]
       colors.update_colors(np.array(scoring_team_colors))
       colors.set_t(3)
+      media = instance.media_new(os.path.join(path, songs_per_team[scoring_team_common_name]))
+      player.set_media(media)
+      player.play()
 
     known_goals_per_game = curr_goals_per_game
     time.sleep(1)
