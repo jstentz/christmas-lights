@@ -215,7 +215,7 @@ def listen_for_goals(colors: ColorWrapper):
       scoring_team_common_name = home_team['commonName']['default'] if scoring_team_id == home_team['id'] else away_team['commonName']['default']
       scoring_team_colors = colors_per_team[scoring_team_common_name]
       colors.update_colors(np.array(scoring_team_colors))
-      colors.set_t(3)
+      colors.set_t(7)
       media = instance.media_new(os.path.join(path, songs_per_team[scoring_team_common_name]))
       player.set_media(media)
       player.play()
