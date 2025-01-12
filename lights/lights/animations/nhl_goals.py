@@ -143,11 +143,16 @@ class NHLGoals(BaseAnimation):
     if np.linalg.norm(self.plane - self.target) < epsilon:
       self.target = NHLGoals.generateRandomPlane()
 
+  def shutdown(self):
+    self.colors.running = False
+    self.nhl_thread.join()
+
 class ColorWrapper:
   def __init__(self, colors: np.array) -> None:
     self.colors = colors
     self.t = 0
     self.lock = threading.Lock()
+    self.running = True
 
   def update_colors(self, new_colors: np.array):
     self.lock.acquire(blocking=True)
@@ -195,7 +200,7 @@ def listen_for_goals(colors: ColorWrapper):
   instance = vlc.Instance()
   player = instance.media_player_new()
 
-  while True:
+  while colors.running:
     curr_goals_per_game = get_goals_per_game(games)
     
     new_goals_per_game = []
