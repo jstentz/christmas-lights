@@ -5,6 +5,7 @@ from lights.utils.geometry import POINTS_3D
 import vlc
 import os
 from lights.utils.nhl import NHLGoalMonitor
+from typing import Optional
 
 colors_per_team = {
   'Ducks': [(252, 76, 2), (185, 151, 91), (193, 198, 200), (0, 0, 0)],
@@ -79,7 +80,7 @@ songs_per_team = {
 path = os.path.dirname(os.path.abspath(__file__))
 
 class NHLGoals(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: int | None = 60, speed: float = 0.02,
+  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[None] = 60, speed: float = 0.02,
                rotation_speed: float = 0.01, bandwidth: float = 0.4, 
                goal_light_duration: float = 7.0, play_horns: bool = True):
     super().__init__(frameBuf, fps)
