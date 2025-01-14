@@ -16,6 +16,7 @@ class MatplotlibController(BaseController):
     self.points = POINTS_3D
     self.sizes = 100 * np.ones(n_pixels)
     self.scatter = self.ax.scatter(self.points[:, 0], self.points[:, 1], self.points[:, 2], c=self.frameBuf / 255, s=self.sizes, marker='o', edgecolors=None, alpha=0.4)
+    self.ax.set_aspect('equal')
 
   def run(self):
     self.ani = FuncAnimation(self.fig, self.update, interval=self.animation.period * 1000, frames=None, cache_frame_data=False)
