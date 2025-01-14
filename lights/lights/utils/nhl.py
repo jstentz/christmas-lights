@@ -15,7 +15,7 @@ class NHLGoalMonitor():
     self.queue_lock = threading.Lock()
 
     self.shutdown_event = threading.Event()
-    self.worker_thread = threading.Thread(self.listen_for_goals, daemon=True)
+    self.worker_thread = threading.Thread(target=self.listen_for_goals, daemon=True)
 
   def start(self):
     self.worker_thread.start()
