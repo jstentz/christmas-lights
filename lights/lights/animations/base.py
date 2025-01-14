@@ -31,7 +31,7 @@ class BaseAnimation():
 
       t = type_hints.get(param, type(default_parameters[param]))
       
-      check_type(param, value, t)
+      check_type(value, t)
 
     full_parameters = {**default_parameters, **parameters}
     if full_parameters['fps'] is not None and full_parameters['fps'] <= 0:
