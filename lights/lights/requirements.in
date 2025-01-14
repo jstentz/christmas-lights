@@ -8,3 +8,4 @@ typeguard
 numpy
 matplotlib
 noise
+python-vlc
