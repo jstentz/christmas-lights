@@ -1,13 +1,10 @@
-import requests
-import time
 import numpy as np
-from typing import Optional, Collection
 from lights.animations.base import BaseAnimation
 from lights.animations.goal_light import GoalLight
 from lights.utils.geometry import POINTS_3D
-import threading
 import vlc
 import os
+from lights.utils.nhl import NHLGoalMonitor
 
 colors_per_team = {
   'Ducks': [(252, 76, 2), (185, 151, 91), (193, 198, 200), (0, 0, 0)],
@@ -82,29 +79,34 @@ songs_per_team = {
 path = os.path.dirname(os.path.abspath(__file__))
 
 class NHLGoals(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 0.02,
-               rotation_speed : float = 0.01, bandwidth : float = 0.4):
+  def __init__(self, frameBuf: np.ndarray, *, fps: int | None = 60, speed: float = 0.02,
+               rotation_speed: float = 0.01, bandwidth: float = 0.4, 
+               goal_light_duration: float = 7.0, play_horns: bool = True):
     super().__init__(frameBuf, fps)
 
     # start as black and white
-    self.colors = ColorWrapper(np.array([(255, 255, 255), (0, 0, 0)]))
+    self.colors = np.array([(255, 255, 255), (0, 0, 0)])
 
-    # start listening for nhl goals
-    self.nhl_thread = threading.Thread(target=listen_for_goals, args=(self.colors,), daemon=True)
-    self.nhl_thread.start()
+    # start monitoring nhl goals
+    self.goal_monitor = NHLGoalMonitor(1.0)
+    self.goal_light = GoalLight(frameBuf)
+    self.goal_light_duration = goal_light_duration
+    self.goal_light_time_remaining = 0
+    self.play_horns = play_horns
+    self.vlc_instance = vlc.Instance()
+    self.vlc_player = self.vlc_instance.media_player_new()
+    self.goal_monitor.start()
 
     self.speed = speed
     self.rotation_speed = rotation_speed
     self.bandwidth = bandwidth
-
-    self.goalLight = GoalLight(frameBuf)
+    self.t = 0
 
     # center the points at the mid points
     min_pt = np.min(POINTS_3D, axis=0)
     max_pt = np.max(POINTS_3D, axis=0)
     mid_point = (max_pt + min_pt) / 2
     self.CENTERED_POINTS_3D = POINTS_3D - mid_point
-    self.t = 0
 
     # generate a random initial angle for the plane
     self.plane = NHLGoals.generateRandomPlane()
@@ -118,15 +120,27 @@ class NHLGoals(BaseAnimation):
     return plane / np.linalg.norm(plane)
 
   def renderNextFrame(self):
-    if self.colors.get_t() > 0:
-      self.goalLight.renderNextFrame()
-      self.colors.t -= 1 / self.fps if self.fps is not None else 1 / 60
+    # step goal light animation if still in progress
+    if self.goal_light_time_remaining > 0:
+      self.goal_light.renderNextFrame()
+      self.goal_light_time_remaining -= 1 / self.fps if self.fps is not None else 1 / 60
       return
     
+    # check for new goals
+    if scoring_team := self.goal_monitor.pop_goal():
+      # update colors
+      self.colors = np.array(colors_per_team[scoring_team])
+      # start goal light animation on next render
+      self.goal_light_time_remaining = self.goal_light_duration
+      # play horn if enabled
+      if self.play_horns:
+        media = self.vlc_instance.media_new(os.path.join(path, songs_per_team[scoring_team]))
+        self.vlc_player.set_media(media)
+        self.vlc_player.play()
+
     distances = np.dot(self.CENTERED_POINTS_3D, self.plane) + self.t
-    colors = self.colors.get_colors()
-    indices = ((distances // self.bandwidth) % len(colors)).astype(np.int32)
-    colors = colors[indices]
+    indices = ((distances // self.bandwidth) % len(self.colors)).astype(np.int32)
+    colors = self.colors[indices]
     self.frameBuf[:] = colors
 
     # increment the time by the speed 
@@ -144,82 +158,4 @@ class NHLGoals(BaseAnimation):
       self.target = NHLGoals.generateRandomPlane()
 
   def shutdown(self):
-    self.colors.running = False
-    self.nhl_thread.join()
-
-class ColorWrapper:
-  def __init__(self, colors: np.array) -> None:
-    self.colors = colors
-    self.t = 0
-    self.lock = threading.Lock()
-    self.running = True
-
-  def update_colors(self, new_colors: np.array):
-    self.lock.acquire(blocking=True)
-    self.colors = new_colors
-    self.lock.release()
-
-  def get_colors(self):
-    self.lock.acquire(blocking=True)
-    colors = self.colors
-    self.lock.release()
-    return colors
-  
-  def get_t(self):
-    return self.t
-  
-  def set_t(self, t):
-    self.t = t
-
-BASE_API = 'https://api-web.nhle.com/v1'
-
-def get_games_today() -> dict:
-  response = requests.get(f'{BASE_API}/schedule/now')
-  response = response.json()
-  games = response['gameWeek'][0]['games']
-  return games
-
-def get_play_by_play(game: dict) -> dict:
-  response = requests.get(f'{BASE_API}/gamecenter/{game["id"]}/play-by-play')
-  response = response.json()
-  return response
-
-def get_goals(game: dict) -> dict:
-  play_by_play: dict = get_play_by_play(game)
-  plays = play_by_play['plays']
-  goals = {play['eventId']: play for play in plays if play['typeDescKey'] == 'goal'}
-  return goals
-
-def get_goals_per_game(games: list[dict]) -> dict:
-  return {game['id']: (game, get_goals(game)) for game in games}
-
-def listen_for_goals(colors: ColorWrapper):
-  games = get_games_today()
-  known_goals_per_game = get_goals_per_game(games)
-
-  instance = vlc.Instance()
-  player = instance.media_player_new()
-
-  while colors.running:
-    curr_goals_per_game = get_goals_per_game(games)
-    
-    new_goals_per_game = []
-
-    for id, (game, goals) in curr_goals_per_game.items():
-      new_goals_per_game.extend([(goal, game) for goal_id, goal in goals.items() if goal_id not in known_goals_per_game[id][1]])
-      
-    if new_goals_per_game:
-      goal, game = new_goals_per_game[0]
-      scoring_team_id = goal['details']['eventOwnerTeamId']
-      home_team, away_team = game['homeTeam'], game['awayTeam']
-      scoring_team_common_name = home_team['commonName']['default'] if scoring_team_id == home_team['id'] else away_team['commonName']['default']
-      scoring_team_colors = colors_per_team[scoring_team_common_name]
-      colors.update_colors(np.array(scoring_team_colors))
-      colors.set_t(7)
-      media = instance.media_new(os.path.join(path, songs_per_team[scoring_team_common_name]))
-      player.set_media(media)
-      player.play()
-
-    known_goals_per_game = curr_goals_per_game
-    time.sleep(1)
-
+    self.goal_monitor.stop()
