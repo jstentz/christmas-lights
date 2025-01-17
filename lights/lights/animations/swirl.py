@@ -1,5 +1,4 @@
 import numpy as np
-from lights.utils.colors import hsv_to_rgb_numpy, rgb_to_hsv
 from typing import Optional, Collection
 from lights.animations.base import BaseAnimation
 from lights.utils.geometry import POINTS_3D
