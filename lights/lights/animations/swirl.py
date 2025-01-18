@@ -7,14 +7,19 @@ from noise import pnoise1
 
 # NOTE: This animation assumes the points are distributed roughly in the shape of the surface of a cone or a cylinder.
 class Swirl(BaseAnimation):
-  def __init__(self, frameBuf: np.ndarray, *, fps: Optional[int] = 60, speed : float = 4.0, colors: Collection[Collection[int]] = [(255, 0, 0), (0, 255, 0), (0, 0, 255)], twist: bool = True, rainbow: bool = False):
+  def __init__(self, frameBuf: np.ndarray, *, 
+               fps: Optional[int] = 60, speed : float = 4.0, 
+               colors: Collection[Collection[int]] = [(255, 0, 0), (0, 255, 0), (0, 0, 255)], 
+               twistSpeed: float = 0.05, rainbow: bool = False):
     super().__init__(frameBuf, fps)
 
     self.speed = np.deg2rad(speed)
     self.colors = np.array(colors)
-    self.twist = twist
+    self.twistSpeed = twistSpeed
     self.rainbow = rainbow
     self.twistScale = 1.0
+    self.twistMax = 2.5
+    self.twistMin = -2.5
 
     # Leverage the assumption that (0, 0, 0) is the bottom of a cylinder / cone
     self.theta = 0
@@ -25,10 +30,11 @@ class Swirl(BaseAnimation):
     self.thetas = np.mod((self.lightThetas + self.thetaOffsets), 2 * np.pi)
 
   def renderNextFrame(self):
-    if self.twist:
-      self.thetaOffsets = POINTS_3D[:, 2] / self.height * (2 * np.pi) * self.twistScale
-      self.thetas = np.mod((self.lightThetas + self.thetaOffsets), 2 * np.pi)
-      self.twistScale = min(max(self.twistScale + self.speed, 0), 2.5)
+    self.thetaOffsets = POINTS_3D[:, 2] / self.height * (2 * np.pi) * self.twistScale
+    self.thetas = np.mod((self.lightThetas + self.thetaOffsets), 2 * np.pi)
+    self.twistScale = min(max(self.twistScale + self.twistSpeed, self.twistMin), self.twistMax)
+    if self.twistScale >= self.twistMax or self.twistScale <= self.twistMin:
+      self.twistSpeed *= -1
       
     alignedThetas = np.mod(self.thetas + self.theta, 2 * np.pi)
     
