@@ -2,16 +2,19 @@
 
 ## Installation
 At the root of the repository, create a virtual environment and install the requirements:
+
+If using `pip`:
 ```shell
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install -e lights
 ```
 
-Still in the virtual environment, install the local change to the first `lights` folder and install the local `lights` package:
+If using `uv`:
 ```shell
-cd lights
-pip install -e .
+uv add -r requirements.in
+uv pip install -e lights
 ```
 
 ## Creating an animation
