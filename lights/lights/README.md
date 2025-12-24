@@ -13,8 +13,9 @@ pip install -e lights
 
 If using `uv`:
 ```shell
-uv add -r requirements.in
+uv run
 uv pip install -e lights
+source .venv/bin/activate
 ```
 
 ## Creating an animation
