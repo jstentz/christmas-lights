@@ -1,0 +1,26 @@
+[project]
+name = "christmas-lights"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "cursor>=1.3.5",
+    "django>=6.0",
+    "django-cors-headers>=4.9.0",
+    "djangorestframework>=3.16.1",
+    "flask>=3.1.2",
+    "gunicorn>=23.0.0",
+    "marko>=2.2.1",
+    "matplotlib>=3.10.8",
+    "noise>=1.2.2",
+    "numpy>=2.3.5",
+    "openai>=2.12.0",
+    "perlin-noise>=1.14",
+    "pyserial>=3.5",
+    "python-vlc>=3.0.21203",
+    "qrcodegen>=1.8.0",
+    "requests>=2.32.5",
+    "sty>=1.0.6",
+    "typeguard>=4.4.4",
+]
