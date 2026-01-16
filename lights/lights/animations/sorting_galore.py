@@ -1,7 +1,7 @@
 import numpy as np
-from lib.base_animation import BaseAnimation
-from utils.geometry import POINTS_3D
-from utils.colors import hsv_to_rgb
+from lights.animations.base import BaseAnimation
+from lights.utils.geometry import POINTS_3D
+from lights.utils.colors import hsv_to_rgb
 
 # Mescad's Sorting Algorithm Visualizer
 #
