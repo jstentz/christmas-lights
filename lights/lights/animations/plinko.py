@@ -119,14 +119,22 @@ class Plinko(BaseAnimation):
     def create_ball(self, initial_delay: float = 0.0):
         h_axis1 = self.horizontal_axis[0]
         h_axis2 = self.horizontal_axis[1]
+        # Original position was 40-60% from min, now flip 180 degrees (40-60% from max)
         x_pos = np.random.uniform(
             self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.4,
             self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.6
         )
+        # Flip 180 degrees: mirror around center
+        x_offset_from_center = x_pos - self.center[h_axis1]
+        x_pos = self.center[h_axis1] - x_offset_from_center
+        
         z_pos = np.random.uniform(
             self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.4,
             self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.6
         )
+        # Flip 180 degrees: mirror around center
+        z_offset_from_center = z_pos - self.center[h_axis2]
+        z_pos = self.center[h_axis2] - z_offset_from_center
 
         hue = np.random.random()
 
@@ -149,15 +157,27 @@ class Plinko(BaseAnimation):
         """
         reset a ball to the top of the tree
         """
-        h_axis = self.horizontal_axis[0]
+        h_axis1 = self.horizontal_axis[0]
+        h_axis2 = self.horizontal_axis[1]
         ball['height'] = 1.0
         ball['velocity_y'] = 0.0
         ball['stuck_count'] = 0
         ball['last_layer_hit'] = None
-        ball['x_offset'] = np.random.uniform(
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.3,
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.7
+        x_pos = np.random.uniform(
+            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.3,
+            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.7
         )
+        # Flip 180 degrees: mirror around center
+        x_offset_from_center = x_pos - self.center[h_axis1]
+        ball['x_offset'] = self.center[h_axis1] - x_offset_from_center
+        
+        z_pos = np.random.uniform(
+            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.3,
+            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.7
+        )
+        # Flip 180 degrees: mirror around center
+        z_offset_from_center = z_pos - self.center[h_axis2]
+        ball['z_offset'] = self.center[h_axis2] - z_offset_from_center
         ball['hue'] = np.random.random()
         ball['trail'] = []
         ball['last_bounce_height'] = 1.0
