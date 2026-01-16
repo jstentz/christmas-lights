@@ -119,14 +119,32 @@ class Plinko(BaseAnimation):
     def create_ball(self, initial_delay: float = 0.0):
         h_axis1 = self.horizontal_axis[0]
         h_axis2 = self.horizontal_axis[1]
-        x_pos = np.random.uniform(
-            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.4,
-            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.6
+        
+        # Calculate the angle of the current drop position (center region)
+        # Use the center of the current drop region as reference
+        current_x = self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.5
+        current_z = self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.5
+        
+        # Calculate angle of current position
+        current_angle = np.arctan2(
+            current_x - self.center[h_axis1],
+            current_z - self.center[h_axis2]
         )
-        z_pos = np.random.uniform(
-            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.4,
-            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.6
+        
+        # Add 210 degrees (7π/6 radians) to shift past opposite side
+        opposite_angle = current_angle + np.pi * 7 / 6
+        
+        # Use a radius that's similar to the current drop region (center area)
+        # Calculate average radius of the center region
+        radius = np.sqrt(
+            (current_x - self.center[h_axis1])**2 + 
+            (current_z - self.center[h_axis2])**2
         )
+        
+        # Position ball 210 degrees from original with some randomness
+        radius_variation = radius * np.random.uniform(0.8, 1.2)
+        x_pos = self.center[h_axis1] + radius_variation * np.sin(opposite_angle)
+        z_pos = self.center[h_axis2] + radius_variation * np.cos(opposite_angle)
 
         hue = np.random.random()
 
@@ -149,15 +167,38 @@ class Plinko(BaseAnimation):
         """
         reset a ball to the top of the tree
         """
-        h_axis = self.horizontal_axis[0]
+        h_axis1 = self.horizontal_axis[0]
+        h_axis2 = self.horizontal_axis[1]
+        
+        # Calculate the angle of the current drop position (center region)
+        # Use the center of the current drop region as reference
+        current_x = self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.5
+        current_z = self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.5
+        
+        # Calculate angle of current position
+        current_angle = np.arctan2(
+            current_x - self.center[h_axis1],
+            current_z - self.center[h_axis2]
+        )
+        
+        # Add 210 degrees (7π/6 radians) to shift past opposite side
+        opposite_angle = current_angle + np.pi * 7 / 6
+        
+        # Use a radius that's similar to the current drop region (center area)
+        # Calculate average radius of the center region
+        radius = np.sqrt(
+            (current_x - self.center[h_axis1])**2 + 
+            (current_z - self.center[h_axis2])**2
+        )
+        
+        # Position ball 210 degrees from original with some randomness
+        radius_variation = radius * np.random.uniform(0.8, 1.2)
         ball['height'] = 1.0
         ball['velocity_y'] = 0.0
         ball['stuck_count'] = 0
         ball['last_layer_hit'] = None
-        ball['x_offset'] = np.random.uniform(
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.3,
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.7
-        )
+        ball['x_offset'] = self.center[h_axis1] + radius_variation * np.sin(opposite_angle)
+        ball['z_offset'] = self.center[h_axis2] + radius_variation * np.cos(opposite_angle)
         ball['hue'] = np.random.random()
         ball['trail'] = []
         ball['last_bounce_height'] = 1.0
