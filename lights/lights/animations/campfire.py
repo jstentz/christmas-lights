@@ -78,11 +78,11 @@ class Campfire(BaseAnimation):
 
             # Animation affects both brightness and color shift
             # anim_normalized 0 = darker/redder, 1 = brighter/yellower
-            brightness = 0.6 + 0.4 * anim_normalized  # 60% to 100%
+            brightness = 0.2 + 0.8 * anim_normalized  # 20% to 100% (more drastic dimming)
 
             if height < 0.08:
                 # Log region - dark brown with ember glow
-                log_pulse = 0.7 + 0.3 * anim_normalized
+                log_pulse = 0.3 + 0.7 * anim_normalized  # More drastic dimming (30% to 100%)
                 r = int(np.clip(140 * log_pulse, 0, 255))
                 g = int(np.clip(50 * log_pulse, 0, 255))
                 b = int(np.clip(10 * log_pulse, 0, 255))
