@@ -164,14 +164,19 @@ class Plinko(BaseAnimation):
         """
         reset a ball to the top of the tree
         """
-        h_axis = self.horizontal_axis[0]
+        h_axis1 = self.horizontal_axis[0]
+        h_axis2 = self.horizontal_axis[1]
         ball['height'] = 1.0
         ball['velocity_y'] = 0.0
         ball['stuck_count'] = 0
         ball['last_layer_hit'] = None
         ball['x_offset'] = np.random.uniform(
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.3,
-            self.min_bounds[h_axis] + (self.max_bounds[h_axis] - self.min_bounds[h_axis]) * 0.7
+            self.min_bounds[h_axis1],
+            self.max_bounds[h_axis1]
+        )
+        ball['z_offset'] = np.random.uniform(
+            self.min_bounds[h_axis2],
+            self.max_bounds[h_axis2]
         )
         ball['hue'] = np.random.random()
         ball['trail'] = []
