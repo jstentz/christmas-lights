@@ -573,12 +573,12 @@ class Plinko(BaseAnimation):
                 layer = self.peg_layers.get(peg_idx, 0)
                 self.frameBuf[peg_idx] = layer_colors[layer]
             
-            # Draw section markers at top of tree
-            if self.section_markers:
-                for section_num, pixels in self.section_markers['pixels'].items():
-                    color = self.section_markers['colors'][section_num]
-                    for pixel_idx in pixels:
-                        self.frameBuf[pixel_idx] = color
+            # Draw section markers at top of tree (disabled for display, but kept for spawn logic)
+            # if self.section_markers:
+            #     for section_num, pixels in self.section_markers['pixels'].items():
+            #         color = self.section_markers['colors'][section_num]
+            #         for pixel_idx in pixels:
+            #             self.frameBuf[pixel_idx] = color
 
         # update and draw each ball
         for ball in self.balls:
