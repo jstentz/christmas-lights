@@ -46,15 +46,16 @@ class Campfire(BaseAnimation):
             angle = self.angle[i]
 
             # Create flickering effect using multiple sine waves (slowed down)
+            # Increased amplitudes for more dramatic variation
             flicker = (
-                0.3 * np.sin(self.time * 2.5 * self.flicker_speeds[i] + self.phase_offsets[i]) +
-                0.2 * np.sin(self.time * 4 * self.flicker_speeds[i] + self.phase_offsets[i] * 1.3) +
-                0.15 * np.sin(self.time * 6 + self.phase_offsets[i] * 0.7) +
-                0.1 * np.sin(self.time * 10 + height * 10)
+                0.5 * np.sin(self.time * 2.5 * self.flicker_speeds[i] + self.phase_offsets[i]) +
+                0.3 * np.sin(self.time * 4 * self.flicker_speeds[i] + self.phase_offsets[i] * 1.3) +
+                0.25 * np.sin(self.time * 6 + self.phase_offsets[i] * 0.7) +
+                0.15 * np.sin(self.time * 10 + height * 10)
             )
 
             # Rising flame effect - flames move upward over time (slowed down)
-            rising = np.sin(self.time * 1.0 - height * 8 + self.phase_offsets[i]) * 0.3
+            rising = np.sin(self.time * 1.0 - height * 8 + self.phase_offsets[i]) * 0.5
 
             # Spiral flame effect - flames twist as they rise
             # Combines angle with height and time for rotating spiral
@@ -67,7 +68,8 @@ class Campfire(BaseAnimation):
             anim = flicker + rising + (spiral - 0.5) * 0.5 + (shimmer - 0.9) * 2
 
             # Normalize to 0-1 range (anim roughly ranges from -1 to 1)
-            anim_normalized = (anim + 1.2) / 2.4
+            # Expanded range to allow for more extreme dimming
+            anim_normalized = (anim + 1.5) / 3.0
             anim_normalized = max(0.0, min(1.0, anim_normalized))
 
             # Height-based color gradient
@@ -78,11 +80,15 @@ class Campfire(BaseAnimation):
 
             # Animation affects both brightness and color shift
             # anim_normalized 0 = darker/redder, 1 = brighter/yellower
-            brightness = 0.2 + 0.8 * anim_normalized  # 20% to 100% (more drastic dimming)
+            # Use exponential curve for more dramatic dimming effect
+            # Square the normalized value to make dimming more extreme
+            brightness_curve = anim_normalized ** 0.5  # Makes dimming more gradual at low end
+            brightness = 0.05 + 0.95 * brightness_curve  # 5% to 100% (very drastic dimming)
 
             if height < 0.08:
                 # Log region - dark brown with ember glow
-                log_pulse = 0.3 + 0.7 * anim_normalized  # More drastic dimming (30% to 100%)
+                log_curve = anim_normalized ** 0.5  # Exponential curve for more dramatic effect
+                log_pulse = 0.1 + 0.9 * log_curve  # Very drastic dimming (10% to 100%)
                 r = int(np.clip(140 * log_pulse, 0, 255))
                 g = int(np.clip(50 * log_pulse, 0, 255))
                 b = int(np.clip(10 * log_pulse, 0, 255))
