@@ -67,6 +67,9 @@ class Plinko(BaseAnimation):
         #initialize pegs
         self.peg_pixels = self.create_pegs()
 
+        #initialize section markers at top of tree
+        self.section_markers = self.create_section_markers()
+
         #initalize the balls
         self.balls = []
         for i in range(num_balls):
@@ -131,16 +134,67 @@ class Plinko(BaseAnimation):
 
         return peg_pixels
 
+    def create_section_markers(self) -> dict:
+        """Create colored section markers at the top of the tree."""
+        # Find pixels in the top portion of the tree (wider range to catch all sections)
+        # Use top 15% of the tree height
+        top_height_threshold = 0.85
+        
+        top_pixels = np.where(self.pixel_heights >= top_height_threshold)[0]
+        
+        if len(top_pixels) == 0:
+            return {}
+        
+        h_axis1 = self.horizontal_axis[0]
+        h_axis2 = self.horizontal_axis[1]
+        
+        # Calculate angles for top pixels
+        angles = np.arctan2(
+            self.points[top_pixels, h_axis1] - self.center[h_axis1],
+            self.points[top_pixels, h_axis2] - self.center[h_axis2]
+        )
+        # Normalize angles to 0-2π
+        angles = (angles + 2 * np.pi) % (2 * np.pi)
+        
+        # Divide into 8 sections with different colors
+        num_sections = 8
+        section_colors = [
+            [255, 0, 0],      # Red - Section 0
+            [255, 127, 0],    # Orange - Section 1
+            [255, 255, 0],    # Yellow - Section 2
+            [0, 255, 0],      # Green - Section 3
+            [0, 255, 255],    # Cyan - Section 4
+            [0, 0, 255],      # Blue - Section 5
+            [127, 0, 255],    # Purple - Section 6
+            [255, 0, 255],    # Magenta - Section 7
+        ]
+        
+        section_pixels = {}
+        for i in range(num_sections):
+            section_pixels[i] = []
+        
+        # Assign each pixel to a section based on angle
+        section_size = 2 * np.pi / num_sections
+        for idx, pixel in enumerate(top_pixels):
+            angle = angles[idx]
+            section = int(angle / section_size) % num_sections
+            section_pixels[section].append(pixel)
+        
+        return {
+            'pixels': section_pixels,
+            'colors': section_colors
+        }
+
     def create_ball(self, initial_delay: float = 0.0):
         h_axis1 = self.horizontal_axis[0]
         h_axis2 = self.horizontal_axis[1]
         x_pos = np.random.uniform(
-            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.4,
-            self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.6
+            self.min_bounds[h_axis1],
+            self.max_bounds[h_axis1]
         )
         z_pos = np.random.uniform(
-            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.4,
-            self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.6
+            self.min_bounds[h_axis2],
+            self.max_bounds[h_axis2]
         )
 
         hue = np.random.random()
@@ -425,6 +479,13 @@ class Plinko(BaseAnimation):
             for peg_idx in self.peg_pixels:
                 layer = self.peg_layers.get(peg_idx, 0)
                 self.frameBuf[peg_idx] = layer_colors[layer]
+            
+            # Draw section markers at top of tree
+            if self.section_markers:
+                for section_num, pixels in self.section_markers['pixels'].items():
+                    color = self.section_markers['colors'][section_num]
+                    for pixel_idx in pixels:
+                        self.frameBuf[pixel_idx] = color
 
         # update and draw each ball
         for ball in self.balls:
