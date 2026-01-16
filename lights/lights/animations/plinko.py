@@ -188,14 +188,59 @@ class Plinko(BaseAnimation):
     def create_ball(self, initial_delay: float = 0.0):
         h_axis1 = self.horizontal_axis[0]
         h_axis2 = self.horizontal_axis[1]
-        x_pos = np.random.uniform(
-            self.min_bounds[h_axis1],
-            self.max_bounds[h_axis1]
-        )
-        z_pos = np.random.uniform(
-            self.min_bounds[h_axis2],
-            self.max_bounds[h_axis2]
-        )
+        
+        # Position ball in cyan section (section 4)
+        cyan_section = 4
+        if self.section_markers and cyan_section in self.section_markers['pixels']:
+            cyan_pixels = self.section_markers['pixels'][cyan_section]
+            if len(cyan_pixels) > 0:
+                # Find cyan pixels that are at the top of the tree (height close to 1.0)
+                top_height_threshold = 0.95
+                top_cyan_pixels = [px for px in cyan_pixels if self.pixel_heights[px] >= top_height_threshold]
+                
+                if len(top_cyan_pixels) > 0:
+                    # Use a random pixel from the top cyan section
+                    random_pixel = np.random.choice(top_cyan_pixels)
+                    x_pos = self.points[random_pixel, h_axis1]
+                    z_pos = self.points[random_pixel, h_axis2]
+                else:
+                    # Fallback: use any cyan pixel
+                    random_pixel = np.random.choice(cyan_pixels)
+                    x_pos = self.points[random_pixel, h_axis1]
+                    z_pos = self.points[random_pixel, h_axis2]
+            else:
+                # Fallback: calculate angle for cyan section
+                num_sections = 8
+                section_size = 2 * np.pi / num_sections
+                angle_start = cyan_section * section_size
+                angle_end = (cyan_section + 1) * section_size
+                angle = np.random.uniform(angle_start, angle_end)
+                # Use center region radius
+                center_x = self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.5
+                center_z = self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.5
+                radius = np.sqrt(
+                    (center_x - self.center[h_axis1])**2 + 
+                    (center_z - self.center[h_axis2])**2
+                )
+                radius_variation = radius * np.random.uniform(0.8, 1.2)
+                x_pos = self.center[h_axis1] + radius_variation * np.sin(angle)
+                z_pos = self.center[h_axis2] + radius_variation * np.cos(angle)
+        else:
+            # Fallback if section markers not available
+            x_pos = np.random.uniform(self.min_bounds[h_axis1], self.max_bounds[h_axis1])
+            z_pos = np.random.uniform(self.min_bounds[h_axis2], self.max_bounds[h_axis2])
+
+        # Initialize trail with a cyan pixel if we found one
+        initial_trail = []
+        if self.section_markers and cyan_section in self.section_markers['pixels']:
+            cyan_pixels = self.section_markers['pixels'][cyan_section]
+            if len(cyan_pixels) > 0:
+                top_height_threshold = 0.95
+                top_cyan_pixels = [px for px in cyan_pixels if self.pixel_heights[px] >= top_height_threshold]
+                if len(top_cyan_pixels) > 0:
+                    initial_trail = [np.random.choice(top_cyan_pixels)]
+                else:
+                    initial_trail = [np.random.choice(cyan_pixels)]
 
         hue = np.random.random()
 
@@ -204,7 +249,7 @@ class Plinko(BaseAnimation):
             'x_offset': x_pos,
             'z_offset': z_pos,
             'hue': hue,
-            'trail': [],
+            'trail': initial_trail,
             'last_bounce_height': 0.95,
             'active': True,
             'landed_frames': 0,
@@ -220,20 +265,68 @@ class Plinko(BaseAnimation):
         """
         h_axis1 = self.horizontal_axis[0]
         h_axis2 = self.horizontal_axis[1]
+        
+        # Position ball in cyan section (section 4)
+        cyan_section = 4
+        if self.section_markers and cyan_section in self.section_markers['pixels']:
+            cyan_pixels = self.section_markers['pixels'][cyan_section]
+            if len(cyan_pixels) > 0:
+                # Find cyan pixels that are at the top of the tree (height close to 1.0)
+                top_height_threshold = 0.95
+                top_cyan_pixels = [px for px in cyan_pixels if self.pixel_heights[px] >= top_height_threshold]
+                
+                if len(top_cyan_pixels) > 0:
+                    # Use a random pixel from the top cyan section
+                    random_pixel = np.random.choice(top_cyan_pixels)
+                    x_pos = self.points[random_pixel, h_axis1]
+                    z_pos = self.points[random_pixel, h_axis2]
+                else:
+                    # Fallback: use any cyan pixel
+                    random_pixel = np.random.choice(cyan_pixels)
+                    x_pos = self.points[random_pixel, h_axis1]
+                    z_pos = self.points[random_pixel, h_axis2]
+            else:
+                # Fallback: calculate angle for cyan section
+                num_sections = 8
+                section_size = 2 * np.pi / num_sections
+                angle_start = cyan_section * section_size
+                angle_end = (cyan_section + 1) * section_size
+                angle = np.random.uniform(angle_start, angle_end)
+                # Use center region radius
+                center_x = self.min_bounds[h_axis1] + (self.max_bounds[h_axis1] - self.min_bounds[h_axis1]) * 0.5
+                center_z = self.min_bounds[h_axis2] + (self.max_bounds[h_axis2] - self.min_bounds[h_axis2]) * 0.5
+                radius = np.sqrt(
+                    (center_x - self.center[h_axis1])**2 + 
+                    (center_z - self.center[h_axis2])**2
+                )
+                radius_variation = radius * np.random.uniform(0.8, 1.2)
+                x_pos = self.center[h_axis1] + radius_variation * np.sin(angle)
+                z_pos = self.center[h_axis2] + radius_variation * np.cos(angle)
+        else:
+            # Fallback if section markers not available
+            x_pos = np.random.uniform(self.min_bounds[h_axis1], self.max_bounds[h_axis1])
+            z_pos = np.random.uniform(self.min_bounds[h_axis2], self.max_bounds[h_axis2])
+        
+        # Initialize trail with a cyan pixel if we found one
+        initial_trail = []
+        if self.section_markers and cyan_section in self.section_markers['pixels']:
+            cyan_pixels = self.section_markers['pixels'][cyan_section]
+            if len(cyan_pixels) > 0:
+                top_height_threshold = 0.95
+                top_cyan_pixels = [px for px in cyan_pixels if self.pixel_heights[px] >= top_height_threshold]
+                if len(top_cyan_pixels) > 0:
+                    initial_trail = [np.random.choice(top_cyan_pixels)]
+                else:
+                    initial_trail = [np.random.choice(cyan_pixels)]
+        
         ball['height'] = 1.0
         ball['velocity_y'] = 0.0
         ball['stuck_count'] = 0
         ball['last_layer_hit'] = None
-        ball['x_offset'] = np.random.uniform(
-            self.min_bounds[h_axis1],
-            self.max_bounds[h_axis1]
-        )
-        ball['z_offset'] = np.random.uniform(
-            self.min_bounds[h_axis2],
-            self.max_bounds[h_axis2]
-        )
+        ball['x_offset'] = x_pos
+        ball['z_offset'] = z_pos
         ball['hue'] = np.random.random()
-        ball['trail'] = []
+        ball['trail'] = initial_trail
         ball['last_bounce_height'] = 1.0
         ball['active'] = True
         ball['landed_frames'] = 0
